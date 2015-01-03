@@ -1,5 +1,4 @@
-USE [COGData]
-GO
+
 
 /****** Object:  Table [dbo].[TEmailContent]    Script Date: 12/28/2014 11:29:31 AM ******/
 SET ANSI_NULLS ON

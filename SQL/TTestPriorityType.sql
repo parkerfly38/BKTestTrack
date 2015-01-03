@@ -1,5 +1,3 @@
-USE [COGData]
-GO
 
 /****** Object:  Table [dbo].[TTestPriorityType]    Script Date: 1/3/2015 10:33:09 AM ******/
 SET ANSI_NULLS ON

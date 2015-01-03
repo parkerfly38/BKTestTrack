@@ -1,5 +1,3 @@
-USE [COGData]
-GO
 
 /****** Object:  StoredProcedure [dbo].[PTodos]    Script Date: 1/3/2015 10:36:42 AM ******/
 SET ANSI_NULLS ON

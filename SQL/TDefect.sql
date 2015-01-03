@@ -1,5 +1,3 @@
-USE [COGData]
-GO
 
 /****** Object:  Table [dbo].[TDefect]    Script Date: 12/28/2014 10:45:58 AM ******/
 SET ANSI_NULLS ON

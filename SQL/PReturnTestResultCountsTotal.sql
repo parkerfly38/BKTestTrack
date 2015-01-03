@@ -1,5 +1,3 @@
-USE [COGData]
-GO
 
 /****** Object:  StoredProcedure [dbo].[PReturnTestResultCountsTotal]    Script Date: 1/3/2015 10:36:11 AM ******/
 SET ANSI_NULLS ON

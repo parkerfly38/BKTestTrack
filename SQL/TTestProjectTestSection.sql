@@ -1,5 +1,4 @@
-USE [COGData]
-GO
+
 
 /****** Object:  Table [dbo].[TTestProjectTestSection]    Script Date: 1/3/2015 10:33:47 AM ******/
 SET ANSI_NULLS ON
