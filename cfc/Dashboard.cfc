@@ -170,6 +170,15 @@
 		<div class="panel-body">
 			<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="#arguments.chartwidth#" height="#arguments.chartheight#" /></div>
 			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+				<cfif qryGeneralActivity.RecordCount eq 0>
+					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+						<div style='width:32px;height:32px;background-color:##777;border: 1px solid ##666;'>&nbsp;</div>
+					</div>
+					<div class="col-xs-8 col sm-8 col-md-8, col-lg-8">
+						<strong>No project activity</strong>
+					</div>
+					<div class="clearfix">&nbsp;</div>
+				</cfif>
 				<cfloop query="qryGeneralActivity">
 					<!--- generate random color for each row, captured in array for later use--->
 					<cfset arrColor[currentRow] = FormatBaseN((RandRange(0,255)+102)/2, 16) & FormatBaseN((RandRange(0,255)+205)/2, 16) & FormatBaseN((RandRange(0,255)+170)/2, 16)>
@@ -179,7 +188,7 @@
 					<div class="col-xs-8 col sm-8 col-md-8, col-lg-8">
 						<strong>#ProjectTitle#</strong>
 					</div>
-					<div class="clearfix"></div>
+					<div class="clearfix">&nbsp;</div>
 				</cfloop>
 			</div>
 		</div>
@@ -188,6 +197,13 @@
 			var barData = {
 						labels : [<cfloop list="#cols#" index="col">"#col#"<cfif ListFindNoCase(cols,col,",") LT ListLen(cols)>,</cfif></cfloop>],
 						datasets : [
+							<cfif qryGeneralActivity.RecordCount eq 0>
+							{
+								title : "",
+								strokeColor: "##777",
+								data: [0]
+							}
+							</cfif>
 							<cfloop query="qryGeneralActivity">
 							{
 								title : "#qryGeneralActivity.ProjectTitle#",
@@ -209,8 +225,8 @@
 						savePngOutput : "Save",
 						savePngName: "Last 14 Days",
 						savePngBackgroundColor : "white",
-						annotateDisplay : true,
-						graphTitle: "Testing Activity - 14 Days"
+						annotateDisplay : true //,
+						//graphTitle: "Testing Activity - 14 Days"
 					};
 					var chartObj = new Chart(document.getElementById("chartcanvas").getContext("2d")).Line(barData,options);
 		</script>
@@ -307,7 +323,16 @@
 	</cffunction>
 	
 	<cffunction name="allProjectsJSON" access="remote" returnformat="JSON" returntype="string">
-		
+		<cfargument name="includeInactiveProjects" type="boolean" required="false" default="false">
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			<cfexit>
+		</cfif>
+		<cfquery name="qryActiveProjects" dbtype="hql">
+			FROM TTestProject
+			<CFIF !includeInactiveProjects>WHERE Closed = false</CFIF>
+			ORDER BY ProjectStartDate
+		</cfquery>
+		<cfreturn serializeJSON(qryActiveProjects)>
 	</cffunction>
 	
 	<cffunction name="assignedTestsCount" access="remote" returntype="numeric">

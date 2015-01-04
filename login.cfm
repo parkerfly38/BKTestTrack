@@ -36,10 +36,7 @@
 <div id="wrapper">
 
 	<form name="login-form" class="login-form" action="index.cfm" method="post">
-		<div id="creationSuccess" class="alert alert-success" role="alert" style="display:none;">
-					  <h4>Account Created</h4>
-					  <p><strong>You can't login yet, though.</strong>  You'll be notified when your account is activated.</p>
-			    </div>
+		
 		<div class="header">
 		<h1>Login Form</h1>
 		<span>Enter your Windows login, the same you use to access your workstation.</span>
@@ -57,7 +54,10 @@
 		</div>
 	
 	</form>
-
+<div id="creationSuccess" class="alert alert-success" role="alert" style="display:none;">
+					  <h4>Account Created</h4>
+					  <p><strong>You can't login yet, though.</strong>  You'll be notified when your account is activated.</p>
+			    </div>
 </div>
 <div class="gradient"></div>
 

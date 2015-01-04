@@ -27,7 +27,7 @@
     			</cfif>
     		</cfif>
     	</cfif>
-		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin) && !FindNoCase(".cfc",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME)>
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin) && !FindNoCase("logon.cfc",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME)>
 			<cflocation url="login.cfm" addtoken="false" />
 		</cfif>
 		

@@ -107,8 +107,6 @@
 		<cflocation url="/#application.applicationname#/">
 	</cffunction>
 	
-	
-	
 	<cffunction name="genSalt" access="public" returnType="string">
     	<cfargument name="size" type="numeric" required="false" default="16" />
     	<cfscript>
