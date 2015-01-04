@@ -1,0 +1,30 @@
+
+
+/****** Object:  Table [dbo].[TTestSettings]    Script Date: 1/4/2015 10:34:40 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[TTestSettings](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[Setting] [varchar](255) NOT NULL,
+	[SettingValue] [varchar](255) NOT NULL,
+ CONSTRAINT [PK_TTestSettings] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+
+INSERT INTO TTestSettings (Setting,SettingValue)
+VALUES ('UseLDAP','false')

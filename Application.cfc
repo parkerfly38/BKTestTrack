@@ -1,6 +1,6 @@
 <cfcomponent>
 
-	<cfset this.Name = "COGTestTracker" />
+	<cfset this.Name = "COGTestTrack" />
 	<cfset this.sessionManagement = true />
 	<cfset this.ormEnabled = true />
 	<cfset this.datasource = "COGData" />
@@ -36,7 +36,8 @@
 	<cffunction name="onApplicationStart" returntype="void">
 		<cfset ORMReload() />
 		<cfset Application.charttype = "html" /><!--- options being flash, jpg, png, html --->
-		<cfset Application.useLDAP = false /><!--- set this to true if you want to use LDAP --->
+		<cfset qryAuthenticationType = EntityLoad("TTestSettings",{Setting="UseLDAP"},true)>
+		<cfset Application.useLDAP = qryAuthenticationType.getSettingValue() /><!--- set this to true if you want to use LDAP --->
 		<cfset Application.DOMAIN = "CORNEROPS" /><!--- set your domain name here, further adjustments may be necessary in Logon.cfc --->
 	</cffunction>
 
