@@ -17,8 +17,14 @@
         <!--- end debug only --->
     	<cfif !FindNoCase(".cfc",CGI.SCRIPT_NAME) &&  StructKeyExists(FORM,"username") && StructKeyExists(FORM,"password")>
     		<cfset objLogon = createObject("component","cfc.Logon") />
-    		<cfif objLogon.ldapAuthenticate(form.username,form.password)>
-    			<cflocation url="index.cfm">
+    		<cfif Application.useLDAP>
+    			<cfif objLogon.ldapAuthenticate(form.username,form.password)>
+    				<cflocation url="index.cfm">
+    			</cfif>
+    		<cfelse>
+    			<cfif objLogon.formAuthenticate(form.username,form.password)>
+    				<cflocation url="index.cfm">
+    			</cfif>
     		</cfif>
     	</cfif>
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin) && !FindNoCase(".cfc",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME)>
@@ -30,6 +36,8 @@
 	<cffunction name="onApplicationStart" returntype="void">
 		<cfset ORMReload() />
 		<cfset Application.charttype = "html" /><!--- options being flash, jpg, png, html --->
+		<cfset Application.useLDAP = false /><!--- set this to true if you want to use LDAP --->
+		<cfset Application.DOMAIN = "CORNEROPS" /><!--- set your domain name here, further adjustments may be necessary in Logon.cfc --->
 	</cffunction>
 
 </cfcomponent>
