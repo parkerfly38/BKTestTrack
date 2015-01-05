@@ -7,5 +7,21 @@ component table="TTestTester" persistent="true"
 	property name="salt";
 	property name="email";
 	property name="samaccountname";
-	property name="isApproved";
+	property name="isApproved" getter="false";
+	
+	public TTestTester function init() 
+	{
+		if (IsNull(variables.isApproved)) 
+		{
+			variables.isApproved = 0;
+		}
+		return this;
+	}
+	public any function getIsApproved() {
+		if (IsNull(variables.isApproved)) {
+			return 0;
+		} else {
+			return variables.isApproved;
+		}
+	}
 }

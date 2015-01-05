@@ -19,7 +19,7 @@
     		<cfscript>
     			arrUser = entityLoad("TTestTester",{ADID=results.samaccountname[1]},true);
     			if (!isDefined("arrUser") ) {
-    				arrUser = createObject("component","db.TTestTester");
+    				arrUser = entityNew("TTestTester");
     				arrUser.setADID(results.samaccountname[1]);
     				arrUser.setUserName(results.cn[1]);
     				entitySave(arrUser);
@@ -32,6 +32,7 @@
     		<cfset Session.Name = results.cn[1] />
     		<cfset Session.UserId = results.samaccountname[1] />
 			<cfcatch>
+				<cflog text="#cfcatch.message# #cfcatch.detail# #cfcatch.ExtendedInfo#"log="APPLICATION" type="Error" application="yes">
 				<cfset isAuthenticated = false />
 				<cfset Session.LoggedIn = false />
 			</cfcatch>

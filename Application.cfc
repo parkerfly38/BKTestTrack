@@ -6,6 +6,7 @@
 	<cfset this.datasource = "COGData" />
 	<cfset this.ormSettings.cflocation = "CFC.db" />
 	<cfset this.ormSettings.datasource = "COGData" />
+	<cfset this.ormSettings.eventhandling = true />
 	
 	
 	<cffunction name="onRequestStart" returntype="void" output="true">
