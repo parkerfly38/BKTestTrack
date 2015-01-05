@@ -5,6 +5,7 @@
 		<link rel="stylesheet" type="text/css" href="style/bootstrap.css">
 		<script type="text/javascript" src="scripts/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+		<cfif !Application.useLDAP>
 		<script type="text/javascript">
 			$(document).ready(function(){
 				$("#btnSave").click(function(event){
@@ -31,6 +32,7 @@
 				});
 			});
 		</script>
+		</cfif>
 	</head>
 	<body>
 <div id="wrapper">
@@ -50,15 +52,17 @@
 		</div>
 
 		<div class="footer">
-			<input type="button" class="button" data-toggle="modal" data-target="#largeModal" value="New User" /> <input type="submit" name="submit" value="Login" class="button" />
+			<cfif !Application.useLDAP><input type="button" class="button" data-toggle="modal" data-target="#largeModal" value="New User" /></cfif> <input type="submit" name="submit" value="Login" class="button" />
 		</div>
 	
 	</form>
-<div id="creationSuccess" class="alert alert-success" role="alert" style="display:none;">
+<cfif !Application.UseLDAP>
+	<div id="creationSuccess" class="alert alert-success" role="alert" style="display:none;">
 					  <h4>Account Created</h4>
 					  <p><strong>You can't login yet, though.</strong>  You'll be notified when your account is activated.</p>
 			    </div>
-</div>
+	</div>
+</cfif>
 <div class="gradient"></div>
 
 		 <div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
