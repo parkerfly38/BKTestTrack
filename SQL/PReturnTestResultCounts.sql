@@ -12,7 +12,7 @@ GO
 -- Description:	Returns counts of various categories of tests across 14 days
 -- =============================================
 CREATE PROCEDURE [dbo].[PReturnTestResultCounts]
-
+	@projectid int
 AS
 BEGIN
 
@@ -23,7 +23,9 @@ SELECT		Convert(varchar(10),DateTested,101) as DateTested,
 			sum(case when StatusID = 4 then 1 else 0 end) as BlockedCount,
 			sum(case when StatusID = 5 then 1 else 0 end) as RetestCount
 FROM		TTestResult
+INNER JOIN	TTestCase ON TTestResult.TestCaseID = TTestCase.id
 WHERE		DateTested <= GETDATE() and DateTested >= DATEADD(DAY,-14,GETDATE())
+AND			TTestCase.ProjectID = @projectid
 GROUP BY	DateTested
 
 

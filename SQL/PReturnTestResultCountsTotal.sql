@@ -12,16 +12,16 @@ GO
 -- Description:	Returns counts of various categories of tests across 14 days
 -- =============================================
 CREATE PROCEDURE [dbo].[PReturnTestResultCountsTotal]
-
+	@projectid int
 AS
 BEGIN
 
 SELECT		a.StatusID,b.[Status], count(a.id) as ItemCount
 FROM		TTestResult a
 INNER JOIN	TTestStatus b on a.StatusID = b.id
---WHERE		DateTested <= GETDATE() and DateTested >= DATEADD(DAY,-14,GETDATE())
+INNER JOIN  TTestCase c on a.TestCaseID = c.id
+WHERE		c.ProjectID = @projectid
 GROUP BY	a.StatusID,b.[Status]
-
 
 END
 

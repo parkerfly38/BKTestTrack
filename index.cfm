@@ -17,6 +17,11 @@
 		<link rel="stylesheet" href="style/datepicker3.css">
 		<script type="text/javascript" src="scripts/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+		<script type="text/javascript">
+			// <!--
+			var projectid<cfif StructKeyExists(Session,"ProjectID")> = <cfoutput>#Session.ProjectID#</cfoutput></cfif>;
+			// -->
+		</script>
 		<script type="text/javascript" src="scripts/functions.js"></script>
 		<script type="text/javascript" src="scripts/ChartNew.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap-datepicker.js"></script>
@@ -42,6 +47,9 @@
 	          	<a class="navbar-brand" href="#" id="lnkHome">CFTestTrack</a>
 	          </div>
 		      <div id="navbar" class="navbar-collapse collapse">
+		        <ul id="uldashboard" class="nav navbar-nav navbar-right" <cfif !StructKeyExists(Session,"ProjectID")>style="display:none;"</cfif>>
+		        	<li><a id="lnkReturnAllProjects" href="#">All Projects Dashboard</a></li>
+		        </ul>
 		        <ul class="nav navbar-nav">
 		          <li><a id="lnkAssignedTests" href="#" userid="<cfoutput>#Session.UserIDInt#</cfoutput>"> <i class="fa fa-tasks"></i> Tests Assigned <span class="badge"><cfoutput>#local.testsAssigned#</cfoutput></span></a></li>
 		          <li><a href="index.html"> <i class="fa fa-gear"></i> Settings</a></li>

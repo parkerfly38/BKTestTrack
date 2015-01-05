@@ -105,7 +105,7 @@
 	
 	<cffunction name="Logout" access="remote" returntype="void">
 		<cfset StructClear(SESSION) />
-		<cflocation url="/#application.applicationname#/">
+		<cflocation url="/#application.applicationname#/" addtoken="false">
 	</cffunction>
 	
 	<cffunction name="genSalt" access="public" returnType="string">

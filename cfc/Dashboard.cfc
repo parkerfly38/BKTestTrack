@@ -2,13 +2,17 @@
 	
 	<!--- dashboard charting --->
 	
-	<cffunction name="HubChart" access="remote" output="true">
-		<cfargument name="chartwidth" required="false" default="580">
-		<cfargument name="chartheight" required="false" default="300">
-		<div class="panel panel-default">
-		<div class="panel-heading" id="activitytitle">Testing Hub</div>
+	<cffunction name="HubChart" access="remote" output="true" httpmethod="POST">
+		<cfargument name="projectid" required="false" default="0">
+		<cfquery name="qryName" dbtype="hql">
+			FROM TTestProject
+			WHERE id = <cfqueryparam value="#arguments.projectid#">
+		</cfquery>
+		<div id="topcontent" class="panel panel-default">
+		<div class="panel-heading" id="activitytitle">#qryName[1].getProjectTitle()#</div>
 		<div class="panel-body">
 		<cfstoredproc procedure="PReturnTestResultCounts">
+			<cfprocparam cfsqltype="cf_sql_int" value="#arguments.projectid#">
 			<cfprocresult name="qryCounts" />
 		</cfstoredproc>
 		<cfscript>
@@ -32,7 +36,7 @@
 		<cfset local.UntestedPercent = (local.TotalUntestedCount / local.TotalCount) * 100>
 		<cfset local.BlockedPercent = (local.TotalBlockedCount / local.TotalCount) * 100>
 		<cfset local.RetestPercent = (local.TotalRetestCount / local.TotalCount) * 100> 
-		<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="#arguments.chartwidth#" height="#arguments.chartheight#" /></div>
+		<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
 		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 			<p><span class="label label-success">#local.TotalPassedCount# Passed</span><br />#NumberFormat(local.PassedPercent,"0.00")#% set to Passed</p>
 			<p><span class="label label-default">#local.TotalBlockedCount# Blocked</span><br />#NumberFormat(local.BlockedPercent,"0.00")#% set to Blocked</p>
@@ -83,7 +87,10 @@
 						savePngName: "Last 14 Days",
 						savePngBackgroundColor : "white",
 						annotateDisplay : true,
-						graphTitle: "Testing Activity - 14 Days"
+						graphTitle: "Testing Activity - 14 Days",
+						responsive: true,
+						responsiveMaxHeight: 300,
+						maintainAspectRatio: false
 					};
 					var chartObj = new Chart(document.getElementById("chartcanvas").getContext("2d")).Line(barData,options);
 					// -->
@@ -92,16 +99,19 @@
 			</div>
 	</cffunction>
 	
-	<cffunction name="HubDonutChart" access="remote" output="true">
-		<cfargument name="chartwidth" required="false" default="500">
-		<cfargument name="chartheight" required="false" default="300">
-		<div class="panel panel-default">
-		<div class="panel-heading" id="activitytitle">Testing Hub</div>
+	<cffunction name="HubDonutChart" access="remote" output="true" httpmethod="POST">
+		<cfargument name="projectid" required="false" default="0">
+		<cfquery name="qryName" dbtype="hql">
+			FROM TTestProject
+			WHERE id = <cfqueryparam value="#arguments.projectid#">
+		</cfquery>
+		<div id="topcontent" class="panel panel-default">
+		<div class="panel-heading" id="activitytitle">#qryName[1].getProjectTitle()#</div>
 		<div class="panel-body">
 		<cfstoredproc procedure="PReturnTestResultCountsTotal">
 			<cfprocresult name="qryCounts" />
 		</cfstoredproc>
-		<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="#arguments.chartwidth#" height="#arguments.chartheight#" /></div>
+		<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
 		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 			<cfset local.totals = 0>
 			<cfloop query="qryCounts">
@@ -150,7 +160,10 @@
 						savePngBackgroundColor : "white",
 						annotateDisplay : true,
 						inGraphDataShow: true,
-						graphTitle : "System Totals"
+						graphTitle : "System Totals",
+						responsive: true,
+						responsiveMaxHeight: 300,
+						maintainAspectRatio: false
 					};
 					var chartObj = new Chart(document.getElementById("chartcanvas").getContext("2d")).Doughnut(donutData,donutoptions);
 				</script>
@@ -159,22 +172,20 @@
 	</cffunction>
 	
 	<cffunction name="AllProjectsChart" access="remote" output="true">
-		<cfargument name="chartwidth" required="false" default="580">
-		<cfargument name="chartheight" required="false" default="300">
 		<cfstoredproc procedure="PGeneralActivityByProject">
 			<cfprocresult name="qryGeneralActivity">
 		</cfstoredproc>
-		<cfset arrColor = []>
+		<cfset arrColor = [] />
 		<div class="panel panel-default">
 		<div class="panel-heading" id="activitytitle">All Projects</div>
 		<div class="panel-body">
-			<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="#arguments.chartwidth#" height="#arguments.chartheight#" /></div>
+			<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
 			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 				<cfif qryGeneralActivity.RecordCount eq 0>
-					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-						<div style='width:32px;height:32px;background-color:##777;border: 1px solid ##666;'>&nbsp;</div>
+					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-right" >
+						<div style='width:32px;height:32px;background-color:##777;border: 1px solid ##666;float:right;'>&nbsp;</div>
 					</div>
-					<div class="col-xs-8 col sm-8 col-md-8, col-lg-8">
+					<div class="col-xs-8 col sm-8 col-md-8, col-lg-8 text-left" style="padding-left:0px;">
 						<strong>No project activity</strong>
 					</div>
 					<div class="clearfix">&nbsp;</div>
@@ -182,10 +193,10 @@
 				<cfloop query="qryGeneralActivity">
 					<!--- generate random color for each row, captured in array for later use--->
 					<cfset arrColor[currentRow] = FormatBaseN((RandRange(0,255)+102)/2, 16) & FormatBaseN((RandRange(0,255)+205)/2, 16) & FormatBaseN((RandRange(0,255)+170)/2, 16)>
-					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-						<div style='width:32px;height:32px;background-color:###arrColor[currentRow]#;border: 1px solid ##666;'>&nbsp;</div>
+					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-right">
+						<div style='width:32px;height:32px;background-color:###arrColor[currentRow]#;border: 1px solid ##666;float:right;'>&nbsp;</div>
 					</div>
-					<div class="col-xs-8 col sm-8 col-md-8, col-lg-8">
+					<div class="col-xs-8 col sm-8 col-md-8, col-lg-8 text-left" style="padding-left:0px;">
 						<strong>#ProjectTitle#</strong>
 					</div>
 					<div class="clearfix">&nbsp;</div>
@@ -225,6 +236,9 @@
 						savePngOutput : "Save",
 						savePngName: "Last 14 Days",
 						savePngBackgroundColor : "white",
+						responsive: true,
+						responsiveMaxHeight: 300,
+						maintainAspectRatio: false,
 						annotateDisplay : true //,
 						//graphTitle: "Testing Activity - 14 Days"
 					};
@@ -253,22 +267,22 @@
 		<cfreturn serializeJSON(result) />
 	</cffunction>
 
-	<!--- other non report/chart sections --->
+	<!--- other non report/chart sections that return rich content --->
 	
 	<cffunction name="Actions" access="remote" output="true">
 		<div class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-rocket"></i> Actions</div>
 			<div class="panel-body">
 					<div class="row rowoffset">
-					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-right"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="fa fa-map-marker fa-fw"></i></span></h1></div>
+					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="fa fa-map-marker fa-fw"></i></span></h1></div>
 					<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8"><span style="font-weight:bold;">Milestones</span><br /><a href="##" id="lnkViewMilestones">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" id="lnkAddMilestone">Add</a></div>
 					</div>
 					<div class="row rowoffset">
-					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-right"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-tachometer fa-fw"></i></span></h1></div>
+					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-tachometer fa-fw"></i></span></h1></div>
 					<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8"><span style="font-weight: bold;">Tests</span><br /><a href="##" id="lnkViewTests">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" id="lnkAddTest">Add</a></div>
 					</div>
 					<div class="row rowwoffset">
-					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-right"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="projects fa fa-wrench fa-fw"></i></span></h1></div>
+					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="projects fa fa-wrench fa-fw"></i></span></h1></div>
 					<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8"><span style="font-weight: bold;">Projects</span><br /><a href="##" id="lnkViewProjects">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" id="lnkAddProject">Add</a></div>
 					</div>
 				</div>
@@ -276,6 +290,169 @@
 		</div>
 	</cffunction>
 	
+	<cffunction name="assignedTestsGrid" access="remote" output="true">
+		<cfargument name="userid" type="numeric" required="true">
+		<cfargument name="page" type="numeric" required="true" default="1">
+		<cfargument name="pageSize" type="numeric" required="true" default="10">
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			<cfexit>
+		</cfif>
+		<cfscript>
+			objData = createObject("component","Data");
+			arrTests = objData.getAssignedTestCasesByTesterId(arguments.userid);
+			local.testCount = ArrayLen(arrTests);
+			arrTestsForGrid =  ormExecuteQuery("FROM TTestCaseHistory WHERE TesterID = :testerid AND Action = 'Assigned' AND DateActionClosed IS NULL",{testerid=arguments.userid},{maxResults=arguments.pageSize,offset=arguments.page-1});
+			local.pageCount = Round(local.testCount / arguments.pageSize);
+		</cfscript>
+		<div class="panel panel-default">
+		<div class="panel-heading">Tests Assigned To You</div>
+		<div class="panel-body">
+		<cfif local.pageCount gt 1>
+			<cfset local.nav='<div id="paging_nav">'>
+			<cfif arguments.page gt 1><cfset local.nav &= '<a href="" id="paging_nav_previous">'></cfif>
+			<cfset local.nav &= 'Previous'>
+			<cfif arguments.page gt 1><cfset local.nav &= '</a>'></cfif>
+			<cfloop from="1" to="#local.pageCount#" index="index">
+				<cfset local.nav &= '<a href="" class="paging_nav_a">' & #index# >
+			</cfloop>
+			<cfif arguments.page lt local.pageCount><cfset local.nav &= '<a href="" id="paging_nav_next">'></cfif>
+			<cfset local.nav &= "Next">
+			<cfif arguments.page lt local.pageCount><cfset local.nav &= "</a>"></cfif>
+			<cfset local.nav &="</div>">
+			<cfoutput>#local.nav#</cfoutput>
+		</cfif>
+		<table class="table table-striped">
+		<tbody>
+			
+		<cfloop array="#arrTestsForGrid#" index="test">
+			<cfquery dbtype="hql" name="case">
+				FROM TTestCase t WHERE t.id = <cfqueryparam value="#test.getCaseID()#">
+			</cfquery>
+			<cfloop array="#case#" index="i">
+				<cfquery dbtype="hql" name="latestresult" ormoptions=#{maxResults=1}#>
+					FROM TTestResult as a
+					WHERE a.TestCaseID = <cfqueryparam value="#i.getID()#">
+					ORDER BY a.id DESC
+				</cfquery>
+				
+				<cfoutput>
+					<tr>
+					<td class="right">
+						<span class="label #returnBSLabelStyle(latestresult[1].getTTestStatus().getStatus())#">#latestresult[1].getTTestStatus().getStatus()#</span>
+					</td>
+					<td>#i.getTestTitle()#</td>
+					<td>Last tested by <span style="font-weight:bold;">#latestresult[1].getTTestTester().getUserName()#</span></td>
+					</tr>
+				</cfoutput>
+			</cfloop>
+		</cfloop>
+		</tbody>
+		</table>
+		</div>
+		</div>
+	</cffunction>
+
+	<cffunction name="mostRecentTests" access="remote" output="true">
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			<cfexit>
+		</cfif>
+		<cfquery name="recenttests" dbtype="hql" ormoptions=#{maxResults=10}#>
+			FROM TTestResult
+		</cfquery>
+		
+		<div class="clearfix"></div>	
+		<div class="panel panel-default">
+		<div class="panel-heading">Activity</div>
+		<div class="panel-body">
+		<table class="table table-striped table-condensed">
+			<thead>
+				<tr>
+					<th>Test Status</th>
+					<th>Test Title</th>
+					<th>Last Tester</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+		<cfloop array="#recenttests#" index="test">
+			<cfquery name="caseinfo" dbtype="hql" ormoptions=#{maxResults=1}#>
+				FROM TTestCase WHERE id = <cfqueryparam value="#test.getTestCaseID()#">
+			</cfquery>
+			<tr><cfoutput>
+				<td class="right"><h4 style="margin:0px;"><span class="label #returnBSLabelStyle(test.getTTestStatus().getStatus())#">#test.getTTestStatus().getStatus()#</span></h4></td>
+				<td>#caseinfo[1].getTestTitle()#</td>
+				<td>Tested by <span style="font-weight: bold;">#test.getTTestTester().getUserName()#</span></td>
+				<td><a href="##" class="testcaseeditlink" editid="#test.getTestCaseID()#">Edit</a>&nbsp;&nbsp;</td>
+				</cfoutput>
+			</tr>
+		</cfloop>
+			</tbody>
+		</table>
+		</div>
+		</div>
+	</cffunction>
+
+	<cffunction name="getMilestones" access="remote" output="true" httpmethod="post">
+		<cfargument name="projectid" required="true">
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			<cfexit>
+		</cfif>
+		<cfquery name="qryMilestones" dbtype="hql">
+			FROM TTestMilestones
+			WHERE ProjectID = <cfqueryparam value="#arguments.projectid#">
+			AND DueOn >= <cfqueryparam value="#DateFormat(now(),'yyyy-mm-dd')#">
+		</cfquery>
+		<div id="panelmilestones" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="padding-left:0px;">
+			<div class="panel panel-default">
+				<div class="panel-heading">Milestones</div>
+				<div class="panel-body">
+					<table class="table table-striped table-condensed">
+						<thead>
+							<th>Milestone</th>
+							<th>Due On</th>
+						</thead>
+						<tbody>
+							<cfloop array="#qryMilestones#" index="milestone">
+							<tr>
+								<td>#milestone.getMilestone()#</td>
+								<td>#milestone.getDueOn()#</td>
+							</tr>
+							</cfloop>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>			
+	</cffunction>
+	
+	<cffunction name="getTestScenarios" access="remote" output="true" httpmethod="post">
+		<cfargument name="projectid" required="true">
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			<cfexit>
+		</cfif>
+		<div id="paneltestscenarios" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="padding-right:0px;">
+			<div class="panel panel-default">
+				<div class="panel-heading">Test Scenario Status</div>
+				<div class="panel-body">
+					<table class="table table-striped table-condensed">
+						<thead>
+							<th>Test Scenario</th>
+							<th>Test Date</th>
+							<th>Run By</th>
+						</thead>
+						<tbody>
+							<tr><td></td><td></td><td></td></tr>
+							
+							<tr><td></td><td></td><td></td></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</cffunction>
+	
+	<!--- JSON and single value functions --->
+		
 	<cffunction name="TodosBySection" access="remote" returnformat="JSON" returntype="string">
 		<cfstoredproc procedure="PTodos">
 			<cfprocresult name="qryTodos" />
@@ -344,104 +521,19 @@
 		</cfscript>
 	</cffunction>
 	
-	<cffunction name="assignedTestsGrid" access="remote" output="true">
-		<cfargument name="userid" type="numeric" required="true">
-		<cfargument name="page" type="numeric" required="true" default="1">
-		<cfargument name="pageSize" type="numeric" required="true" default="10">
+	<cffunction name="setSessionProject" access="remote" returntype="void" httpmethod="POST">
+		<cfargument name="projectid" required="true" type="numeric">		
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfexit>
 		</cfif>
-		<cfscript>
-			objData = createObject("component","Data");
-			arrTests = objData.getAssignedTestCasesByTesterId(arguments.userid);
-			local.testCount = ArrayLen(arrTests);
-			arrTestsForGrid =  ormExecuteQuery("FROM TTestCaseHistory WHERE TesterID = :testerid AND Action = 'Assigned' AND DateActionClosed IS NULL",{testerid=arguments.userid},{maxResults=arguments.pageSize,offset=arguments.page-1});
-			local.pageCount = Round(local.testCount / arguments.pageSize);
-		</cfscript>
-		<div class="panel panel-default">
-		<div class="panel-heading">Tests Assigned To You</div>
-		<div class="panel-body">
-		<cfif local.pageCount gt 1>
-			<cfset local.nav='<div id="paging_nav">'>
-			<cfif arguments.page gt 1><cfset local.nav &= '<a href="" id="paging_nav_previous">'></cfif>
-			<cfset local.nav &= 'Previous'>
-			<cfif arguments.page gt 1><cfset local.nav &= '</a>'></cfif>
-			<cfloop from="1" to="#local.pageCount#" index="index">
-				<cfset local.nav &= '<a href="" class="paging_nav_a">' & #index# >
-			</cfloop>
-			<cfif arguments.page lt local.pageCount><cfset local.nav &= '<a href="" id="paging_nav_next">'></cfif>
-			<cfset local.nav &= "Next">
-			<cfif arguments.page lt local.pageCount><cfset local.nav &= "</a>"></cfif>
-			<cfset local.nav &="</div>">
-			<cfoutput>#local.nav#</cfoutput>
-		</cfif>
-		<table class="table table-striped">
-		<tbody>
-			
-		<cfloop array="#arrTestsForGrid#" index="test">
-			<cfquery dbtype="hql" name="case">
-				FROM TTestCase t WHERE t.id = <cfqueryparam value="#test.getCaseID()#">
-			</cfquery>
-			<cfloop array="#case#" index="i">
-				<cfquery dbtype="hql" name="latestresult" ormoptions=#{maxResults=1}#>
-					FROM TTestResult as a
-					WHERE a.TestCaseID = <cfqueryparam value="#i.getID()#">
-					ORDER BY a.id DESC
-				</cfquery>
-				
-				<cfoutput>
-					<tr>
-					<td class="right">
-						<span class="label #returnBSLabelStyle(latestresult[1].getTTestStatus().getStatus())#">#latestresult[1].getTTestStatus().getStatus()#</span>
-					</td>
-					<td>#i.getTestTitle()#</td>
-					<td>Last tested by <span style="font-weight:bold;">#latestresult[1].getTTestTester().getUserName()#</span></td>
-					</tr>
-				</cfoutput>
-			</cfloop>
-		</cfloop>
-		</tbody>
-		</table>
-		</div>
-		</div>
+		<cfset Session.ProjectID = arguments.projectid>
 	</cffunction>
-		
-	<cffunction name="mostRecentTests" access="remote" output="true">
-		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+	
+	<cffunction name="removeSessionProject" access="remote" returntype="void" httpmethod="post">
+		<cfif (!StructKeyExists(Session,"LoggedIn") || !Session.Loggedin)>
 			<cfexit>
 		</cfif>
-		<cfquery name="recenttests" dbtype="hql" ormoptions=#{maxResults=10}#>
-			FROM TTestResult
-		</cfquery>
-		<div class="panel panel-default">
-		<div class="panel-heading">Activity</div>
-		<div class="panel-body">
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>Test Status</th>
-					<th>Test Title</th>
-					<th>Last Tester</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-		<cfloop array="#recenttests#" index="test">
-			<cfquery name="caseinfo" dbtype="hql" ormoptions=#{maxResults=1}#>
-				FROM TTestCase WHERE id = <cfqueryparam value="#test.getTestCaseID()#">
-			</cfquery>
-			<tr><cfoutput>
-				<td class="right"><p><span class="label #returnBSLabelStyle(test.getTTestStatus().getStatus())#">#test.getTTestStatus().getStatus()#</span></p></td>
-				<td>#caseinfo[1].getTestTitle()#</td>
-				<td>Tested by <span style="font-weight: bold;">#test.getTTestTester().getUserName()#</span></td>
-				<td><a href="##" class="testcaseeditlink" editid="#test.getTestCaseID()#">Edit</a>&nbsp;&nbsp;</td>
-				</cfoutput>
-			</tr>
-		</cfloop>
-			</tbody>
-		</table>
-		</div>
-		</div>
+		<cfset StructDelete(Session,"ProjectID")>
 	</cffunction>
 	
 	<cffunction name="returnBSLabelStyle" access="private" returntype="string">

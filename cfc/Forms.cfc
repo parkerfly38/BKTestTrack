@@ -41,6 +41,7 @@
 			<cfexit>
 		</cfif>
 		<script type="text/javascript">
+			// <!--
 			$(document).ready(function() {
 				$(".datetime").datepicker({
 					format:"mm/dd/yyyy",
@@ -88,6 +89,7 @@
 					});
 				});		
 			});
+			// -->
 		</script>
 		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
 			<div class="form-group required">
@@ -133,7 +135,9 @@
 			<cfif arguments.projectId GT 0>
 			<div class="form-group">
 				<div class="control-group">
-					<label class="checkbox" for="cbxClosed"><input type="checkbox" name="cbxClosed" id="cbxClosed" value="1"<cfif arrProject.getClosed()> checked="true"</cfif> />Project is complete</label>
+					<label class="checkbox" for="cbxClosed"><input type="checkbox" name="cbxClosed" id="cbxClosed" value="1"
+						<cfif arrProject.getClosed()> checked="true"
+						</cfif>>Project is complete</label>
 					<p class="help-block">Shows the project as completed on the dashboard and other reports.</p>
 				</div>
 			</div>

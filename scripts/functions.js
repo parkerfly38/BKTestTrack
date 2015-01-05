@@ -2,6 +2,7 @@ var jsonMilestones = [];
 var jsonDashMenu = [];
 var jsonLinks = [];
 var jsonProjectCounts = [];
+var jsonProjects = [];
 var recentresultscontent = "";
 var timervar;
 var linkstimervar;
@@ -27,16 +28,15 @@ $(document).ready(function() {
 	$.getJSON("cfc/Dashboard.cfc?method=LinksJSON", function(data) {
 		jsonLinks = data;
 	});
-
+	$.getJSON("cfc/Dashboard.cfc?method=allProjectsJSON",function(data){
+		jsonProjects = data;
+		console.log(jsonProjects);
+	});
 	$("#actioncontent").load("cfc/Dashboard.cfc?method=Actions", function(){
 		$("#actioncontent").append("<div class='panel panel-default'><div class='panel-heading'><i class='fa fa-check-square-o'></i> Todos</div><div class='panel-body'><table id='todotable' class='table table-striped'><tbody></tbody></table></div></div>");
 	});
-	$.ajax({
-		url: "cfc/Dashboard.cfc?method=mostRecentTests",
-		type: "GET"
-	}).done(function(data) {
-		recentresultscontent = data;
-	});
+	
+	projectIDCheck();
 	
 	initialLoadTimer = setInterval(function() {homeLoad()},10);
 	linkstimervar = setInterval(function() {insertLinks()},10);
@@ -51,12 +51,20 @@ $(document).ready(function() {
 		event.preventDefault();
 		homeLoad();
 	});
+	$("a#lnkReturnAllProjects").click(function(event) {
+		event.preventDefault();
+		$.ajax({ url:"cfc/Dashboard.cfc?method=removeSessionProject",type:"POST"}).done(function()
+		{
+			projectid = null;
+			homeLoad();
+		});
+	});
 	$(document).on("click",".testcaseeditlink",function(event){
-			event.preventDefault();
-			var editid = $(this).attr("editid");
-			$("#largeModal .modal-title").text("Edit Test Case");
-			$("#largeModal .modal-body").load("cfc/forms.cfc?method=getTestEditForm&testcaseid="+editid);
-			$("#largeModal").modal("show");
+		event.preventDefault();
+		var editid = $(this).attr("editid");
+		$("#largeModal .modal-title").text("Edit Test Case");
+		$("#largeModal .modal-body").load("cfc/forms.cfc?method=getTestEditForm&testcaseid="+editid);
+		$("#largeModal").modal("show");
 	});
 	$(document).on("click","a#lnkAddProject",function(event) {
 		event.preventDefault();
@@ -65,6 +73,15 @@ $(document).ready(function() {
 		$("#largeModal").modal("show");
 		$(document).trigger("eventLoadForm");
 	});
+	$(document).on("click","a.pjlink", function(event) {
+		event.preventDefault();
+		projectid = $(this).attr("pjid");
+		$.ajax({ url:"cfc/Dashboard.cfc?method=setSessionProject",type:"POST",data: {projectid : projectid}});
+		$("#uldashboard").show();
+		projectIDCheck();
+		projectLoad();
+		
+	})
 	$(document).on("eventLoadForm", function(event){
 		$("#txtProjectStartDate").datepicker({
 			format:"mm/dd/yyyy",
@@ -76,6 +93,17 @@ $(document).ready(function() {
 	});
 });
 
+function projectIDCheck(){
+	if ( isNumber(projectid))
+	{
+		$.ajax({
+			url: "cfc/Dashboard.cfc?method=mostRecentTests",
+			type: "GET"
+		}).done(function(data) {
+			recentresultscontent = data;
+		});
+	}
+}
 
 function insertLinks() {
 	if (jsonLinks.length > 0) {
@@ -108,21 +136,107 @@ function insertDashMenu() {
 	$(".lnkQuickReport").click(function(event) {
 		event.preventDefault();
 		if ($(this).attr("reportvalue") != "") {
-			$("#featurecontent").load("cfc/Dashboard.cfc?method="+$(this).attr("reportvalue"),function() {
+			//$("#featurecontent").load("cfc/Dashboard.cfc?method="+$(this).attr("reportvalue"),function() {
+			//	insertDashMenu();
+			//	insertAdditional();
+			//});
+			$.ajax({
+				url: "cfc/Dashboard.cfc?method="+$(this).attr("reportvalue"),
+				type: "POST",
+				data: { projectid : projectid }
+			}).done(function(data) {
+				$("#featurecontent").html(data);
 				insertDashMenu();
 				insertAdditional();
+				insertMilestones();
+				insertScenarios();
 			});
 		}
-		
+	});
+}
+
+function insertProjectInfo() {
+	if (!($.isEmptyObject(jsonProjects))) {
+		$("#featurecontent").append("<div class='panel panel-default'><div class='panel-heading'><i class='fa fa-wrench'></i> Projects</span></div><div id='pjpanelbody' class='panel-body'></div></div>")
+		$.each(jsonProjects, function(index){
+			var pjcontent = "";
+			pjcontent += "<div class='col-xs-1 col-sm-1 col-md-1 col-lg-1 text-right' style='padding-right:0px;'>";
+			pjcontent += "<h1 style='margin:0px;'><span class='label label-primary' style='padding:5px;'>";
+			pjcontent += "<i class='projects fa fa-wrench fa-fw'></i></span></h1></div>";
+			pjcontent += "<div class='col-xs-11 col-sm-11 col-md-11 col-lg-11'><h4><a href='#' class='pjlink' pjid='" + jsonProjects[index].id + "'>"+jsonProjects[index].ProjectTitle+"</a></h4>";
+			pjcontent += "<a href='#'>Todos</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
+			pjcontent += "<a href='#'>Milestones</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
+			pjcontent += "<a href='#'>Tests</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
+			if (jsonProjects[index].RepositoryType == 2)
+				pjcontent += "<a href='#'>Test Collections</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
+			pjcontent += "<a href='#'>Reporting</a></div><div class='clearfix' style='margin-bottom:20px;'></div>";
+			$("#pjpanelbody").append(pjcontent);
+		});
+	}
+}
+
+function casesLoad(projectid) {
+	
+}
+
+function projectLoad() {
+	$.ajax({
+		url: "cfc/Dashboard.cfc?method=HubChart",
+		type: "POST",
+		data: {
+			projectid : projectid
+		}
+	}).done(function(data){
+		$("#featurecontent").html(data);
+		insertDashMenu();
+		insertAdditional();
+		insertMilestones();
+		insertScenarios();
+	});
+}
+
+function insertMilestones() {
+	$.ajax({
+		url: "cfc/dashboard.cfc?method=getMilestones",
+		type: "post",
+		data: { projectid : projectid }
+	}).done(function(data){
+		$("#topcontent").after(data);
+	});
+}
+
+function insertScenarios() {
+	$.ajax({
+		url: "cfc/dashboard.cfc?method=getTestScenarios",
+		type: "post",
+		data: {projectid : projectid }
+	}).done(function(data) {
+		$("#topcontent").after(data);
 	});
 }
 
 function homeLoad() {
+	if ( isNumber(projectid)  )
+	{
+		$.ajax({
+				url: "cfc/Dashboard.cfc?method=HubChart",
+				type: "POST",
+				data: { projectid : projectid }
+			}).done(function(data) {
+				$("#featurecontent").html(data);
+				insertDashMenu();
+				insertAdditional();
+				insertMilestones();
+				insertScenarios();
+			});
+		window.clearInterval(initialLoadTimer);
+		return; 
+	}
 	if ( !($.isEmptyObject(jsonProjectCounts))) {
 		if (jsonProjectCounts.TotalProjects > 0) {
-			$("#featurecontent").load("cfc/Dashboard.cfc?method=AllProjectsChart&chartheight="+chartheight+"&chartwidth="+chartwidth,function() {
-				//insertDashMenu();
-				insertAdditional();
+			$("#featurecontent").load("cfc/Dashboard.cfc?method=AllProjectsChart",function() {
+				insertProjectInfo();
+				$("#uldashboard").hide();
 			});
 		} else {
 			$("#featurecontent").html("<div class='alert alert-danger' role='alert'><strong>Add your first project to CFTestTrack</strong><br />Welcome!  This dashboard displays an overview of available projects and recent activity, but there aren't any projects yet.  Add a new project from the Actions menu on the right.</div>");
