@@ -109,6 +109,7 @@
 		<div class="panel-heading" id="activitytitle">#qryName[1].getProjectTitle()#</div>
 		<div class="panel-body">
 		<cfstoredproc procedure="PReturnTestResultCountsTotal">
+			<cfprocparam cfsqltype="cf_sql_int" value="#arguments.projectid#">
 			<cfprocresult name="qryCounts" />
 		</cfstoredproc>
 		<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
@@ -176,7 +177,7 @@
 			<cfprocresult name="qryGeneralActivity">
 		</cfstoredproc>
 		<cfset arrColor = ['red','green','blue','yellow','gray','black','pink','brown'] />
-		<div class="panel panel-default">
+		<div id="topcontent" class="panel panel-default">
 		<div class="panel-heading" id="activitytitle">All Projects</div>
 		<div class="panel-body">
 			<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
@@ -252,7 +253,6 @@
 	<cffunction name="chartList" access="remote" returnformat="JSON" returntype="string">
 		<cfset var data="" />
 		<cfset var result= ArrayNew(1) />
-				
 		<cfscript>
 			hubChart = StructNew();
 			hubchart["opticon"] = "fa-line-chart";
@@ -295,10 +295,6 @@
 						<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight: bold;">Test Scenarios</span><br /><a href="##" id="lnkViewTestScenarios">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" id="lnkAddTestScenario">Add</a></i></div>
 					</div>
 					</cfif>
-					<!---<div class="row rowwoffset">
-					<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="projects fa fa-wrench fa-fw"></i></span></h1></div>
-					<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10"><span style="font-weight: bold;">Projects</span><br /><a href="##" id="lnkViewProjects">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" id="lnkAddProject">Add</a></div>
-					</div>--->
 				</div>
 			</div>
 		</div>
@@ -411,16 +407,17 @@
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfexit>
 		</cfif>
-		<cfquery name="qryMilestones" dbtype="hql">
+		<cfquery name="qryMilestones" dbtype="hql" ormoptions=#{maxresults=5}#>
 			FROM TTestMilestones
 			WHERE ProjectID = <cfqueryparam value="#arguments.projectid#">
 			AND DueOn >= <cfqueryparam value="#DateFormat(now(),'yyyy-mm-dd')#">
 		</cfquery>
-		<div id="panelmilestones" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="padding-left:0px;">
+		<div id="panelmilestones" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 			<div class="panel panel-default">
-				<div class="panel-heading">Milestones</div>
+				<div class="panel-heading">Top 5 Milestones<div class="btn-group" style="float:right;margin-top:-5px;"><a href="##" class="lnkAddMilestone btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Milestone</a><a href="##" class="lnkViewMilestones btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
 				<div class="panel-body">
-					<table class="table table-striped table-condensed">
+					<cfif ArrayLen(qryMilestones) gt 0>
+						<table class="table table-striped table-condensed">
 						<thead>
 							<th>Milestone</th>
 							<th>Due On</th>
@@ -434,6 +431,9 @@
 							</cfloop>
 						</tbody>
 					</table>
+					<cfelse>
+						<div class="alert alert-warning"><h4>This project doesn't contain any milestones.</h4>Please add one from the actions link to the right.</div>
+					</cfif>
 				</div>
 			</div>
 		</div>			
@@ -444,22 +444,37 @@
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfexit>
 		</cfif>
-		<div id="paneltestscenarios" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="padding-right:0px;">
+		<cfif !StructKeyExists(SESSION,"ProjectID")>
+			<cfexit>
+		</cfif>
+		<cfquery name="qryTestScenarios" dbtype="hql" ormoptions=#{maxresults=5}#>
+			FROM	TTestScenario
+			WHERE	ProjectID = <cfqueryparam value="#Session.ProjectID#">
+		</cfquery>
+		<div id="paneltestscenarios" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 			<div class="panel panel-default">
-				<div class="panel-heading">Test Scenario Status</div>
+				<div class="panel-heading">Test Scenario Status<div class="btn-group" style="float:right;margin-top:-5px;"><a href="##" class="lnkAddScenario btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Scenario</a><a href="##" class="lnkViewScenarios btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
 				<div class="panel-body">
+					<cfif ArrayLen(qryTestScenarios) gt 0>
 					<table class="table table-striped table-condensed">
 						<thead>
 							<th>Test Scenario</th>
-							<th>Test Date</th>
-							<th>Run By</th>
+							<th>Tests Assigned</th>
+							<th></th>
 						</thead>
 						<tbody>
-							<tr><td></td><td></td><td></td></tr>
-							
-							<tr><td></td><td></td><td></td></tr>
+							<cfloop array="#qryTestScenarios#" index="scenario">
+								<tr>
+									<td>#scenario.getTestScenario()#</td>
+									<td>(0)</td>
+									<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
+								</tr>
+							</cfloop>
 						</tbody>
 					</table>
+					<cfelse>
+					<div class="alert alert-warning"><h4>This project doesn't contain any test scenarios.</h4>Please add one from the actions link to the right.</div>
+					</cfif>
 				</div>
 			</div>
 		</div>

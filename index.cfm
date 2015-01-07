@@ -61,7 +61,9 @@
 	    
 	  <div class="container-fluid" style="background:none;">
 		  <div class="row">
-		  	<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><div id="featurecontent" style="width:100%"></div></div>
+		  	<div id="featurecontent" class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+		  		<div id="midrow" class="row"></div>
+		  	</div>
 		  	<div id="actioncontent" class="col-xs-3 col-sm-3 col-md-3 col-lg-3"></div>
 		  </div>
 	  </div>

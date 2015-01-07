@@ -28,6 +28,110 @@
 		</div>
 	</cffunction>
 	
+	<cffunction name="TestScenarioForm" access="remote" output="true">
+		<cfargument name="testscenarioid" required="False" default="0" type="numeric">
+		<cfif !(StructKeyExists(Session,"ProjectID"))>
+			<cfexit>
+		</cfif>
+		<cfif arguments.testscenarioid gt 0>
+			<cfset arrTestScenario = EntityLoadByPK("TTestScenario",arguments.testscenarioid)>
+		<cfelse>
+			<cfset arrTestScenario = entityNew("TTestScenario")>
+			<cfset arrTestScenario.setId(0) >
+		</cfif>
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			login
+			<cfexit>
+		</cfif>
+			<script type="text/javascript">
+			$(document).ready(function() {
+				$(document).on("click","a.lnkMilestone", function(event) {
+					event.preventDefault();
+					var rpvalue = $(this).attr("msvalue");
+					var rptext = $(this).html();
+					$("##txtMilestoneID").val(rpvalue);
+					$(".list-group-item").removeClass("active");
+					$("##mslink").html(rptext);
+					$(this).addClass("active");
+				});
+				$(document).off("click","##btnClose");
+				$(document).on("click","##btnClose",function(event) {
+					event.preventDefault();					
+					if (confirm("Are you sure you want to close without saving your test scenario?"))
+					{
+						$("##largeModal").modal('hide');
+					}
+				});
+				$(document).off("click","##btnSave");
+				$(document).on("click","##btnSave",function(event) {
+					event.preventDefault();
+					$.ajax({
+						url: "CFC/forms.cfc?method=saveScenario",
+						type: "POST",
+						data: {
+							id : $("##txtID").val(),
+							TestScenario : $("##txtTestScenario").val(),
+							TestDescription : $("##txtTestDescription").val(),
+							MilestoneID : $("##txtMilestoneID").val(),
+							TestDescription : $("##txtTestDescription").val(),
+							ProjectID : '#Session.ProjectID#'
+						}
+					}).done(function(data) {
+						if ( data == "true" )
+						{
+							$("##largeModal").modal('hide');
+							$("##paneltestscenarios").remove();
+							insertScenarios();
+						} else {
+							alert("There was an error with your save.  Please contact system administrator.");
+						}
+					});
+				});		
+			});
+			</script>
+			<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+			<div class="form-group required">
+				<input type="hidden" name="txtID" id="txtID" value="#arrTestScenario.getId()#" />
+				<label for="txtTestScenario">Name</label><br />
+				<input type="text" name="txtTestScenario" id="txtTestScenario" value="#arrTestScenario.getTestScenario()#" />
+				<p class="help-block">Ex: <i>User interface test</i></p>
+			</div>
+			<div class="form-group">
+				<label for="txtTestDescription">Description</label><br />
+				<textarea class="form-control" rows="5" id="txtTestDescription" name="txtTestDescription">#arrTestScenario.getTestDescription()#</textarea>
+			</div>
+			</div>
+			<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			
+			<div class="form-group">
+				<input type="hidden" name="txtMilestoneID" id="txtMilestoneID" value="#arrTestScenario.getMilestoneID()#">
+				<label>Milestone</label><br />
+				<div class="btn-group" style="margin-top:-5px;">
+					<a id="mslink" class="btn btn-sm btn-info" href="##">
+						<cfif IsNumeric(arrTestScenario.getMilestoneID()) AND arrTestScenario.getMilestoneID() gt 0>
+							<cfset arrMilestone = EntityLoadByPk("TTestMilestones",arrTestScenario.getMilestoneID())>
+							#arrMilestone.getMilestone()#
+						<cfelse>
+							Select a milestone
+						</cfif>	
+					</a>
+					<a class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" href="##">
+							<span class="fa fa-caret-down"></span></a>
+							<ul class="dropdown-menu">
+								<cfquery name="qryMilestones" dbtype="hql">
+									FROM TTestMilestones
+									WHERE ProjectID = <cfqueryparam value="#Session.ProjectID#">
+								</cfquery>
+								<cfif ArrayLen(qryMilestones) gt 0>
+									<cfloop array="#qryMilestones#" index="ms">
+										<li><a href='##' class='lnkMilestone' msvalue="#ms.getId()#">#ms.getMilestone()#</a></li>
+									</cfloop>
+								</cfif>
+							</ul>
+				</div>
+			</div>
+	</cffunction>
+			
 	<cffunction name="ProjectForm" access="remote" output="true">
 		<cfargument name="projectId" required="false" default="0" type="numeric">
 		<cfif arguments.projectId gt 0>
@@ -145,6 +249,31 @@
 		</div>
 	</cffunction>
 	<!--- form processing --->
+	
+	<cffunction name="saveScenario" access="remote" returntype="any" returnformat="JSON">
+		<cfargument name="id" type="numeric">
+		<cfargument name="TestScenario" required="true">
+		<cfargument name="MilestoneID">
+		<cfargument name="TestDescription">
+		<cfargument name="ProjectID">
+		<cfscript>
+			if ( arguments.id > 0 ) {
+				arrScenario = EntityLoadByPK("TTestScenario",arguments.id);
+			} else {
+				arrScenario = EntityNew("TTestScenario");
+			}
+			arrScenario.setTestScenario(arguments.TestScenario);
+			arrScenario.setMilestoneID((isNumeric(arguments.MilestoneID)) ? arguments.MilestoneID : 0);
+			arrScenario.setTestDescription(arguments.TestDescription);
+			arrScenario.setProjectId(arguments.ProjectID);
+			try {
+				EntitySave(arrScenario);
+				return true;
+			} catch (any ex) {
+				return serializeJSON(ex);
+			}
+		</cfscript>
+	</cffunction>
 	
 	<cffunction name="saveProject" access="remote" returntype="any" returnformat="JSON">
 		<cfargument name="id" type="numeric">

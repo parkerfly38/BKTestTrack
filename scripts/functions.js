@@ -101,9 +101,23 @@ $(document).ready(function() {
 			$("#panelprojects").remove();
 		});	
 		todotimervar = setInterval(function() {insertTodos()},10);
-		linkstimervar = setInterval(function() {insertLinks()},10);
+		//linkstimervar = setInterval(function() {insertLinks()},10);
 		insertActions();
 	});
+	$(document).on("click","a.lnkAddScenario", function(event) {
+		event.preventDefault();
+		$("#largeModal .modal-title").text("Add Test Scenario");
+		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestScenarioForm");
+		$("#largeModal").modal("show");
+	});
+	$(document).on("click","a.lnkEditScenario",function(event) {
+		event.preventDefault();
+		var pjid = $(this).attr("scenarioid");
+		$("#largeModal .modal-title").text("Edit Test Scenario");
+		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestScenarioForm&testscenarioid="+pjid);
+		$("#largeModal").modal({show:"true"});
+	});
+	
 	$(document).on("eventLoadForm", function(event){
 		$("#txtProjectStartDate").datepicker({
 			format:"mm/dd/yyyy",
@@ -170,15 +184,16 @@ function insertAdditional() {
 }
 
 function insertActions() {
+	$("#panel-actions").remove();
 	$.ajax({url:"cfc/dashboard.cfc?method=Actions"}).done( function(data){
 		$("#actioncontent").prepend(data);
 	})
 }
 
 function insertDashMenu() {
-	$("#activitytitle").append('<div class="btn-group" style="float:right;margin-top:-5px;"><a class="btn btn-sm btn-default" href="#"><i class="fa fa-bar-chart fa-fw"></i> Quick Reports</a><a class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" href="#"><span class="fa fa-caret-down"></span></a><ul class="dropdown-menu"></ul></div>');
+	$("#activitytitle").append('<div class="btn-group" style="float:right;margin-top:-5px;"><a class="btn btn-sm btn-info" href="#"><i class="fa fa-bar-chart fa-fw"></i> Quick Reports</a><a class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" href="#"><span class="fa fa-caret-down"></span></a><ul id="pjreportmenu" class="dropdown-menu"></ul></div>');
 	$.each(jsonDashMenu, function(index) {
-		$(".dropdown-menu").append("<li><a href='#' class='lnkQuickReport' reportvalue='"+jsonDashMenu[index].optvalue+"'><i class='fa "+jsonDashMenu[index].opticon+" fa-fw'></i> "+jsonDashMenu[index].optlabel+"</a></li>");
+		$("#pjreportmenu").append("<li><a href='#' class='lnkQuickReport' reportvalue='"+jsonDashMenu[index].optvalue+"'><i class='fa "+jsonDashMenu[index].opticon+" fa-fw'></i> "+jsonDashMenu[index].optlabel+"</a></li>");
 	});
 	$(".lnkQuickReport").click(function(event) {
 		event.preventDefault();
@@ -192,11 +207,11 @@ function insertDashMenu() {
 				type: "POST",
 				data: { projectid : projectid }
 			}).done(function(data) {
-				$("#featurecontent").html(data);
+				$("#topcontent").replaceWith(data);
 				insertDashMenu();
-				insertAdditional();
+				/*insertAdditional();
 				insertMilestones();
-				insertScenarios();
+				insertScenarios();*/
 			});
 		}
 	});
@@ -204,7 +219,7 @@ function insertDashMenu() {
 
 function insertProjectInfo() {
 	if (!($.isEmptyObject(jsonProjects))) {
-		$("#featurecontent").append("<div id='panelprojects' class='panel panel-default'><div class='panel-heading'><i class='fa fa-wrench'></i> Projects</span></div><div id='pjpanelbody' class='panel-body' style='padding:10px;'></div></div>");
+		$("#featurecontent").append("<div id='panelprojects' class='panel panel-default'><div class='panel-heading'><i class='fa fa-wrench'></i> Projects</span><a href='##' id='lnkAddProject' class='btn btn-info btn-sm' style='float:right;margin-top:-5px;'><i class='fa fa-plus-square'></i> Add Project</a></div><div id='pjpanelbody' class='panel-body' style='padding:10px;'></div></div>");
 		$.each(jsonProjects, function(index){
 			var pjcontent = "";
 			pjcontent += "<div class='col-xs-2 col-sm-2 col-md-2 col-lg-2 text-right' style='padding-left:0px;padding-right:0px;'>";
@@ -217,7 +232,8 @@ function insertProjectInfo() {
 			if (jsonProjects[index].RepositoryType == 2)
 				pjcontent += "<a href='#'>Test Scenarios</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
 			pjcontent += "<a href='#'>Reporting</a></div><div class='clearfix' style='margin-bottom:20px;'></div>";
-			$("#pjpanelbody").append(pjcontent);
+			$("#pjpanelbody").prepend(pjcontent);
+			
 		});
 	}
 }
@@ -234,11 +250,13 @@ function projectLoad() {
 			projectid : projectid
 		}
 	}).done(function(data){
-		$("#featurecontent").html(data);
+		$("#topcontent").remove();
+		$("#featurecontent").prepend(data);
 		insertDashMenu();
 		insertAdditional();
 		insertMilestones();
 		insertScenarios();
+		insertActions();
 	});
 }
 
@@ -248,7 +266,7 @@ function insertMilestones() {
 		type: "post",
 		data: { projectid : projectid }
 	}).done(function(data){
-		$("#topcontent").after(data);
+		$("#midrow").append(data);
 	});
 }
 
@@ -256,9 +274,9 @@ function insertScenarios() {
 	$.ajax({
 		url: "cfc/dashboard.cfc?method=getTestScenarios",
 		type: "post",
-		data: {projectid : projectid }
+		data: { projectid : projectid }
 	}).done(function(data) {
-		$("#topcontent").after(data);
+		$("#midrow").append(data);
 	});
 }
 
@@ -270,7 +288,8 @@ function homeLoad() {
 				type: "POST",
 				data: { projectid : projectid }
 			}).done(function(data) {
-				$("#featurecontent").html(data);
+				$("#topcontent").remove();
+				$("#featurecontent").prepend(data).fadeIn();
 				insertDashMenu();
 				insertAdditional();
 				insertMilestones();
@@ -286,9 +305,10 @@ function homeLoad() {
 			$("#featurecontent").load("cfc/Dashboard.cfc?method=AllProjectsChart",function() {
 				insertProjectInfo();
 				$("#uldashboard").hide();
+				$("#featurecontent").append('<div id="midrow" class="row"></div>');
 			});
 		} else {
-			$("#featurecontent").html("<div class='alert alert-danger' role='alert'><strong>Add your first project to CFTestTrack</strong><br />Welcome!  This dashboard displays an overview of available projects and recent activity, but there aren't any projects yet.  Add a new project from the Actions menu on the right.</div>");
+			$("#featurecontent").prepend("<div class='alert alert-danger' role='alert'><strong>Add your first project to CFTestTrack</strong><br />Welcome!  This dashboard displays an overview of available projects and recent activity, but there aren't any projects yet.  Add a new project from the Actions menu on the right.</div>");
 		}
 		window.clearInterval(initialLoadTimer);
 	}
