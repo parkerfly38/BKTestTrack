@@ -28,6 +28,95 @@
 		</div>
 	</cffunction>
 	
+	<cffunction name="MilestoneForm" access="remote" output="true">
+		<cfargument name="milestoneid" required="false" default="0" type="numeric">
+		<cfif !(StructKeyExists(Session,"ProjectID"))>
+			<cfexit>
+		</cfif>
+		<cfif !(StructKeyExists(Session,"LoggedIn")) || !Session.LoggedIn>
+			login
+			<cfexit>
+		</cfif>
+		<cfif arguments.milestoneid gt 0>
+			<cfset arrMilestone = EntityLoadByPK("TTestMilestones",arguments.milestoneid)>
+		<cfelse>
+			<cfset arrMilestone = EntityNew("TTestMilestones")>
+			<cfset arrMilestone.setId(0)>
+		</cfif>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(".datetime").datepicker({
+					format:"mm/dd/yyyy",
+					todayHighlight: true,
+					autoclose:true
+				});
+				$(document).off("click","##btnClose");
+				$(document).on("click","##btnClose",function(event) {
+					event.preventDefault();					
+					if (confirm("Are you sure you want to close without saving your milestone?"))
+					{
+						$("##largeModal").modal('hide');
+					}
+				});
+				$(document).off("click","##btnSave");
+				$(document).on("click","##btnSave",function(event) {
+					event.preventDefault();
+					$.ajax({
+						url: "CFC/forms.cfc?method=saveMilestone",
+						type: "POST",
+						data: {
+							id : $("##txtID").val(),
+							Milestone : $("##txtMilestone").val(),
+							MilestoneDescription : $("##txtMilestoneDescription").val(),
+							DueOn : $("##txtDueOn").val(),
+							Closed : $("##cbxClosed").is(":checked"),
+							ProjectID : '#Session.ProjectID#'
+						}
+					}).done(function(data) {
+						if ( data == "true" )
+						{
+							$("##largeModal").modal('hide');
+							$("##panelmilestones").remove();
+							insertMilestones();
+						} else {
+							alert("There was an error with your save.  Please contact system administrator.");
+						}
+					});
+				});
+			});
+		</script>
+		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+			<div class="form-group required">
+				<input type="hidden" id="txtID" name="txtID" value="#arrMilestone.getId()#" />
+				<label for="txtMilestone">Milestone Name</label>
+				<input type="text" id="txtMilestone" name="txtMilestone" value="#arrMilestone.getMilestone()#" class="form-control" />
+				<p class="help-block">Ex: <em>Version 3.2 or Internal Beta</em></p>
+			</div>
+			<div class="form-group">
+				<label for="txtMilestoneDescription">Description</label>
+				<textarea class="form-control" rows="5" id="txtMilestoneDescription" name="txtMilestoneDescription">#arrMilestone.getMilestoneDescription()#</textarea>
+				<p class="help-block">Describe the reason for this milestone, desired endstate upon close.</p>
+			</div>
+		</div>
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			<div class="form-group required">
+				<label for="txtDueOn">Due Date</label>
+				<input type="text" id="txtDueOn" name="txtDueOn" value="#arrMilestone.getDueOn()#" class="form-control datetime" />
+			</div>
+			<cfif arguments.milestoneid GT 0>
+			<div class="form-group">
+				<div class="control-group">
+					<label class="checkbox" for="cbxClosed"><input type="checkbox" name="cbxClosed" id="cbxClosed" value="1"
+						<cfif arrMilestone.getClosed()> checked="true"
+						</cfif>>Milestone is complete</label>
+					<p class="help-block">Shows the milestone as completed on the dashboard and other reports.</p>
+				</div>
+			</div>
+			</cfif>
+		</div>
+			
+	</cffunction>
+				
 	<cffunction name="TestScenarioForm" access="remote" output="true">
 		<cfargument name="testscenarioid" required="False" default="0" type="numeric">
 		<cfif !(StructKeyExists(Session,"ProjectID"))>
@@ -249,6 +338,34 @@
 		</div>
 	</cffunction>
 	<!--- form processing --->
+	
+	<cffunction name="saveMilestone" access="remote" returntype="any" returnformat="JSON">
+		<cfargument name="id" type="numeric">
+		<cfargument name="Milestone" required="true">
+		<cfargument name="DueOn">
+		<cfargument name="MilestoneDescription">
+		<cfargument name="Closed">
+		<cfargument name="ProjectID">
+		<cfscript>
+			if ( arguments.id > 0 ) {
+				arrMilestone = EntityLoadByPK("TTestMilestones",arguments.id);
+			} else {
+				arrMilestone = EntityNew("TTestMilestones");
+			}
+			arrMilestone.setMilestone(arguments.Milestone);
+			arrMilestone.setDueOn(arguments.DueOn);
+			arrMilestone.setMilestoneDescription(arguments.MilestoneDescription);
+			arrMilestone.setClosed(arguments.Closed);
+			arrMilestone.setProjectID(arguments.ProjectID);
+			try {
+				EntitySave(arrMilestone);
+				return true;
+			} catch (any ex) {
+				return serializeJSON(ex);
+			}
+		</cfscript>
+	</cffunction>
+		
 	
 	<cffunction name="saveScenario" access="remote" returntype="any" returnformat="JSON">
 		<cfargument name="id" type="numeric">

@@ -283,7 +283,7 @@
 			<div class="panel-body">
 					<div class="row rowoffset">
 					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="fa fa-map-marker fa-fw"></i></span></h1></div>
-					<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight:bold;">Milestones</span><br /><a href="##" id="lnkViewMilestones">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" id="lnkAddMilestone">Add</a></div>
+					<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight:bold;">Milestones</span><br /><a href="##" id="lnkViewMilestones">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddMilestone">Add</a></div>
 					</div>
 					<div class="row rowoffset">
 					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-tachometer fa-fw"></i></span></h1></div>
@@ -410,7 +410,8 @@
 		<cfquery name="qryMilestones" dbtype="hql" ormoptions=#{maxresults=5}#>
 			FROM TTestMilestones
 			WHERE ProjectID = <cfqueryparam value="#arguments.projectid#">
-			AND DueOn >= <cfqueryparam value="#DateFormat(now(),'yyyy-mm-dd')#">
+			AND (DueOn >= <cfqueryparam value="#DateFormat(now(),'yyyy-mm-dd')#"> OR Closed = 0)
+			ORDER By DueOn ASC
 		</cfquery>
 		<div id="panelmilestones" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 			<div class="panel panel-default">
@@ -421,12 +422,18 @@
 						<thead>
 							<th>Milestone</th>
 							<th>Due On</th>
+							<th></th>
 						</thead>
 						<tbody>
 							<cfloop array="#qryMilestones#" index="milestone">
+							<cfif milestone.getDueOn() LT Now()>
+								<tr class="highlight" style="color:red;font-weight:bold;">
+							<cfelse>
 							<tr>
+							</cfif>
 								<td>#milestone.getMilestone()#</td>
 								<td>#milestone.getDueOn()#</td>
+								<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
 							</tr>
 							</cfloop>
 						</tbody>

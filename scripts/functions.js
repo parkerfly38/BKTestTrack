@@ -117,7 +117,19 @@ $(document).ready(function() {
 		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestScenarioForm&testscenarioid="+pjid);
 		$("#largeModal").modal({show:"true"});
 	});
-	
+	$(document).on("click","a.lnkAddMilestone",function(event){
+		event.preventDefault();
+		$("#largeModal .modal-title").text("Add Milestone");
+		$("#largeModal .modal-body").load("cfc/forms.cfc?method=MilestoneForm");
+		$("#largeModal").modal("show");
+	});
+	$(document).on("click","a.lnkEditMilestone",function(event) {
+		event.preventDefault();
+		var pjid = $(this).attr("milestoneid");
+		$("#largeModal .modal-title").text("Edit Milestone");
+		$("#largeModal .modal-body").load("cfc/forms.cfc?method=MilestoneForm&milestoneid="+pjid);
+		$("#largeModal").modal({show:"true"});
+	});
 	$(document).on("eventLoadForm", function(event){
 		$("#txtProjectStartDate").datepicker({
 			format:"mm/dd/yyyy",
@@ -266,7 +278,7 @@ function insertMilestones() {
 		type: "post",
 		data: { projectid : projectid }
 	}).done(function(data){
-		$("#midrow").append(data);
+		$("#midrow").prepend(data);
 	});
 }
 
