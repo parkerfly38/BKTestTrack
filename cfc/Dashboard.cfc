@@ -31,11 +31,11 @@
 			
 		</cfloop>
 		<cfset local.TotalCount = local.TotalBlockedCount + local.TotalFailedCount + local.TotalPassedCount + local.TotalRetestCount + local.TotalUntestedCount/>
-		<cfset local.PassedPercent = (local.TotalPassedCount / local.TotalCount) * 100 />
-		<cfset local.FailedPercent = (local.TotalFailedCount / local.TotalCount) * 100>
-		<cfset local.UntestedPercent = (local.TotalUntestedCount / local.TotalCount) * 100>
-		<cfset local.BlockedPercent = (local.TotalBlockedCount / local.TotalCount) * 100>
-		<cfset local.RetestPercent = (local.TotalRetestCount / local.TotalCount) * 100> 
+		<cfset local.PassedPercent = (local.TotalCount gt 0) ? (local.TotalPassedCount / local.TotalCount) * 100 : 0 >
+		<cfset local.FailedPercent = (local.TotalCount gt 0) ? (local.TotalFailedCount / local.TotalCount) * 100 : 0>
+		<cfset local.UntestedPercent = (local.TotalCount gt 0) ?  (local.TotalUntestedCount / local.TotalCount) * 100 : 0>
+		<cfset local.BlockedPercent = (local.TotalCount gt 0) ? (local.TotalBlockedCount / local.TotalCount) * 100 : 0>
+		<cfset local.RetestPercent = (local.TotalCount gt 0) ? (local.TotalRetestCount / local.TotalCount) * 100 : 0> 
 		<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
 		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 			<p><span class="label label-success">#local.TotalPassedCount# Passed</span><br />#NumberFormat(local.PassedPercent,"0.00")#% set to Passed</p>

@@ -21,6 +21,9 @@ $(document).ready(function() {
 	});
 	$.getJSON("cfc/Dashboard.cfc?method=TodosBySection", function(data) {
 		jsonTodos = data.DATA;
+		if (jsonTodos.length == 0) {
+			jsonTodos = {[{0,0}]}
+		}
 	});
 	$.getJSON("cfc/Dashboard.cfc?method=MilestonesJSON", function(data) {
 		jsonMilestones = data;
@@ -31,13 +34,6 @@ $(document).ready(function() {
 	$.getJSON("cfc/Dashboard.cfc?method=allProjectsJSON",function(data){
 		jsonProjects = data;
 	});
-	if (isNumber(projectid)) {
-		$("#actioncontent").load("cfc/Dashboard.cfc?method=Actions", function(){
-			$("#actioncontent").append("<div class='panel panel-default'><div class='panel-heading'><i class='fa fa-check-square-o'></i> Todos</div><div class='panel-body'><table id='todotable' class='table table-striped'><tbody></tbody></table></div></div>");
-		});
-	} else {
-		$("#actioncontent").append("<div class='panel panel-default'><div class='panel-heading'><i class='fa fa-check-square-o'></i> Todos</div><div class='panel-body'><table id='todotable' class='table table-striped'><tbody></tbody></table></div></div>");
-	}
 	
 	projectIDCheck();
 	
@@ -130,15 +126,13 @@ function projectIDCheck(){
 
 function insertTodos() {
 	if (jsonTodos.length > 0) {
-		//$.getJSON("cfc/Dashboard.cfc?method=TodosBySection", function(data) {
-			if ($("#todotable tbody").html().length() == 0) {
+		$("#actioncontent").append("<div class='panel panel-default'><div class='panel-heading'><i class='fa fa-check-square-o'></i> Todos</div><div class='panel-body'><table id='todotable' class='table table-striped'><tbody></tbody></table></div></div>");
+		if ($("#todotable tbody").html().length() == 0) {
 			$.each(jsonTodos,function(index){
 				$("#todotable tbody").append("<tr><td>"+jsonTodos[index][0]+"</td><td>("+jsonTodos[index][1]+")</td></tr>");
 			});
-			}
-		//}).done(function() {
-			window.clearInterval(todotimervar);
-		//});
+		}
+		window.clearInterval(todotimervar);
 	}
 }
 
@@ -194,7 +188,7 @@ function insertDashMenu() {
 
 function insertProjectInfo() {
 	if (!($.isEmptyObject(jsonProjects))) {
-		$("#actioncontent").prepend("<div id='panelprojects' class='panel panel-default'><div class='panel-heading'><i class='fa fa-wrench'></i> Projects</span></div><div id='pjpanelbody' class='panel-body' style='padding:10px;'></div></div>");
+		$("#featurecontent").append("<div id='panelprojects' class='panel panel-default'><div class='panel-heading'><i class='fa fa-wrench'></i> Projects</span></div><div id='pjpanelbody' class='panel-body' style='padding:10px;'></div></div>");
 		$.each(jsonProjects, function(index){
 			var pjcontent = "";
 			pjcontent += "<div class='col-xs-2 col-sm-2 col-md-2 col-lg-2 text-right' style='padding-left:0px;padding-right:0px;'>";
