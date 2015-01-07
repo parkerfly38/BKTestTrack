@@ -22,7 +22,9 @@ $(document).ready(function() {
 	$.getJSON("cfc/Dashboard.cfc?method=TodosBySection", function(data) {
 		jsonTodos = data.DATA;
 		if (jsonTodos.length == 0) {
-			jsonTodos = {[{0,0}]}
+			jsonTodos = [
+				["0","0"]
+			];
 		}
 	});
 	$.getJSON("cfc/Dashboard.cfc?method=MilestonesJSON", function(data) {
@@ -99,7 +101,8 @@ $(document).ready(function() {
 			$("#panelprojects").remove();
 		});	
 		todotimervar = setInterval(function() {insertTodos()},10);
-		linkstimervar = setInterval(function() {insertLinks()},10);	
+		linkstimervar = setInterval(function() {insertLinks()},10);
+		insertActions();
 	});
 	$(document).on("eventLoadForm", function(event){
 		$("#txtProjectStartDate").datepicker({
@@ -126,11 +129,18 @@ function projectIDCheck(){
 
 function insertTodos() {
 	if (jsonTodos.length > 0) {
-		$("#actioncontent").append("<div class='panel panel-default'><div class='panel-heading'><i class='fa fa-check-square-o'></i> Todos</div><div class='panel-body'><table id='todotable' class='table table-striped'><tbody></tbody></table></div></div>");
-		if ($("#todotable tbody").html().length() == 0) {
+		$("#todopanel").remove();
+		$("#actioncontent").append("<div id='todopanel' class='panel panel-default'><div class='panel-heading'><i class='fa fa-check-square-o'></i> Todos</div><div class='panel-body'><table id='todotable' class='table table-striped'><tbody></tbody></table></div></div>");
+		if (jsonTodos[0][0] != 0) {
+		if ($("#todotable tbody").html().length == 0) {
 			$.each(jsonTodos,function(index){
 				$("#todotable tbody").append("<tr><td>"+jsonTodos[index][0]+"</td><td>("+jsonTodos[index][1]+")</td></tr>");
 			});
+			$("#todoalert").remove();
+		}
+		} else {
+			$("#todoalert").remove();
+			$("#todotable").parent().append("<div id='todoalert' class='alert alert-warning' role='alert'>No to-dos for you at this time.</div>");
 		}
 		window.clearInterval(todotimervar);
 	}
@@ -157,6 +167,12 @@ function insertAdditional() {
 		
 		window.clearInterval(timervar);
 	}
+}
+
+function insertActions() {
+	$.ajax({url:"cfc/dashboard.cfc?method=Actions"}).done( function(data){
+		$("#actioncontent").prepend(data);
+	})
 }
 
 function insertDashMenu() {
@@ -259,6 +275,7 @@ function homeLoad() {
 				insertAdditional();
 				insertMilestones();
 				insertScenarios();
+				insertActions();
 				$("#panelprojects").remove();
 			});
 		window.clearInterval(initialLoadTimer);

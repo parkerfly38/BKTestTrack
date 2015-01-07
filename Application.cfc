@@ -20,11 +20,11 @@
     		<cfset objLogon = createObject("component","cfc.Logon") />
     		<cfif Application.useLDAP>
     			<cfif objLogon.ldapAuthenticate(form.username,form.password)>
-    				<cflocation url="index.cfm">
+    				<cflocation url="index.cfm" addtoken="false" >
     			</cfif>
     		<cfelse>
     			<cfif objLogon.formAuthenticate(form.username,form.password)>
-    				<cflocation url="index.cfm">
+    				<cflocation url="index.cfm" addtoken="false" >
     			</cfif>
     		</cfif>
     	</cfif>
