@@ -3,10 +3,12 @@ var jsonDashMenu = [];
 var jsonLinks = [];
 var jsonProjectCounts = [];
 var jsonProjects = [];
+var jsonTodos = [];
 var recentresultscontent = "";
 var timervar;
 var linkstimervar;
 var initialLoadTimer;
+var todotimervar;
 var chartheight = 300;
 var chartwidth = 840;
 
@@ -18,9 +20,7 @@ $(document).ready(function() {
 		jsonProjectCounts = data;
 	});
 	$.getJSON("cfc/Dashboard.cfc?method=TodosBySection", function(data) {
-		$.each(data.DATA,function(index){
-			$("#todotable tbody").append("<tr><td>"+data.DATA[index][0]+"</td><td>("+data.DATA[index][1]+")</td></tr>");
-		});
+		jsonTodos = data.DATA;
 	});
 	$.getJSON("cfc/Dashboard.cfc?method=MilestonesJSON", function(data) {
 		jsonMilestones = data;
@@ -30,18 +30,22 @@ $(document).ready(function() {
 	});
 	$.getJSON("cfc/Dashboard.cfc?method=allProjectsJSON",function(data){
 		jsonProjects = data;
-		console.log(jsonProjects);
 	});
-	$("#actioncontent").load("cfc/Dashboard.cfc?method=Actions", function(){
+	if (isNumber(projectid)) {
+		$("#actioncontent").load("cfc/Dashboard.cfc?method=Actions", function(){
+			$("#actioncontent").append("<div class='panel panel-default'><div class='panel-heading'><i class='fa fa-check-square-o'></i> Todos</div><div class='panel-body'><table id='todotable' class='table table-striped'><tbody></tbody></table></div></div>");
+		});
+	} else {
 		$("#actioncontent").append("<div class='panel panel-default'><div class='panel-heading'><i class='fa fa-check-square-o'></i> Todos</div><div class='panel-body'><table id='todotable' class='table table-striped'><tbody></tbody></table></div></div>");
-	});
+	}
 	
 	projectIDCheck();
 	
 	initialLoadTimer = setInterval(function() {homeLoad()},10);
 	linkstimervar = setInterval(function() {insertLinks()},10);
+	todotimervar = setInterval(function() {insertTodos()},10);
 	timervar = setInterval(function() {insertAdditional()},10);
-	
+		
 	$("a#lnkAssignedTests").click(function(event) {
 		event.preventDefault();
 		var userid = $("a#lnkAssignedTests").attr("userid");
@@ -49,13 +53,21 @@ $(document).ready(function() {
 	});
 	$("a#lnkHome").click(function(event) {
 		event.preventDefault();
-		homeLoad();
+		$.ajax({ url:"cfc/Dashboard.cfc?method=removeSessionProject",type:"POST"}).done(function()
+		{
+			projectid = null;
+			$("#panelprojects").remove();
+			$("#panel-actions").remove();
+			homeLoad();
+		});
 	});
 	$("a#lnkReturnAllProjects").click(function(event) {
 		event.preventDefault();
 		$.ajax({ url:"cfc/Dashboard.cfc?method=removeSessionProject",type:"POST"}).done(function()
 		{
 			projectid = null;
+			$("#panelprojects").remove();
+			$("#panel-actions").remove();
 			homeLoad();
 		});
 	});
@@ -73,15 +85,26 @@ $(document).ready(function() {
 		$("#largeModal").modal("show");
 		$(document).trigger("eventLoadForm");
 	});
+	$(document).on("click","a.lnkEditProject",function(event) {
+		event.preventDefault();
+		var pjid = $(this).attr("projectid");
+		$("#largeModal .modal-title").text("Edit Project");
+		$("#largeModal .modal-body").load("cfc/forms.cfc?method=ProjectForm&projectid="+pjid);
+		$("#largeModal").modal({show:"true"});
+		$(document).trigger("eventLoadForm");
+	});
 	$(document).on("click","a.pjlink", function(event) {
 		event.preventDefault();
 		projectid = $(this).attr("pjid");
-		$.ajax({ url:"cfc/Dashboard.cfc?method=setSessionProject",type:"POST",data: {projectid : projectid}});
-		$("#uldashboard").show();
-		projectIDCheck();
-		projectLoad();
-		
-	})
+		$.ajax({ url:"cfc/Dashboard.cfc?method=setSessionProject",type:"POST",data: {projectid : projectid}}).done(function() {
+			$("#uldashboard").show();
+			projectIDCheck();
+			projectLoad();
+			$("#panelprojects").remove();
+		});	
+		todotimervar = setInterval(function() {insertTodos()},10);
+		linkstimervar = setInterval(function() {insertLinks()},10);	
+	});
 	$(document).on("eventLoadForm", function(event){
 		$("#txtProjectStartDate").datepicker({
 			format:"mm/dd/yyyy",
@@ -102,6 +125,20 @@ function projectIDCheck(){
 		}).done(function(data) {
 			recentresultscontent = data;
 		});
+	}
+}
+
+function insertTodos() {
+	if (jsonTodos.length > 0) {
+		//$.getJSON("cfc/Dashboard.cfc?method=TodosBySection", function(data) {
+			if ($("#todotable tbody").html().length() == 0) {
+			$.each(jsonTodos,function(index){
+				$("#todotable tbody").append("<tr><td>"+jsonTodos[index][0]+"</td><td>("+jsonTodos[index][1]+")</td></tr>");
+			});
+			}
+		//}).done(function() {
+			window.clearInterval(todotimervar);
+		//});
 	}
 }
 
@@ -157,18 +194,18 @@ function insertDashMenu() {
 
 function insertProjectInfo() {
 	if (!($.isEmptyObject(jsonProjects))) {
-		$("#featurecontent").append("<div class='panel panel-default'><div class='panel-heading'><i class='fa fa-wrench'></i> Projects</span></div><div id='pjpanelbody' class='panel-body'></div></div>")
+		$("#actioncontent").prepend("<div id='panelprojects' class='panel panel-default'><div class='panel-heading'><i class='fa fa-wrench'></i> Projects</span></div><div id='pjpanelbody' class='panel-body' style='padding:10px;'></div></div>");
 		$.each(jsonProjects, function(index){
 			var pjcontent = "";
-			pjcontent += "<div class='col-xs-1 col-sm-1 col-md-1 col-lg-1 text-right' style='padding-right:0px;'>";
-			pjcontent += "<h1 style='margin:0px;'><span class='label label-primary' style='padding:5px;'>";
+			pjcontent += "<div class='col-xs-2 col-sm-2 col-md-2 col-lg-2 text-right' style='padding-left:0px;padding-right:0px;'>";
+			pjcontent += "<h1 style='margin:0px;'><span class='label label-primary' style='padding:5px;background-color: #"+jsonProjects[index].Color+";'>";
 			pjcontent += "<i class='projects fa fa-wrench fa-fw'></i></span></h1></div>";
-			pjcontent += "<div class='col-xs-11 col-sm-11 col-md-11 col-lg-11'><h4><a href='#' class='pjlink' pjid='" + jsonProjects[index].id + "'>"+jsonProjects[index].ProjectTitle+"</a></h4>";
+			pjcontent += "<div class='col-xs-10 col-sm-10 col-md-10 col-lg-10'><h5><a href='#' class='pjlink' pjid='" + jsonProjects[index].id + "'>"+jsonProjects[index].ProjectTitle+"</a>&nbsp;&nbsp;<a href='#' class='lnkEditProject btn btn-default btn-xs' projectid='"+jsonProjects[index].id+"'><i class='fa fa-pencil'></i> Edit</a></h5>";
 			pjcontent += "<a href='#'>Todos</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
 			pjcontent += "<a href='#'>Milestones</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
 			pjcontent += "<a href='#'>Tests</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
 			if (jsonProjects[index].RepositoryType == 2)
-				pjcontent += "<a href='#'>Test Collections</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
+				pjcontent += "<a href='#'>Test Scenarios</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
 			pjcontent += "<a href='#'>Reporting</a></div><div class='clearfix' style='margin-bottom:20px;'></div>";
 			$("#pjpanelbody").append(pjcontent);
 		});
@@ -228,6 +265,7 @@ function homeLoad() {
 				insertAdditional();
 				insertMilestones();
 				insertScenarios();
+				$("#panelprojects").remove();
 			});
 		window.clearInterval(initialLoadTimer);
 		return; 

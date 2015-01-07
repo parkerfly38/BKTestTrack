@@ -175,7 +175,7 @@
 		<cfstoredproc procedure="PGeneralActivityByProject">
 			<cfprocresult name="qryGeneralActivity">
 		</cfstoredproc>
-		<cfset arrColor = [] />
+		<cfset arrColor = ['red','green','blue','yellow','gray','black','pink','brown'] />
 		<div class="panel panel-default">
 		<div class="panel-heading" id="activitytitle">All Projects</div>
 		<div class="panel-body">
@@ -192,9 +192,9 @@
 				</cfif>
 				<cfloop query="qryGeneralActivity">
 					<!--- generate random color for each row, captured in array for later use--->
-					<cfset arrColor[currentRow] = FormatBaseN((RandRange(0,255)+102)/2, 16) & FormatBaseN((RandRange(0,255)+205)/2, 16) & FormatBaseN((RandRange(0,255)+170)/2, 16)>
+					<!---<cfset arrColor[currentRow] = FormatBaseN((RandRange(0,255)+102)/2, 16) & FormatBaseN((RandRange(0,255)+205)/2, 16) & FormatBaseN((RandRange(0,255)+170)/2, 16)>--->
 					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-right">
-						<div style='width:32px;height:32px;background-color:###arrColor[currentRow]#;border: 1px solid ##666;float:right;'>&nbsp;</div>
+						<div style='width:32px;height:32px;background-color:###qryGeneralActivity.Color#;border: 1px solid ##666;float:right;'>&nbsp;</div>
 					</div>
 					<div class="col-xs-8 col sm-8 col-md-8, col-lg-8 text-left" style="padding-left:0px;">
 						<strong>#ProjectTitle#</strong>
@@ -204,6 +204,7 @@
 			</div>
 		</div>
 		<cfset local.cols = ListDeleteAt(ArrayToList(qryGeneralActivity.getColumnNames()),1,",")>
+		<cfset local.cols = ListDeleteAt(local.cols,1,",")> <!--- do this twice to purge the color column value, too --->
 		<script type="text/javascript">
 			var barData = {
 						labels : [<cfloop list="#cols#" index="col">"#col#"<cfif ListFindNoCase(cols,col,",") LT ListLen(cols)>,</cfif></cfloop>],
@@ -218,7 +219,7 @@
 							<cfloop query="qryGeneralActivity">
 							{
 								title : "#qryGeneralActivity.ProjectTitle#",
-								strokeColor : "###arrColor[currentRow]#",
+								strokeColor : "###qryGeneralActivity.Color#",
 								data : [<cfloop list="#cols#" index="col">#qryGeneralActivity[col][currentRow]#<cfif ListFindNoCase(cols,col,",") LT ListLen(cols)>,</cfif></cfloop>]
 							}
 							<cfif currentRow NEQ qryGeneralActivity.RecordCount>,</cfif>
@@ -270,21 +271,34 @@
 	<!--- other non report/chart sections that return rich content --->
 	
 	<cffunction name="Actions" access="remote" output="true">
-		<div class="panel panel-default">
+		<cfif !StructKeyExists(Session,"ProjectID")>
+			<cfexit>
+		</cfif>
+		<cfquery name="qryProject" dbtype="hql">
+			FROM TTestProject
+			WHERE id = <cfqueryparam value="#Session.ProjectID#">
+		</cfquery>
+		<div id="panel-actions" class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-rocket"></i> Actions</div>
 			<div class="panel-body">
 					<div class="row rowoffset">
-					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="fa fa-map-marker fa-fw"></i></span></h1></div>
-					<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8"><span style="font-weight:bold;">Milestones</span><br /><a href="##" id="lnkViewMilestones">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" id="lnkAddMilestone">Add</a></div>
+					<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="fa fa-map-marker fa-fw"></i></span></h1></div>
+					<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10"><span style="font-weight:bold;">Milestones</span><br /><a href="##" id="lnkViewMilestones">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" id="lnkAddMilestone">Add</a></div>
 					</div>
 					<div class="row rowoffset">
-					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-tachometer fa-fw"></i></span></h1></div>
-					<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8"><span style="font-weight: bold;">Tests</span><br /><a href="##" id="lnkViewTests">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" id="lnkAddTest">Add</a></div>
+					<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-tachometer fa-fw"></i></span></h1></div>
+					<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10"><span style="font-weight: bold;">Tests</span><br /><a href="##" id="lnkViewTests">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" id="lnkAddTest">Add</a></div>
 					</div>
-					<div class="row rowwoffset">
-					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="projects fa fa-wrench fa-fw"></i></span></h1></div>
-					<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8"><span style="font-weight: bold;">Projects</span><br /><a href="##" id="lnkViewProjects">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" id="lnkAddProject">Add</a></div>
+					<cfif qryProject[1].getRepositoryType() eq 2>
+					<div class="row rowoffset">
+						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 text-right" style="padding-right: 0xp;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-suitcase fa-fw"></i></span></h1></div>
+						<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10"><span style="font-weight: bold;">Test Scenarios</span><br /><a href="##" id="lnkViewTestScenarios">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" id="lnkAddTestScenario">Add</a></i></span></h1></div>
 					</div>
+					</cfif>
+					<!---<div class="row rowwoffset">
+					<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="projects fa fa-wrench fa-fw"></i></span></h1></div>
+					<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10"><span style="font-weight: bold;">Projects</span><br /><a href="##" id="lnkViewProjects">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" id="lnkAddProject">Add</a></div>
+					</div>--->
 				</div>
 			</div>
 		</div>

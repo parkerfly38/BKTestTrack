@@ -41,7 +41,7 @@
 			<cfexit>
 		</cfif>
 		<script type="text/javascript">
-			// <!--
+			<!-- //
 			$(document).ready(function() {
 				$(".datetime").datepicker({
 					format:"mm/dd/yyyy",
@@ -110,12 +110,12 @@
 			<input type="hidden" name="txtRepositoryType" id="txtRepositoryType" value="#IsNull(arrProject.getRepositoryType()) ? 1 : arrProject.getRepositoryType()#" />
 			<div class="list-group">
 				<a href="##" class="list-group-item<cfif arrProject.getRepositoryType() eq 1 or IsNull(arrProject.getRepositoryType())> active</cfif>" rtvalue="1">
-					<h4 class="list-group-item-heading">Use a single test suite for all test cases</h4>
+					<h4 class="list-group-item-heading">Use a single test scenario for all test cases</h4>
 					<p class="list-group-item-text">For smaller projects where you may not have a need to compartmentalize versions or test cases.  You can still use sections to compartmentalize your testing.</p>
 				</a>
 				<a href="##" class="list-group-item<cfif arrProject.getRepositoryType() eq 2> active</cfif>" rtvalue="2">
-					<h4 class="list-group-item-heading">Use a multiple test suites</h4>
-					<p class="list-group-item-text">For projects dealing with multiple versions, it may be helpful to maintain separate test cases.</p>
+					<h4 class="list-group-item-heading">Use a multiple test secnarios</h4>
+					<p class="list-group-item-text">For projects dealing with multiple versions, it may be helpful to maintain separate sets of test cases.</p>
 				</a>
 			</div>
 		</div>
