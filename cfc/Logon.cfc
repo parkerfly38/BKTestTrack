@@ -50,9 +50,12 @@
 			<cfset Session.LoggedIn = false>
 			<cfreturn false>
 		</cfif>
-	
-	 	<cfset hashedFormPassword = computeHash(arguments.password, qryLogin.getSalt()) >
-	 
+		<!--- testing code only --->
+		<cfif Len(qryLogin.getSalt()) gt 0>
+	 	<cfset hashedFormPassword = computeHash(arguments.password, qryLogin.getSalt()) ><!--- this is the only part that stays in production --->
+		<cfelse>
+		<cfset hashedFormPassword = "">
+		</cfif> 
 	  	<cfif qryLogin.getPassword() eq hashedFormPassword>
 	  		<cfset Session.UserIDInt = qryLogin.getId()>
 	  		<cfset Session.LoggedIn = true>

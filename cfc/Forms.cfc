@@ -28,6 +28,112 @@
 		</div>
 	</cffunction>
 	
+	<cffunction name="TestCaseForm" access="remote" output="true">
+		<cfargument name="testcaseid" required="false" default="0" type="numeric">
+		<cfif !(StructKeyExists(Session,"ProjectID"))>
+			<cfexit>
+		</cfif>
+		<cfif !(StructKeyExists(Session,"LoggedIn")) || !Session.LoggedIn>
+			login
+			<cfexit>
+		</cfif>
+		<cfif arguments.testcaseid gt 0>
+			<cfset arrTestCase = EntityLoadByPK("TTestCase",arguments.testcaseid)>
+		<cfelse>
+			<cfset arrTestCase = EntityNew("TTestCase")>
+			<cfset arrTestCase.setPriorityId(0)>
+			<cfset arrTestCase.setSectionID(0)>
+			<cfset arrTestCase.setTypeId(0)>
+		</cfif>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(".selectpicker").selectpicker();
+				$(".datetime").datepicker({
+					format:"mm/dd/yyyy",
+					todayHighlight: true,
+					autoclose:true
+				});
+				$(document).off("click","##btnClose");
+				$(document).on("click","##btnClose",function(event) {
+					event.preventDefault();					
+					if (confirm("Are you sure you want to close without saving your test case?"))
+					{
+						$("##largeModal").modal('hide');
+					}
+				});
+				$(document).off("click","##btnSave");
+				$(document).on("click","##btnSave",function(event) {
+					event.preventDefault();
+					$.ajax({
+						url: "CFC/forms.cfc?method=saveTestCase",
+						type: "POST",
+						data: {
+							id : $("##txtID").val(),
+							Milestone : $("##txtMilestone").val(),
+							MilestoneDescription : $("##txtMilestoneDescription").val(),
+							DueOn : $("##txtDueOn").val(),
+							Closed : $("##cbxClosed").is(":checked"),
+							ProjectID : '#Session.ProjectID#'
+						}
+					}).done(function(data) {
+						if ( data == "true" )
+						{
+							$("##largeModal").modal('hide');
+							$("##panelmilestones").remove();
+							insertMilestones();
+						} else {
+							alert("There was an error with your save.  Please contact system administrator.");
+						}
+					});
+				});
+			});
+		</script>
+		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+		<div class="form-group">
+			<label for="txtTestTitle">Title</label>
+			<input type="text" name="txtTestTitle" id="txtTestTitle" value="#arrTestCase.getTestTitle()#" class="form-control" />
+			<label for="txtPreconditions">Preconditions and Assumptions</label>
+			<textarea class="form-control" rows="5" id="txtPreconditions" name="txtPreconditions">#arrTestCase.getPreconditions()#</textarea>
+			<p class="help-block">Anything that must be done prior to executing this test.  You can reference other test cases using TC + Number, like TC1 for test case 1.</p>
+			<label for="txtSteps">Performance Steps</label>
+			<textarea class="form-control" rows="5" id="txtSteps" name="txtSteps">#arrTestCase.getSteps()#</textarea>
+			<p class="help-block">These are the steps you'll take to perform the test.  If this is to be a scripted test, annotate that here.</p> 
+		</div>
+		</div>
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			<div class="form-group">
+				<label for="ddlPriorityId">Priority</label>
+				<cfset arrPriority = EntityLoad("TTestPriorityType",{},"PriorityRank DESC")>
+				<select class="form-control selectpicker" id="ddlPriorityId" name="ddPriorityId" data-style="btn-info">
+					<option value="0" <cfif arrTestCase.getPriorityId() eq 0>selected</cfif>>Select a priority</option>
+					<cfloop array="#arrPriority#" index="priority">
+					<option value="#priority.getId()#" <cfif arrTestCase.getPriorityId() eq priority.getId()>selected</cfif>>#priority.getPriorityName()#</option>
+					</cfloop>
+				</select>
+				<label for="ddlTypeId">Type of Test</label>
+				<cfset arrTypes = EntityLoad("TTestType") >
+				<select class="form-control selectpicker" id="ddlTypeId" name="ddlTypeId" data-style="btn-info">
+					<option value="0" <cfif arrTestCase.getTypeId() eq 0>selected</cfif>>Select a Test Type</option>
+					<cfloop array="#arrTypes#" index="type">
+					<option value="#type.getId()#" <Cfif arrTestCase.getTypeId() eq type.getId()>selected</cfif>>#type.getType()#</option>
+					</cfloop>
+				</select>
+				<label for="ddlSectionId">Testing Section</label>
+				<cfset arrSections = EntityLoad("TTestProjectTestSection",{ProjectID = Session.ProjectID})>
+				<select class="form-control selectpicker" id="ddlSectionId" name="ddlSectionId" data-style="btn-info">
+					<option value="0" <cfif arrTestCase.getSectionId() eq 0>selected</cfif>>Select a section</option>
+					<cfloop array="#arrSections#" index="section">
+					<option value="#section.getId()#" <cfif arrTestCase.getSectionId() eq section.getId()>selected</cfif>>#section.getSection()#</option>
+					</cfloop>
+				</select>
+				<label for="txtTestDetails">References</label>
+				<input type="text" class="form-control" name="txtTestDetails" id="txtTestDetails" />
+				<p class="help-block">Insert related AxoSoft ids here, ex: <em>COG00050</em>.</p>
+			</div>
+		</div>
+			 
+	</cffunction>
+	
 	<cffunction name="MilestoneForm" access="remote" output="true">
 		<cfargument name="milestoneid" required="false" default="0" type="numeric">
 		<cfif !(StructKeyExists(Session,"ProjectID"))>

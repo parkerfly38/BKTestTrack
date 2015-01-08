@@ -130,6 +130,13 @@ $(document).ready(function() {
 		$("#largeModal .modal-body").load("cfc/forms.cfc?method=MilestoneForm&milestoneid="+pjid);
 		$("#largeModal").modal({show:"true"});
 	});
+	$(document).on("click","a.lnkAddTest",function(event) {
+		event.preventDefault();
+		$("#largeModal .modal-title").text("Add Test Case");
+		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestCaseForm");
+		$("#largeModal").modal("show");		
+		
+	})
 	$(document).on("eventLoadForm", function(event){
 		$("#txtProjectStartDate").datepicker({
 			format:"mm/dd/yyyy",

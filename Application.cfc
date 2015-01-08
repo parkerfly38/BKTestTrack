@@ -3,9 +3,9 @@
 	<cfset this.Name = "COGTestTrack" />
 	<cfset this.sessionManagement = true />
 	<cfset this.ormEnabled = true />
-	<cfset this.datasource = "COGData" />
+	<cfset this.datasource = "COGDataWork" />
 	<cfset this.ormSettings.cflocation = "CFC.db" />
-	<cfset this.ormSettings.datasource = "COGData" />
+	<cfset this.ormSettings.datasource = "COGDataWork" />
 	<cfset this.ormSettings.eventhandling = true />
 	
 	

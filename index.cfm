@@ -12,9 +12,10 @@
 	    <meta name="description" content="">
 	    <meta name="author" content="">
 	    <title>COG Test Tracker</title>
-		<link rel="stylesheet" href="style/bootstrap.css">
-		<link href="font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet">
-		<link rel="stylesheet" href="style/datepicker3.css">
+		<link rel="stylesheet" href="style/bootstrap.css" />
+		<link href="font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="style/datepicker3.css" />
+		<link rel="stylesheet" href="style/bootstrap-select.min.css" />
 		<script type="text/javascript" src="scripts/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
 		<script type="text/javascript">
@@ -25,6 +26,7 @@
 		<script type="text/javascript" src="scripts/functions.js"></script>
 		<script type="text/javascript" src="scripts/ChartNew.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap-datepicker.js"></script>
+		<script type="text/javascript" src="scripts/bootstrap-select.min.js"></script>
 		<style>
 			body { padding-top: 60px; background: url('images/bg.png'); }
 			.rowoffset { margin-bottom: 20px; }
