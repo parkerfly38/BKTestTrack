@@ -182,6 +182,7 @@
 		<div class="panel-body">
 			<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
 			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+				<h5>Most Activity (Last 14 Days)</h5>
 				<cfif qryGeneralActivity.RecordCount eq 0>
 					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-right" >
 						<div style='width:32px;height:32px;background-color:##777;border: 1px solid ##666;float:right;'>&nbsp;</div>
@@ -198,7 +199,7 @@
 						<div style='width:32px;height:32px;background-color:###qryGeneralActivity.Color#;border: 1px solid ##666;float:right;'>&nbsp;</div>
 					</div>
 					<div class="col-xs-8 col sm-8 col-md-8, col-lg-8 text-left" style="padding-left:0px;">
-						<strong>#ProjectTitle#</strong>
+						<h6>#ProjectTitle#</h6>
 					</div>
 					<div class="clearfix">&nbsp;</div>
 				</cfloop>
@@ -283,7 +284,7 @@
 			<div class="panel-body">
 					<div class="row rowoffset">
 					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="fa fa-map-marker fa-fw"></i></span></h1></div>
-					<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight:bold;">Milestones</span><br /><a href="##" id="lnkViewMilestones">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddMilestone">Add</a></div>
+					<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight:bold;">Milestones</span><br /><a href="##" class="lnkViewMilestones">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddMilestone">Add</a></div>
 					</div>
 					<div class="row rowoffset">
 					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-tachometer fa-fw"></i></span></h1></div>
@@ -298,6 +299,108 @@
 				</div>
 			</div>
 		</div>
+	</cffunction>
+	
+	<cffunction name="AllMilestones" access="remote" output="true">
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			<cfexit>
+		</cfif>
+		<cfif !StructKeyExists(SESSION,"ProjectID")>
+			<cfexit>
+		</cfif>
+		<cfset arrMilestones = EntityLoad("TTestMilestones",{ProjectID = SESSION.ProjectID},"DueOn ASC")>
+		<div class="panel panel-default">
+			<div class="panel-heading"><i class="fa fa-map-marker"></i> Milestones</div>
+			<div class="panel-body">
+				<div class="well well-sm" id="overduewell" style="display:none;color:##F00;">Overdue</div>
+				<table class="table table-striped">
+				<tbody>
+				<cfset overdueCount = 0>
+				<cfloop array="#arrMilestones#" index="milestone">
+					<cfif milestone.getDueOn() lt Now() and milestone.getClosed() eq false>
+					<cfset overdueCount = overdueCount + 1>
+					<tr>
+						<td>
+							<h5>#milestone.getMilestone()#</h5>Due on #DateFormat(milestone.getDueon(),"m/d/yyyy")#
+						</td>
+						<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a>
+							<cfif overdueCount eq 1>
+								<script type="text/javascript">
+									$(document).ready(function() {
+										$("##overduewell").show();
+									});
+								</script>
+							</cfif>
+						</td>
+						<td><!--- insert progress bar ---></td>
+					</tr>
+					</cfif>
+				</cfloop>
+				</tbody>
+				</table>
+				<div class="well well-sm" id="openmilestoneswell" style="display:none;">Open Milestones</div>
+				<table class="table table-striped">
+				<tbody>
+				<cfset openCount = 0>
+				<cfloop array="#arrMilestones#" index="milestone">
+					<cfif milestone.getDueOn() gte Now() and milestone.getClosed() eq false>
+					<cfset openCount = openCount + 1>
+					<tr>
+						<td>
+							<h5>#milestone.getMilestone()#</h5>Due on #DateFormat(milestone.getDueOn(),"m/d/yyyy")#
+						</td>
+						<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a>
+							<cfif openCount eq 1>
+								<script type="text/javascript">
+									$(document).ready(function() {
+										$("##openmilestoneswell").show();
+									});
+								</script>
+							</cfif>
+						</td>
+						<td><!--- insert progress bar ---></td>
+					</tr>
+					</cfif>
+				</cfloop>
+				</tbody>
+				</table>
+				<div class="well well-sm" id="closedmswell" style="display:none;">Completed Milestones</div>
+				<table class="table table-striped">
+				<tbody>
+				<cfset closedCount = 0>
+				<cfloop array="#arrMilestones#" index="milestone">
+					<cfif milestone.getClosed() eq true>
+					<cfset closedCount = closedCount + 1>
+					<tr>
+						<td>
+							<h5>#milestone.getMilestone()#</h5>Due on #DateFormat(milestone.getDueOn(),"m/d/yyyy")#
+						</td>
+						<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a>
+							<cfif openCount eq 1>
+								<script type="text/javascript">
+									$(document).ready(function() {
+										$("##closedmswell").show();
+									});
+								</script>
+							</cfif>
+						</td>
+						<td><!--- insert progress bar ---></td>
+					</tr>
+					</cfif>
+				</cfloop>
+				</tbody>
+				</table>
+			</div>
+		</div>
+	</cffunction>						
+	
+	<cffunction name="AllScenarios" access="remote" output="true">
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			<cfexit>
+		</cfif>
+		<cfif !StructKeyExists(SESSION,"ProjectID")>
+			<cfexit>
+		</cfif>
 	</cffunction>
 	
 	<cffunction name="assignedTestsGrid" access="remote" output="true">
@@ -371,7 +474,7 @@
 		</cfquery>
 		
 		<div class="clearfix"></div>	
-		<div class="panel panel-default">
+		<div id="activitypanel" class="panel panel-default">
 		<div class="panel-heading">Activity</div>
 		<div class="panel-body">
 		<table class="table table-striped table-condensed">

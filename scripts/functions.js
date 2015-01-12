@@ -11,6 +11,7 @@ var initialLoadTimer;
 var todotimervar;
 var chartheight = 300;
 var chartwidth = 840;
+var currentview = "allprojects";
 
 $(document).ready(function() {
 	$.getJSON("cfc/Dashboard.cfc?method=chartList", function(data) {
@@ -92,14 +93,18 @@ $(document).ready(function() {
 		$(document).trigger("eventLoadForm");
 	});
 	$(document).on("click","a.pjlink", function(event) {
+		$("featurecontent").empty();
 		event.preventDefault();
 		projectid = $(this).attr("pjid");
+		currentview = "project";
 		$.ajax({ url:"cfc/Dashboard.cfc?method=setSessionProject",type:"POST",data: {projectid : projectid}}).done(function() {
 			$("#uldashboard").show();
+			$("#activitypanel").remove();
 			projectIDCheck();
 			projectLoad();
 			$("#panelprojects").remove();
-		});	
+		});
+		$("#lnkReturnToProject").hide();
 		todotimervar = setInterval(function() {insertTodos()},10);
 		//linkstimervar = setInterval(function() {insertLinks()},10);
 		insertActions();
@@ -136,7 +141,15 @@ $(document).ready(function() {
 		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestCaseForm");
 		$("#largeModal").modal("show");		
 		
-	})
+	});
+	$(document).on("click","a.lnkViewMilestones",function(event) {
+		event.preventDefault();
+		$("#topcontent").load("cfc/Dashboard.cfc?method=AllMilestones");
+		$("#midrow").empty();
+		$("#activitypanel").remove();	
+		$("#lnkReturnToProject").attr("pjid",projectid);
+		$("#lnkReturnToProject").show();
+	});
 	$(document).on("eventLoadForm", function(event){
 		$("#txtProjectStartDate").datepicker({
 			format:"mm/dd/yyyy",
@@ -149,13 +162,14 @@ $(document).ready(function() {
 });
 
 function projectIDCheck(){
-	if ( isNumber(projectid))
+	if ( isNumber(projectid) && $("#activitypanel").length <= 0)
 	{
 		$.ajax({
 			url: "cfc/Dashboard.cfc?method=mostRecentTests",
 			type: "GET"
 		}).done(function(data) {
-			recentresultscontent = data;
+			if ($("#activitypanel").length <= 0)
+				recentresultscontent = data;
 		});
 	}
 }

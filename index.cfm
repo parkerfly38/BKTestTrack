@@ -51,6 +51,7 @@
 		      <div id="navbar" class="navbar-collapse collapse">
 		        <ul id="uldashboard" class="nav navbar-nav navbar-right" <cfif !StructKeyExists(Session,"ProjectID")>style="display:none;"</cfif>>
 		        	<li><a id="lnkReturnAllProjects" href="#"><i class="fa fa-long-arrow-left"></i> All Projects Dashboard</a></li>
+		        	<li><a id="lnkReturnToProject" class="pjlink" href="#" style="display:none;"><i class="fa fa-long-arrow-left"></i>  Back to Project</a></li>
 		        </ul>
 		        <ul class="nav navbar-nav">
 		          <li><a id="lnkAssignedTests" href="#" userid="<cfoutput>#Session.UserIDInt#</cfoutput>"> <i class="fa fa-tasks"></i> Tests Assigned <span class="badge"><cfoutput>#local.testsAssigned#</cfoutput></span></a></li>
