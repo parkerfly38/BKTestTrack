@@ -182,8 +182,14 @@
 						if ( data == "true" )
 						{
 							$("##largeModal").modal('hide');
-							$("##panelmilestones").remove();
-							insertMilestones();
+							if ( $("##allmilestonespanel").length == 0)
+							{
+								$("##panelmilestones").remove();
+								insertMilestones();
+							} else {
+								$("##allmilestonespanel").remove();
+								$("##topcontent").load("cfc/Dashboard.cfc?method=AllMilestones");
+							}
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");
 						}
@@ -275,8 +281,14 @@
 						if ( data == "true" )
 						{
 							$("##largeModal").modal('hide');
-							$("##paneltestscenarios").remove();
-							insertScenarios();
+							if ( $("##scenariospanel").length == 0 )
+							{
+								$("##paneltestscenarios").remove();
+								insertScenarios();
+							} else {
+								$("##scenariospanel").remove();
+								$("##topcontent").load("cfc/Dashboard.cfc?method=AllScenarios");
+							}
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");
 						}
@@ -489,6 +501,7 @@
 			arrScenario.setMilestoneID((isNumeric(arguments.MilestoneID)) ? arguments.MilestoneID : 0);
 			arrScenario.setTestDescription(arguments.TestDescription);
 			arrScenario.setProjectId(arguments.ProjectID);
+			arrScenario.setCreatorUserId(SESSION.UserIDInt);
 			try {
 				EntitySave(arrScenario);
 				return true;

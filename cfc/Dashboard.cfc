@@ -293,7 +293,7 @@
 					<cfif qryProject[1].getRepositoryType() eq 2>
 					<div class="row rowoffset">
 						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right: 0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-suitcase fa-fw"></i></span></h1></div>
-						<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight: bold;">Test Scenarios</span><br /><a href="##" id="lnkViewTestScenarios">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddScenario">Add</a></i></div>
+						<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight: bold;">Test Scenarios</span><br /><a href="##" class="lnkViewScenarios">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddScenario">Add</a></i></div>
 					</div>
 					</cfif>
 				</div>
@@ -309,9 +309,10 @@
 			<cfexit>
 		</cfif>
 		<cfset arrMilestones = EntityLoad("TTestMilestones",{ProjectID = SESSION.ProjectID},"DueOn ASC")>
-		<div class="panel panel-default">
+		<div id="allmilestonespanel" class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-map-marker"></i> Milestones</div>
 			<div class="panel-body">
+				<cfif ArrayLen(arrMilestones) gt 0>
 				<div class="well well-sm" id="overduewell" style="display:none;color:##F00;">Overdue</div>
 				<table class="table table-striped">
 				<tbody>
@@ -376,7 +377,7 @@
 							<h5>#milestone.getMilestone()#</h5>Due on #DateFormat(milestone.getDueOn(),"m/d/yyyy")#
 						</td>
 						<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a>
-							<cfif openCount eq 1>
+							<cfif closedCount eq 1>
 								<script type="text/javascript">
 									$(document).ready(function() {
 										$("##closedmswell").show();
@@ -390,6 +391,9 @@
 				</cfloop>
 				</tbody>
 				</table>
+				<cfelse>
+				<div class="alert alert-warning"><h4>This project doesn't contain any milestones.</h4>Please add one from the actions link to the right.</div>
+				</cfif>
 			</div>
 		</div>
 	</cffunction>						
@@ -401,6 +405,26 @@
 		<cfif !StructKeyExists(SESSION,"ProjectID")>
 			<cfexit>
 		</cfif>
+		<cfset arrTestScenarios = EntityLoad("TTestScenario",{ProjectID = Session.ProjectID})>
+		<div id="scenariospanel" class="panel panel-default">
+			<div class="panel-heading">Test Scenarios</div>
+			<div class="panel-body">
+				<div class="well well-sm">Active</div>
+				<cfif ArrayLen(arrTestScenarios) gt 0>
+				<table class="table table-striped">
+				<tbody>
+					<cfloop array="#arrTestScenarios#" index="scenario">
+						<tr>
+							<td>#scenario.getTestScenario()#</td>
+							<td>##</td>
+						</tr>
+					</cfloop>
+				</tbody>
+				</table>
+				<cfelse>
+				<div class="alert alert-warning"><h4>This project doesn't contain any test scenarios.</h4>Please add one from the actions link to the right.</div>
+				</cfif>				
+			</div>
 	</cffunction>
 	
 	<cffunction name="assignedTestsGrid" access="remote" output="true">

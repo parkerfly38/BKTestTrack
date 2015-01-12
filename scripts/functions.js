@@ -149,6 +149,15 @@ $(document).ready(function() {
 		$("#activitypanel").remove();	
 		$("#lnkReturnToProject").attr("pjid",projectid);
 		$("#lnkReturnToProject").show();
+		currentview = "milestones";
+	});
+	$(document).on("click","a.lnkViewScenarios",function(event) {
+		event.preventDefault();
+		$("#topcontent").load("cfc/Dashboard.cfc?method=AllScenarios");
+		$("#midrow").empty();
+		$("#activitypanel").remove();
+		$("#lnkReturnToProject").attr("pjid",projectid);
+		$("#lnkReturnToProject").show();
 	});
 	$(document).on("eventLoadForm", function(event){
 		$("#txtProjectStartDate").datepicker({
@@ -168,7 +177,6 @@ function projectIDCheck(){
 			url: "cfc/Dashboard.cfc?method=mostRecentTests",
 			type: "GET"
 		}).done(function(data) {
-			if ($("#activitypanel").length <= 0)
 				recentresultscontent = data;
 		});
 	}
@@ -209,9 +217,8 @@ function insertLinks() {
 }
 
 function insertAdditional() {
-	if (recentresultscontent.length > 0) {
+	if (recentresultscontent.length > 0 && $("#activitypanel").length == 0 ) {
 		$("#featurecontent").append(recentresultscontent);
-		
 		window.clearInterval(timervar);
 	}
 }
