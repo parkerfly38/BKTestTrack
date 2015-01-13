@@ -171,6 +171,14 @@ $(document).ready(function() {
 		$("#lnkReturnToProject").attr("pjid",projectid);
 		$("#lnkReturnToProject").show();
 	});
+	$(document).on("click","a.lnkOpenScenarioHub",function(event) {
+		event.preventDefault();
+		$("#topcontent").load("cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+$(this).attr("scenarioid"));
+		$("#midrow").empty();
+		$("#activitypanel").remove();
+		$("#lnkReturnToProject").attr("pjid",projectid);
+		$("#lnkReturnToProject").show();
+	});
 	$(document).on("eventLoadForm", function(event){
 		$("#txtProjectStartDate").datepicker({
 			format:"mm/dd/yyyy",

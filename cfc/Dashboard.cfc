@@ -290,12 +290,10 @@
 					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-tachometer fa-fw"></i></span></h1></div>
 					<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight: bold;">Tests</span><br /><a href="##" id="lnkViewTests">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddTest">Add</a></div>
 					</div>
-					<cfif qryProject[1].getRepositoryType() eq 2>
 					<div class="row rowoffset">
 						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right: 0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-suitcase fa-fw"></i></span></h1></div>
 						<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight: bold;">Test Scenarios</span><br /><a href="##" class="lnkViewScenarios">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddScenario">Add</a></i></div>
 					</div>
-					</cfif>
 				</div>
 			</div>
 		</div>
@@ -419,7 +417,7 @@
 					<!--- subcounts --->
 					<cfset qryTestCounts = objData.qryTestCaseHistoryForScenarios(scenario.getId())>
 						<tr>
-							<td><h5>#scenario.getTestScenario()#<h5>
+							<td><h5><a href="##" class="lnkOpenScenarioHub" scenarioid="#scenario.getId()#">#scenario.getTestScenario()#</a><h5>
 								<cfloop query="qryTestCounts">
 									<!--- conditional for percentage counts --->
 									<cfif Status eq "Untested">
@@ -469,6 +467,126 @@
 				</cfif>				
 			</div>
 	</cffunction>
+	
+	<cffunction name="AllTests" access="remote" output="true">
+	
+	</cffunction>
+	
+	<cffunction name="TestScenarioHub" access="remote" output="true">
+		<cfargument name="scenarioid" type="numeric" required="true">
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			<cfexit>
+		</cfif>
+		<cfset objData = createObject("component","Data")>
+		<cfset arrScenarioData = EntityLoadByPK("TTestScenario",arguments.scenarioid)>
+		<cfset qryTestCases = objData.qryTestCaseForScenarios(arrScenarioData.getId())>
+		<cfset qryTestCounts = objData.qryTestCaseHistoryForScenarios(arrScenarioData.getId())>
+		<cfset qryTestCasesAssigned = objData.qryTestCaseHistoryDataForScenario(arrScenarioData.getId())>
+		<cfset arrStatus = EntityLoad("TTestStatus")>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(".selectpicker").selectpicker();
+			});
+		</script>
+		<div class="panel panel-default">
+			<div class="panel-heading"><span class="label label-info">S#arrScenarioData.getId()#</span> #arrScenarioData.getTestScenario()#</div>
+			<div class="panel-body">
+				<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
+				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+					<cfloop query="qryTestCounts">
+					<p><span class="label #returnBSLabelStyle(Status)#">#StatusCount# #Status#</span><br />#NumberFormat((StatusCount gt 0 AND qryTestCases.RecordCount gt 0) ? (StatusCount / qryTestCases.RecordCount) * 100 : 0,"0.0")#% set to #Status#</p>
+					</cfloop>
+				</div>
+				<script type="text/javascript">
+					var donutData = [
+									<cfloop query="qryTestCounts">
+									<cfif StatusCount gt 0>
+									{
+										title : "#Status#",
+										<cfswitch expression="#Status#">
+										<cfcase value="Passed">
+										color : "##5cb85c",
+										</cfcase>
+										<cfcase value="Failed">
+										color : "##d9534f",
+										</cfcase>
+										<cfcase value="Untested">
+										color : "##5bc0de",
+										</cfcase>
+										<cfcase value="Blocked">
+										color : "##777",
+										</cfcase>
+										<cfcase value="Retest">
+										color : "##f0ad4e",
+										</cfcase>
+										</cfswitch>
+										value : #StatusCount#
+									}
+									<cfif currentRow LT qryTestCounts.RecordCount>,</cfif>
+									</cfif>
+									</cfloop>
+								];
+							
+							var donutoptions = {
+								canvasBorders : false,
+								legend : false,
+								scaleOverride : false,
+								scaleStartValue : null,
+								savePng : true,
+								savePngOutput : "Save",
+								savePngName: "System Totals",
+								savePngBackgroundColor : "white",
+								annotateDisplay : true,
+								inGraphDataShow: true,
+								responsive: true,
+								responsiveMaxHeight: 300,
+								maintainAspectRatio: false
+							};
+							var chartObj = new Chart(document.getElementById("chartcanvas").getContext("2d")).Doughnut(donutData,donutoptions);
+						</script>
+			
+				<div class="clearfix"></div>
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<div class="navbar">
+						<div class="navbar-inner">
+							<ul class="nav">
+								<li>blank option</li>
+							</ul>
+						</div>
+					</div>
+					<h4>All Test Cases <small>(#qryTestCases.RecordCount#)</h4>
+					<table class="table table-condensed table-striped table-hover">
+						<thead>
+							<tr>
+								<th></th>
+								<th>Case ID</th>
+								<th>Test Title</th>
+								<th>Assigned To</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody>
+						<cfloop query="qryTestCasesAssigned">
+						<tr>
+							<td><input type="checkbox" id="cbxId" caseid="#caseid#" /></td>
+							<td>TC#caseid#</td>
+							<td>#TestTitle#</td>
+							<td>#UserName#</td>
+							<td style="width:8%"><select class="form-control selectpicker" caseid="#caseid#" data-style="#returnBSLabelStyle(Action,"btn")# btn-xs">
+								<cfloop array="#arrStatus#" index="indstatus">
+									<option value="#indstatus.getId()#"<cfif indstatus.getStatus() eq Action> selected</cfif>>#indstatus.getStatus()#</option>
+								</cfloop>
+								</select>
+							</td>
+						</tr>
+						</cfloop>
+						</tbody>
+					</table>						
+				</div>
+			</div>	
+		</div>
+	</cffunction>
+		
 	
 	<cffunction name="assignedTestsGrid" access="remote" output="true">
 		<cfargument name="userid" type="numeric" required="true">
@@ -641,9 +759,11 @@
 						</thead>
 						<tbody>
 							<cfloop array="#qryTestScenarios#" index="scenario">
+								<cfset objData = createObject("component","Data")>
+								<cfset qryTestCases = objData.qryTestCaseForScenarios(scenario.getId())>
 								<tr>
-									<td>#scenario.getTestScenario()#</td>
-									<td>(0)</td>
+									<td><a href="##" class="lnkOpenScenarioHub" scenarioid="#scenario.getId()#">#scenario.getTestScenario()#</a></td>
+									<td>(#qryTestCases.RecordCount#)</td>
 									<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
 								</tr>
 							</cfloop>
@@ -744,25 +864,26 @@
 	
 	<cffunction name="returnBSLabelStyle" access="private" returntype="string">
 		<cfargument name="labelExpression" required="true">
+		<cfargument name="element" required="false" default="label">
 		<cfset local.labelstyle = "">
 		<cfswitch expression="#arguments.labelExpression#">
 				<cfcase value="Passed">
-					<cfset local.labelstyle = "label-success">
+					<cfset local.labelstyle = "#arguments.element#-success">
 				</cfcase>
 				<cfcase value="Failed">
-					<cfset local.labelstyle = "label-danger">
+					<cfset local.labelstyle = "#arguments.element#-danger">
 				</cfcase>
 				<cfcase value="Blocked">
-					<cfset local.labelstyle = "label-default">
+					<cfset local.labelstyle = "#arguments.element#-default">
 				</cfcase>
 				<cfcase value="Untested">
-					<cfset local.labelstyle = "label-info">
+					<cfset local.labelstyle = "#arguments.element#-info">
 				</cfcase>
 				<cfcase value="Retest">
-					<cfset local.labelstyle = "label-warning">
+					<cfset local.labelstyle = "#arguments.element#-warning">
 				</cfcase>
 				<cfdefaultcase>
-					<cfset local.labelstyle = "label-default">
+					<cfset local.labelstyle = "#arguments.element#-default">
 				</cfdefaultcase>
 			</cfswitch>
 		<cfreturn local.labelstyle>

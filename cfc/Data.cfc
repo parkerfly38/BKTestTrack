@@ -97,4 +97,15 @@ component
 											 "ORDER BY TTestStatus.id");
 		return qryResult.getResult();
 	}
+	public query function qryTestCaseHistoryDataForScenario(scenarioid) {
+		qryNew = new query();
+		qryNew.setName("getTestCaseHistory");
+		qryNew.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
+		qryResult = qryNew.execute(sql="SELECT DISTINCT d.TestTitle, a.CaseId, a.DateOfAction, a.Action, c.UserName FROM TTestCaseHistory a " &
+										"INNER JOIN TTestScenarioCases b on a.CaseId = b.CaseId " &
+										"INNER JOIN TTestTester c on a.TesterID = c.id " &
+										"INNER JOIN TTestCase d on a.CaseId = d.id " &
+										"WHERE b.ScenarioId = :scenarioid AND DateActionClosed IS NULL");
+		return qryResult.getResult();
+	}
 }
