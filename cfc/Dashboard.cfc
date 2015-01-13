@@ -526,6 +526,17 @@
 			$(document).ready(function() {
 				$(".selectpicker").selectpicker();
 			});
+			function onRowSelect(objCheckbox) {
+				if ($(objCheckbox).is(":checked")) {
+					$("##addlink").removeClass("disabled");
+				} else {
+					if ( $("input:checkbox[name=cbxId]").is(":checked") ) {
+						$("##addlink").removeClass("disabled");
+					} else {
+						$("##addlink").addClass("disabled");
+					}
+				}
+			}
 		</script>
 		<div class="panel panel-default">
 			<div class="panel-heading"><span class="label label-info">S#arrScenarioData.getId()#</span> #arrScenarioData.getTestScenario()#</div>
@@ -586,14 +597,14 @@
 			
 				<div class="clearfix"></div>
 				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<h4>All Test Cases <small>(#qryTestCases.RecordCount#)</h4>
 					<div class="navbar">
 						<div class="navbar-inner">
-							<ul class="nav">
-								<li>blank option</li>
+							<ul class="nav navbar-nav navbar-right">
+								<li id="addlink" class="disabled"><a href="##" class="lnkAddResults"><i class="fa fa-plus-square"></i> Update/Add Results</a></li>
 							</ul>
 						</div>
 					</div>
-					<h4>All Test Cases <small>(#qryTestCases.RecordCount#)</h4>
 					<table class="table table-condensed table-striped table-hover">
 						<thead>
 							<tr>
@@ -607,7 +618,7 @@
 						<tbody>
 						<cfloop query="qryTestCasesAssigned">
 						<tr>
-							<td><input type="checkbox" id="cbxId" caseid="#caseid#" /></td>
+							<td><input type="checkbox" id="cbxId" name="cbxId" class="cbxTestId" caseid="#caseid#" onclick="onRowSelect(this);"  /></td>
 							<td>TC#caseid#</td>
 							<td>#TestTitle#</td>
 							<td>#UserName#</td>
