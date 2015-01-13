@@ -41,6 +41,7 @@
 			<cfset arrTestCase = EntityLoadByPK("TTestCase",arguments.testcaseid)>
 		<cfelse>
 			<cfset arrTestCase = EntityNew("TTestCase")>
+			<cfset arrTestCase.setId(0)>
 			<cfset arrTestCase.setPriorityId(0)>
 			<cfset arrTestCase.setSectionID(0)>
 			<cfset arrTestCase.setTypeId(0)>
@@ -68,19 +69,30 @@
 						url: "CFC/forms.cfc?method=saveTestCase",
 						type: "POST",
 						data: {
-							id : $("##txtID").val(),
-							Milestone : $("##txtMilestone").val(),
-							MilestoneDescription : $("##txtMilestoneDescription").val(),
-							DueOn : $("##txtDueOn").val(),
-							Closed : $("##cbxClosed").is(":checked"),
-							ProjectID : '#Session.ProjectID#'
+							id : "#arguments.testcaseid#",
+							TestTitle : $("##txtTestTitle").val(),
+							TestDetails : $("##txtTestDetails").val(),
+							PriorityId : $("##ddlPriorityId").val(),
+							TypeId : $("##ddlTypeId").val(),
+							SectionId : $("##ddlSectionId").val(),
+							ProjectID : "#Session.ProjectID#",
+							Preconditions : $("##txtPreconditions").val(),
+							Steps : $("##txtSteps").val(),
+							ExpectedResult : $("##txtExpectedResult").val(),
+							MilestoneId : "0",
+							Estimate : $("##txtEstimate").val()
 						}
 					}).done(function(data) {
 						if ( data == "true" )
 						{
 							$("##largeModal").modal('hide');
-							$("##panelmilestones").remove();
-							insertMilestones();
+							if ($("##panelalltestcases").length == 0) 
+							{
+								/* do nothing */
+							} else {
+								$("##panelalltestcases").remove();
+								$("##topcontent").load("cfc/Dashboard.cfc?method=AllTests");	
+							}
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");
 						}
@@ -97,7 +109,10 @@
 			<p class="help-block">Anything that must be done prior to executing this test.  You can reference other test cases using TC + Number, like TC1 for test case 1.</p>
 			<label for="txtSteps">Performance Steps</label>
 			<textarea class="form-control" rows="5" id="txtSteps" name="txtSteps">#arrTestCase.getSteps()#</textarea>
-			<p class="help-block">These are the steps you'll take to perform the test.  If this is to be a scripted test, annotate that here.</p> 
+			<p class="help-block">These are the steps you'll take to perform the test.  If this is to be a scripted test, annotate that here.</p>
+			<label for="txtExpectedResult">Expected Result</label>
+			<textarea class="form-control" rows="5" id="txtExpectedResult" name="txtExpectedResult">#arrTestCase.getExpectedResult()#</textarea>
+			<p class="help-block">Describe the desired conditions that should return from testing.</p> 
 		</div>
 		</div>
 		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
@@ -126,8 +141,10 @@
 					<option value="#section.getId()#" <cfif arrTestCase.getSectionId() eq section.getId()>selected</cfif>>#section.getSection()#</option>
 					</cfloop>
 				</select>
+				<label for="txtEstimate">Estimated Time (in hours)</label>
+				<input type="text" class="form-control" name="txtEstimate" id="txtEstimate" value="#arrTestCase.getEstimate()#" />
 				<label for="txtTestDetails">References</label>
-				<input type="text" class="form-control" name="txtTestDetails" id="txtTestDetails" />
+				<input type="text" class="form-control" name="txtTestDetails" id="txtTestDetails" value="#arrTestCase.getTestDetails()#"  />
 				<p class="help-block">Insert related AxoSoft ids here, ex: <em>COG00050</em>.</p>
 			</div>
 		</div>
@@ -509,7 +526,45 @@
 			}
 		</cfscript>
 	</cffunction>
-		
+	
+	<cffunction name="saveTestCase" access="remote" returntype="any" returnformat="JSON">
+		<cfargument name="id" type="numeric">
+		<cfargument name="TestTitle">
+		<cfargument name="TestDetails">
+		<cfargument name="PriorityId">
+		<cfargument name="TypeId">
+		<cfargument name="SectionId">
+		<cfargument name="ProjectId">
+		<cfargument name="Preconditions">
+		<cfargument name="Steps">
+		<cfargument name="ExpectedResult">
+		<cfargument name="MilestoneId">
+		<cfargument name="Estimate">
+		<cfscript>
+			if ( arguments.id > 0 ) {
+				arrTestCase = EntityLoadByPK("TTestCase",arguments.id);
+			} else {
+				arrTestCase = EntityNew("TTestCase");
+			}
+			arrTestCase.setTestTitle(arguments.TestTitle);
+			arrTestCase.setTestDetails(arguments.TestDetails);
+			arrTestCase.setPriorityId(arguments.PriorityId);
+			arrTestCase.setTypeId(arguments.TypeId);
+			arrTestCase.setSectionId(arguments.SEctionId);
+			arrTestCase.setProjectID(arguments.ProjectID);
+			arrTestCase.setPreconditions(arguments.preconditions);
+			arrTestCase.setSteps(arguments.Steps);
+			arrTestCase.setExpectedResult(arguments.expectedResult);
+			arrTestCase.setMilestoneId(arguments.milestoneId);
+			arrTestCase.setEstimate(arguments.Estimate);
+			try {
+				EntitySave(arrTestCase);
+				return true;
+			} catch (any ex) {
+				return serializeJSON(ex);
+			}
+		</cfscript>
+	</cffunction>	
 	
 	<cffunction name="saveScenario" access="remote" returntype="any" returnformat="JSON">
 		<cfargument name="id" type="numeric">

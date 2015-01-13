@@ -22,6 +22,12 @@ component
 		return arrTestCases;
 	}
 	
+	public array function getTestCasesByProject(projectid)
+	{
+		arrTestCases = EntityLoad("TTestCase",{ProjectID=arguments.projectid});
+		return arrTestCases;
+	}
+	
 	public db.TTestCase function getTestCase(id) {
 		testcase = entityLoad("TTestCase",id,true);
 		return testcase;

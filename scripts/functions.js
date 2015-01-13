@@ -74,7 +74,7 @@ $(document).ready(function() {
 		event.preventDefault();
 		var editid = $(this).attr("editid");
 		$("#largeModal .modal-title").text("Edit Test Case");
-		$("#largeModal .modal-body").load("cfc/forms.cfc?method=getTestEditForm&testcaseid="+editid);
+		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestCaseForm&testcaseid="+editid);
 		$("#largeModal").modal("show");
 	});
 	$(document).on("click","a#lnkAddProject",function(event) {
@@ -126,6 +126,7 @@ $(document).ready(function() {
 		event.preventDefault();
 		var scenarioid = $(this).attr("scenarioid");
 		$("#topcontent").empty();
+		$("#topcontent").removeClass("panel").removeClass("panel-default");
 		$("#topcontent").prepend("<div id='panelTestScenario' class='panel panel-default'><div class='panel-heading'>Edit Test Scenario</div><div id='panelTestScenarioBody' class='panel-body'>");
 		$("#topcontent").append("</div></div>");
 		$("#panelTestScenarioBody").load("cfc/forms.cfc?method=TestScenarioForm&testscenarioid="+scenarioid);
@@ -154,8 +155,18 @@ $(document).ready(function() {
 		$("#largeModal").modal("show");		
 		
 	});
+	$(document).on("click","a.lnkViewTests",function(event){
+		event.preventDefault();
+		$("#topcontent").removeClass("panel").removeClass("panel-default");
+		$("#topcontent").load("cfc/Dashboard.cfc?method=AllTests");
+		$("#midrow").empty();
+		$("#activitypanel").remove();
+		$("#lnkReturnToProject").attr("pjid",projectid);
+		$("#lnkReturnToProject").show();
+	});
 	$(document).on("click","a.lnkViewMilestones",function(event) {
 		event.preventDefault();
+		$("#topcontent").removeClass("panel").removeClass("panel-default");
 		$("#topcontent").load("cfc/Dashboard.cfc?method=AllMilestones");
 		$("#midrow").empty();
 		$("#activitypanel").remove();	
@@ -165,6 +176,7 @@ $(document).ready(function() {
 	});
 	$(document).on("click","a.lnkViewScenarios",function(event) {
 		event.preventDefault();
+		$("#topcontent").removeClass("panel").removeClass("panel-default");
 		$("#topcontent").load("cfc/Dashboard.cfc?method=AllScenarios");
 		$("#midrow").empty();
 		$("#activitypanel").remove();
@@ -173,6 +185,7 @@ $(document).ready(function() {
 	});
 	$(document).on("click","a.lnkOpenScenarioHub",function(event) {
 		event.preventDefault();
+		$("#topcontent").removeClass("panel").removeClass("panel-default");
 		$("#topcontent").load("cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+$(this).attr("scenarioid"));
 		$("#midrow").empty();
 		$("#activitypanel").remove();

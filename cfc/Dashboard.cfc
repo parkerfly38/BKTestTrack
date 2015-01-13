@@ -288,7 +288,7 @@
 					</div>
 					<div class="row rowoffset">
 					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-tachometer fa-fw"></i></span></h1></div>
-					<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight: bold;">Tests</span><br /><a href="##" id="lnkViewTests">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddTest">Add</a></div>
+					<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight: bold;">Tests</span><br /><a href="##" class="lnkViewTests">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddTest">Add</a></div>
 					</div>
 					<div class="row rowoffset">
 						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right: 0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-suitcase fa-fw"></i></span></h1></div>
@@ -469,7 +469,46 @@
 	</cffunction>
 	
 	<cffunction name="AllTests" access="remote" output="true">
-	
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			<cfexit>
+		</cfif>
+		<cfset objData = createObject("component","Data")>
+		<cfset arrTestCases = objData.getTestCasesByProject(Session.ProjectID)>
+		<div id="panelalltestcases" class="panel panel-default">
+			<div class="panel-heading">Test Cases</div>
+			<div class="panel-body">
+				<!---<div class="navbar">
+					<div class="navbar-inner">
+						<ul class="nav">
+							<li>blank option</li>
+						</ul>
+					</div>
+				</div>--->
+				<h4>All Test Cases</h4>
+				<table class="table table-condensed table-striped table-hover">
+					<thead>
+						<tr>
+							<th></th>
+							<th>Case ID</th>
+							<th>Test Title</th>
+							<th></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<cfloop array="#arrTestCases#" index="case">
+						<tr>
+							<td><input type="checkbox" id="cbxTestCase" caseid="#case.getId()#" /></td>
+							<td>TC#case.getId()#</td>
+							<td>#case.getTestTitle()#</td>
+							<td><a href="##" class="testcaseeditlink btn btn-default btn-xs" editid="#case.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
+							<td><a href="##" class="testcasedeletelink btn btn-default btn-xs" editid="#case.getId()#"><i class="fa fa-trash"></i> Delete</a></td>
+						</tr>
+						</cfloop>
+					</tbody>
+				</table>
+			</div>
+		</div>				
 	</cffunction>
 	
 	<cffunction name="TestScenarioHub" access="remote" output="true">
