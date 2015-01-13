@@ -37,7 +37,7 @@ $(document).ready(function() {
 	$.getJSON("cfc/Dashboard.cfc?method=allProjectsJSON",function(data){
 		jsonProjects = data;
 	});
-	
+		
 	projectIDCheck();
 	
 	initialLoadTimer = setInterval(function() {homeLoad()},10);
@@ -121,6 +121,18 @@ $(document).ready(function() {
 		$("#largeModal .modal-title").text("Edit Test Scenario");
 		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestScenarioForm&testscenarioid="+pjid);
 		$("#largeModal").modal({show:"true"});
+	});
+	$(document).on("click","a.lnkEditScenarioBig",function(event){
+		event.preventDefault();
+		var scenarioid = $(this).attr("scenarioid");
+		$("#topcontent").empty();
+		$("#topcontent").prepend("<div id='panelTestScenario' class='panel panel-default'><div class='panel-heading'>Edit Test Scenario</div><div id='panelTestScenarioBody' class='panel-body'>");
+		$("#topcontent").append("</div></div>");
+		$("#panelTestScenarioBody").load("cfc/forms.cfc?method=TestScenarioForm&testscenarioid="+scenarioid);
+		$("#midrow").empty();
+		$("#activitypanel").remove();	
+		$("#lnkReturnToProject").attr("pjid",projectid);
+		$("#lnkReturnToProject").show();
 	});
 	$(document).on("click","a.lnkAddMilestone",function(event){
 		event.preventDefault();

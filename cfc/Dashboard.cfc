@@ -313,7 +313,7 @@
 			<div class="panel-heading"><i class="fa fa-map-marker"></i> Milestones</div>
 			<div class="panel-body">
 				<cfif ArrayLen(arrMilestones) gt 0>
-				<div class="well well-sm" id="overduewell" style="display:none;color:##F00;">Overdue</div>
+				<div class="well well-sm" id="overduewell" style="display:none;color:##F00;font-weight:bold;">Overdue</div>
 				<table class="table table-striped">
 				<tbody>
 				<cfset overdueCount = 0>
@@ -339,7 +339,7 @@
 				</cfloop>
 				</tbody>
 				</table>
-				<div class="well well-sm" id="openmilestoneswell" style="display:none;">Open Milestones</div>
+				<div class="well well-sm" id="openmilestoneswell" style="display:none;font-weight:bold;">Open Milestones</div>
 				<table class="table table-striped">
 				<tbody>
 				<cfset openCount = 0>
@@ -365,7 +365,7 @@
 				</cfloop>
 				</tbody>
 				</table>
-				<div class="well well-sm" id="closedmswell" style="display:none;">Completed Milestones</div>
+				<div class="well well-sm" id="closedmswell" style="display:none;font-weight:bold;">Completed Milestones</div>
 				<table class="table table-striped">
 				<tbody>
 				<cfset closedCount = 0>
@@ -406,17 +406,60 @@
 			<cfexit>
 		</cfif>
 		<cfset arrTestScenarios = EntityLoad("TTestScenario",{ProjectID = Session.ProjectID})>
+		<cfset objData = createObject("component","Data")>
 		<div id="scenariospanel" class="panel panel-default">
 			<div class="panel-heading">Test Scenarios</div>
 			<div class="panel-body">
-				<div class="well well-sm">Active</div>
+				<div class="well well-sm" style="font-weight:bold;">Active</div>
 				<cfif ArrayLen(arrTestScenarios) gt 0>
 				<table class="table table-striped">
 				<tbody>
 					<cfloop array="#arrTestScenarios#" index="scenario">
+					<cfset qryTestCases = objData.qryTestCaseForScenarios(scenario.getId())><!--- get total record count --->
+					<!--- subcounts --->
+					<cfset qryTestCounts = objData.qryTestCaseHistoryForScenarios(scenario.getId())>
 						<tr>
-							<td>#scenario.getTestScenario()#</td>
-							<td>##</td>
+							<td><h5>#scenario.getTestScenario()#<h5>
+								<cfloop query="qryTestCounts">
+									<!--- conditional for percentage counts --->
+									<cfif Status eq "Untested">
+										<cfset untestedPercent = (StatusCount gt 0 AND qryTestCases.RecordCount gt 0) ? (StatusCount / qryTestCases.RecordCount) * 100 : 0>
+									</cfif>
+									<cfif Status eq "Blocked">
+										<cfset blockedPercent = (StatusCount gt 0 AND qryTestCases.RecordCount gt 0) ? (StatusCount / qryTestCases.RecordCount) * 100 : 0>
+									</cfif>
+									<cfif Status eq "Retest">
+										<cfset retestPercent = (StatusCount gt 0 AND qryTestCases.RecordCount gt 0) ? (StatusCount / qryTestCases.RecordCount) * 100 : 0>
+									</cfif>
+									<cfif Status eq "Passed">
+										<cfset passedPercent = (StatusCount gt 0 AND qryTestCases.RecordCount gt 0) ? (StatusCount / qryTestCases.RecordCount) * 100 : 0>
+									</cfif>
+									<cfif Status eq "Failed">
+										<cfset failedPercent = (StatusCount gt 0 AND qryTestCases.RecordCount gt 0) ? (StatusCount / qryTestCases.RecordCount) * 100 : 0>
+									</cfif>
+									<strong>#StatusCount#</strong> #Status#<cfif currentRow lt qryTestCounts.RecordCount>,</cfif>
+								</cfloop>
+							</td>
+							<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
+							<td style="width:33%"><div class="progress">
+									<div class="progress-bar progress-bar-success progress-bar-striped" style="width:#passedPercent#%;">
+										<span class="sr-only">#passedPercent#% Passed</span>
+									</div>
+									<div class="progress-bar progress-bar-warning progress-bar-striped" style="width:#retestPercent#%;">
+										<span class="sr-only">#retestPercent#% Retest</span>
+									</div>
+									<div class="progress-bar progess-bar-danger progress-bar-striped" style="width:#failedPercent#%;">
+										<span class="sr-only">#failedPercent#% Failed</span>
+									</div>
+									<div class="progress-bar progress-bar-info progress-bar-striped" style="width:#untestedPercent#%;">
+										<span class="sr-only">#untestedPercent#% Untested</span>
+									</div>
+									<div class="progress-bar progress-bar-default progress-bar-striped" style="width:#blockedPercent#%;">
+										<span class="sr-only">#blockedPercent#% Blocked</span>
+									</div>
+								</div>
+									
+							</td>
 						</tr>
 					</cfloop>
 				</tbody>

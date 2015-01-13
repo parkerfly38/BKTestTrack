@@ -60,6 +60,11 @@ component
 		return history;
 	}
 	
+	public query function qryTestCaseHistoryByTestCase(id) {
+		arrHistory = getTestCaseHistoryByTestCase(arguments.id);
+		return EntityToQuery(arrHistory);
+	}
+	
 	public array function getAllMilestones() 
 	{
 		milestones = entityLoad("TTestMilestones");
@@ -70,5 +75,26 @@ component
 		links = entityLoad("TTestLinks");
 		return links;
 	}
-	
+	public query function qryTestCaseForScenarios(scenarioid)
+	{
+		QueryHistory = new query();
+		QueryHistory.setName("getTestCaseHistory");
+		QueryHistory.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
+		qryResult = QueryHistory.execute(sql="SELECT a.TestTitle, b.DateOfAction, c.UserName, b.DateActionClosed" &
+				" FROM TTestCaseHistory b INNER JOIN TTestCase a ON a.id = b.CaseId INNER JOIN TTestTester c on b.TesterID = c.id INNER JOIN TTestScenarioCases d ON a.id = d.CaseId" &
+				" WHERE d.ScenarioId = :scenarioid");
+		return qryResult.getResult();
+	}
+	public query function qryTestCaseHistoryForScenarios(scenarioid) {
+		QueryHistory = new query();
+		QueryHistory.setName("getTestCaseHistory");
+		QueryHistory.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
+		qryResult = QueryHistory.execute(sql="Select TTestStatus.id, Status, ISNULL(Count(a.id),0) as StatusCount" &
+											 " FROM TTestStatus " &
+											 "LEFT JOIN (SELECT b.id, b.Action FROM TTestCaseHistory b INNER JOIN TTestScenarioCases c on b.CaseId = c.CaseId WHERE c.ScenarioID = :scenarioid AND DateActionClosed IS NULL) a " &
+											 "ON a.Action = Status " &
+											 "GROUP BY TTestStatus.id, Status " &
+											 "ORDER BY TTestStatus.id");
+		return qryResult.getResult();
+	}
 }

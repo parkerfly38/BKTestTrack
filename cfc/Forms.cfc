@@ -334,8 +334,36 @@
 										<li><a href='##' class='lnkMilestone' msvalue="#ms.getId()#">#ms.getMilestone()#</a></li>
 									</cfloop>
 								</cfif>
-							</ul>
+							</ul>	
+					
 				</div>
+				</div>
+				<div class="form-group">
+				<label>Assigned Test Cases</label>
+				<cfset objData = CreateObject("component","Data")>
+				<cfset qryTestCases = objData.qryTestCaseForScenarios(arrTestScenario.getId())>
+				<cfif qryTestCases.RecordCount eq 0>
+					<div class="alert alert-warning small"><h4>No Test Cases Assigned</h4>Click below to assign a test case.</div>
+				<cfelse>
+					<table class="table table-condensed table-striped table-hover small">
+						<thead>
+							<tr>
+								<th>Test</th>
+								<th>Date Ass.</th>
+								<th>User</th>
+							</tr>
+						</thead>
+						<tbody>
+						<cfloop query="qryTestCases">
+							<tr>
+								<td>#TestTitle#</td>
+								<td>#DateFormat(DateOfAction,"m/d/yy")#</td>
+								<td>#UserName#</td>
+							</tr>
+						</cfloop>
+						</tbody>
+					</table>								
+				</cfif>
 			</div>
 	</cffunction>
 			
@@ -352,7 +380,6 @@
 			<cfexit>
 		</cfif>
 		<script type="text/javascript">
-			<!-- //
 			$(document).ready(function() {
 				$(".datetime").datepicker({
 					format:"mm/dd/yyyy",
@@ -400,7 +427,6 @@
 					});
 				});		
 			});
-			// -->
 		</script>
 		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
 			<div class="form-group required">
@@ -545,6 +571,6 @@
 			}
 		</cfscript>
 	</cffunction>
-				
+	
 		
 </cfcomponent>
