@@ -60,6 +60,7 @@ $(document).ready(function() {
 			homeLoad();
 		});
 	});
+	
 	$("a#lnkReturnAllProjects").click(function(event) {
 		event.preventDefault();
 		$.ajax({ url:"cfc/Dashboard.cfc?method=removeSessionProject",type:"POST"}).done(function()
@@ -191,6 +192,19 @@ $(document).ready(function() {
 		$("#activitypanel").remove();
 		$("#lnkReturnToProject").attr("pjid",projectid);
 		$("#lnkReturnToProject").show();
+	});
+	$(document).on("click","a.lnkQuickTSReport",function(event) {
+		if ($(this).attr("reportvalue") != "") {
+			$.ajax({
+				url: "cfc/Dashboard.cfc?method="+$(this).attr("reportvalue"),
+				type: "POST",
+				data: {
+					scenarioid : $(this).attr("scenarioid")
+				}
+			}).done(function(data){
+				$("#scenarioreport").replaceWith(data);
+			});
+		}
 	});
 	$(document).on("eventLoadForm", function(event){
 		$("#txtProjectStartDate").datepicker({

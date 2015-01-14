@@ -511,37 +511,15 @@
 		</div>				
 	</cffunction>
 	
-	<cffunction name="TestScenarioHub" access="remote" output="true">
+	<cffunction name="TestScenarioTestsAndResults" access="remote" output="true">
 		<cfargument name="scenarioid" type="numeric" required="true">
-		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfexit>
-		</cfif>
 		<cfset objData = createObject("component","Data")>
 		<cfset arrScenarioData = EntityLoadByPK("TTestScenario",arguments.scenarioid)>
 		<cfset qryTestCases = objData.qryTestCaseForScenarios(arrScenarioData.getId())>
 		<cfset qryTestCounts = objData.qryTestCaseHistoryForScenarios(arrScenarioData.getId())>
 		<cfset qryTestCasesAssigned = objData.qryTestCaseHistoryDataForScenario(arrScenarioData.getId())>
-		<cfset arrStatus = EntityLoad("TTestStatus")>
-		<script type="text/javascript">
-			$(document).ready(function() {
-				$(".selectpicker").selectpicker();
-			});
-			function onRowSelect(objCheckbox) {
-				if ($(objCheckbox).is(":checked")) {
-					$("##addlink").removeClass("disabled");
-				} else {
-					if ( $("input:checkbox[name=cbxId]").is(":checked") ) {
-						$("##addlink").removeClass("disabled");
-					} else {
-						$("##addlink").addClass("disabled");
-					}
-				}
-			}
-		</script>
-		<div class="panel panel-default">
-			<div class="panel-heading"><span class="label label-info">S#arrScenarioData.getId()#</span> #arrScenarioData.getTestScenario()#</div>
-			<div class="panel-body">
-				<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
+		<div id="scenarioreport">
+		<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
 				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 					<cfloop query="qryTestCounts">
 					<p><span class="label #returnBSLabelStyle(Status)#">#StatusCount# #Status#</span><br />#NumberFormat((StatusCount gt 0 AND qryTestCases.RecordCount gt 0) ? (StatusCount / qryTestCases.RecordCount) * 100 : 0,"0.0")#% set to #Status#</p>
@@ -584,7 +562,8 @@
 								scaleStartValue : null,
 								savePng : true,
 								savePngOutput : "Save",
-								savePngName: "System Totals",
+								savePngName: "TestsAndResults",
+								graphTitle : "Tests and Results",
 								savePngBackgroundColor : "white",
 								annotateDisplay : true,
 								inGraphDataShow: true,
@@ -594,7 +573,142 @@
 							};
 							var chartObj = new Chart(document.getElementById("chartcanvas").getContext("2d")).Doughnut(donutData,donutoptions);
 						</script>
+		</div>
+	</cffunction>
+	
+	<cffunction name="TestScenarioActivity" access="remote" output="true">
+		<cfargument name="scenarioid" type="numeric" required="true">
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			<cfexit>
+		</cfif>
+		<cfstoredproc procedure="PReturnTestResultCountsByScenario">
+			<cfprocparam cfsqltype="cf_sql_int" value="#Session.projectid#">
+			<cfprocparam cfsqltype="cf_sql_int" value="#arguments.scenarioid#">
+			<cfprocresult name="qryCounts" />
+		</cfstoredproc>
+		<cfscript>
+			local.TotalPassedCount = 0;
+			local.TotalFailedCount = 0;
+			local.TotalUntestedCount = 0;
+			local.TotalBlockedCount = 0;
+			local.TotalRetestCount = 0;
+		</cfscript>
+		<cfloop query="qryCounts">
+			<cfset local.TotalPassedCount = local.TotalPassedCount + PassedCount />
+			<cfset local.TotalFailedCount = local.TotalFailedCount + FailedCount />
+			<cfset local.TotalUntestedCount = local.TotalUntestedCount + UntestedCount />
+			<cfset local.TotalBlockedCount = local.TotalBlockedCount + BlockedCount />
+			<cfset local.TotalRetestCount = local.TotalRetestCount + RetestCount />
 			
+		</cfloop>
+		<cfset local.TotalCount = local.TotalBlockedCount + local.TotalFailedCount + local.TotalPassedCount + local.TotalRetestCount + local.TotalUntestedCount/>
+		<cfset local.PassedPercent = (local.TotalCount gt 0) ? (local.TotalPassedCount / local.TotalCount) * 100 : 0 >
+		<cfset local.FailedPercent = (local.TotalCount gt 0) ? (local.TotalFailedCount / local.TotalCount) * 100 : 0>
+		<cfset local.UntestedPercent = (local.TotalCount gt 0) ?  (local.TotalUntestedCount / local.TotalCount) * 100 : 0>
+		<cfset local.BlockedPercent = (local.TotalCount gt 0) ? (local.TotalBlockedCount / local.TotalCount) * 100 : 0>
+		<cfset local.RetestPercent = (local.TotalCount gt 0) ? (local.TotalRetestCount / local.TotalCount) * 100 : 0> 
+		<div id="scenarioreport">
+		<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
+		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+			<p><span class="label label-success">#local.TotalPassedCount# Passed</span><br />#NumberFormat(local.PassedPercent,"0.00")#% set to Passed</p>
+			<p><span class="label label-default">#local.TotalBlockedCount# Blocked</span><br />#NumberFormat(local.BlockedPercent,"0.00")#% set to Blocked</p>
+			<p><span class="label label-warning">#local.TotalRetestCount# Retest</span><br />#NumberFormat(local.RetestPercent,"0.00")#% set to Retest</p>
+			<p><span class="label label-danger">#local.TotalFailedCount# Failed</span><br />#NumberFormat(local.FailedPercent,"0.00")#% set to Failed</p>
+			<p><span class="label label-info">#local.TotalUntestedCount# Untested</span><br />#NumberFormat(local.UntestedPercent,"0.00")#% set to Untested</p>
+		</div>
+		<script type="text/javascript">
+			var barData = {
+						labels : [#Replace(QuotedValueList(qryCounts.DateTested,","),"/","\/","all")#],
+						datasets : [
+							{
+								title : "Passed",
+								strokeColor : "##5cb85c",
+								data : [#ValueList(qryCounts.PassedCount,",")#]
+							},
+							{
+								title : "Failed",
+								strokeColor : "##d9534f",
+							    data : [#ValueList(qryCounts.FailedCount,",")#]
+							},
+							{
+								title : "Untested",
+								strokeColor : "##5bc0de",
+								data : [#ValueList(qryCounts.UntestedCount,",")#]
+							},
+							{
+								title : "Blocked",
+								strokeColor : "##777",
+								data : [#ValueList(qryCounts.BlockedCount,",")#]
+							},
+							{
+								title : "Retest",
+								strokeColor : "##f0ad4e",
+								data : [#ValueList(qryCounts.RetestCount,",")#]
+							}
+						]
+					}
+					var options = {
+						canvasBorders : false,
+						legend : false,
+						yAxisMinimumInterval : 1,
+						scaleStartValue : 0,
+						xAxisLabel : "Date",
+						yAxisLabel : "Count",
+						savePng : true,
+						savePngOutput : "Save",
+						savePngName: "Last 14 Days",
+						savePngBackgroundColor : "white",
+						annotateDisplay : true,
+						graphTitle: "Activity",
+						responsive: true,
+						responsiveMaxHeight: 300,
+						maintainAspectRatio: false
+					};
+					var chartObj = new Chart(document.getElementById("chartcanvas").getContext("2d")).Line(barData,options);
+					// -->
+				</script>
+			</div>
+	</cffunction>
+	
+	<cffunction name="TestScenarioHub" access="remote" output="true">
+		<cfargument name="scenarioid" type="numeric" required="true">
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			<cfexit>
+		</cfif>
+		<cfset objData = createObject("component","Data")>
+		<cfset arrScenarioData = EntityLoadByPK("TTestScenario",arguments.scenarioid)>
+		<cfset qryTestCases = objData.qryTestCaseForScenarios(arrScenarioData.getId())>
+		<cfset qryTestCounts = objData.qryTestCaseHistoryForScenarios(arrScenarioData.getId())>
+		<cfset qryTestCasesAssigned = objData.qryTestCaseHistoryDataForScenario(arrScenarioData.getId())>
+		<cfset arrStatus = EntityLoad("TTestStatus")>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(".selectpicker").selectpicker();
+			});
+			function onRowSelect(objCheckbox) {
+				if ($(objCheckbox).is(":checked")) {
+					$("##addlink").removeClass("disabled");
+				} else {
+					if ( $("input:checkbox[name=cbxId]").is(":checked") ) {
+						$("##addlink").removeClass("disabled");
+					} else {
+						$("##addlink").addClass("disabled");
+					}
+				}
+			}
+		</script>
+		<div class="panel panel-default">
+			<div class="panel-heading"><span class="label label-info">S#arrScenarioData.getId()#</span> #arrScenarioData.getTestScenario()#
+			<div class="btn-group" style="float:right;margin-top:-5px;">
+				<a class="btn btn-sm btn-info" href="##">
+					<i class="fa fa-bar-chart fa-fw"></i> Scenario Reports</a>
+					<a class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" href="##"><span class="fa fa-caret-down"></span></a>
+					<ul id="tsreportmentu" class="dropdown-menu">
+						<li><a href='##' class='lnkQuickTSReport' reportvalue='TestScenarioTestsAndResults' scenarioid="#arrScenarioData.getId()#"><i class='fa fa-pie-chart fa-fw'></i> Tests and Results</a></li>
+						<li><a href='##' class='lnkQuickTSReport' reportvalue='TestScenarioActivity' scenarioid="#arrScenarioData.getId()#"><i class='fa fa-line-chart fa-fw'></i> Activity</a></li>
+				</ul></div></div>
+			<div class="panel-body">
+				#TestScenarioTestsAndResults(arguments.scenarioid)#
 				<div class="clearfix"></div>
 				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<h4>All Test Cases <small>(#qryTestCases.RecordCount#)</h4>
@@ -637,7 +751,6 @@
 		</div>
 	</cffunction>
 		
-	
 	<cffunction name="assignedTestsGrid" access="remote" output="true">
 		<cfargument name="userid" type="numeric" required="true">
 		<cfargument name="page" type="numeric" required="true" default="1">

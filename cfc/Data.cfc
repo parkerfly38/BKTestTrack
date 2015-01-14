@@ -114,4 +114,18 @@ component
 										"WHERE b.ScenarioId = :scenarioid AND DateActionClosed IS NULL");
 		return qryResult.getResult();
 	}
+	public query function qryTestCaseHistoryAllForScenario(scenarioid) {
+		qrynew = new query();
+		qrynew.setName("getTestCaseHistory");
+		qrynew.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
+		qryResult = qrynew.execute(sql="SELECT d.TestTitle, a.Action, b.UserName, a.DateOfAction " &
+									   "FROM TTestCaseHistory a " &
+									   "INNER JOIN TTestTester b ON a.TesterID = b.id " &
+									   "INNER JOIN TTestScenarioCases c ON a.CaseId = c.CaseId " &
+									   "INNER JOIN TTestCased d on a.CaseId = d.id " &
+									   "WHERE c.ScenarioId = :scenarioid " &
+									   "AND DateOfAction BETWEEN GETDATE() AND DATEADD(DAY,-14,GETDATE()) " &
+									   "ORDER BY TestTitle, DateOfAction");
+		return qryResult.getResult();
+	}
 }
