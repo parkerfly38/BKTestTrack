@@ -78,6 +78,11 @@ $(document).ready(function() {
 		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestCaseForm&testcaseid="+editid);
 		$("#largeModal").modal("show");
 	});
+	$(document).on("click","a.lnkAddSections",function(event) {
+		$("#smallModal .modal-title").text("Add Section");
+		$("#smallModal .modal-body").load("cfc/forms.cfc?method=TestSectionForm");
+		$("#smallModal").modal("show");
+	});
 	$(document).on("click","a#lnkAddProject",function(event) {
 		event.preventDefault();
 		$("#largeModal .modal-title").text("Add Project");
@@ -395,7 +400,7 @@ function homeLoad() {
 				$("#featurecontent").append('<div id="midrow" class="row"></div>');
 			});
 		} else {
-			$("#featurecontent").prepend("<div class='alert alert-danger' role='alert'><strong>Add your first project to CFTestTrack</strong><br />Welcome!  This dashboard displays an overview of available projects and recent activity, but there aren't any projects yet.  Add a new project from the Actions menu on the right.</div>");
+			$("#featurecontent").prepend("<div class='alert alert-danger' role='alert'><strong>Add your first project to CFTestTrack</strong><br />Welcome!  This dashboard displays an overview of available projects and recent activity, but there aren't any projects yet.<p><br /><a id='lnkAddProject' class='btn btn-info'><i class='fa fa-plus-square'></i> Add Project</a></p></div>");
 		}
 		window.clearInterval(initialLoadTimer);
 	}

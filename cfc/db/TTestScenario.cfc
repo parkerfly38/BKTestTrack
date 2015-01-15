@@ -6,4 +6,5 @@ component table="TTestScenario" persistent="true"
 	property name="TestDescription";
 	property name="ProjectID";
 	property name="CreatorUserId";
+	property name="SectionID";
 }

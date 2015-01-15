@@ -86,7 +86,7 @@ component
 		QueryHistory = new query();
 		QueryHistory.setName("getTestCaseHistory");
 		QueryHistory.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
-		qryResult = QueryHistory.execute(sql="SELECT a.TestTitle, b.DateOfAction, c.UserName, b.DateActionClosed" &
+		qryResult = QueryHistory.execute(sql="SELECT a.id as TestCaseId, a.TestTitle, b.DateOfAction, c.UserName, b.DateActionClosed" &
 				" FROM TTestCaseHistory b INNER JOIN TTestCase a ON a.id = b.CaseId INNER JOIN TTestTester c on b.TesterID = c.id INNER JOIN TTestScenarioCases d ON a.id = d.CaseId" &
 				" WHERE d.ScenarioId = :scenarioid");
 		return qryResult.getResult();
@@ -97,8 +97,8 @@ component
 		QueryHistory.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
 		qryResult = QueryHistory.execute(sql="Select TTestStatus.id, Status, ISNULL(Count(a.id),0) as StatusCount" &
 											 " FROM TTestStatus " &
-											 "LEFT JOIN (SELECT b.id, b.Action FROM TTestCaseHistory b INNER JOIN TTestScenarioCases c on b.CaseId = c.CaseId WHERE c.ScenarioID = :scenarioid AND DateActionClosed IS NULL) a " &
-											 "ON a.Action = Status " &
+											 "LEFT JOIN (SELECT TOP 1 b.id, b.StatusID FROM TTestResult b INNER JOIN TTestScenarioCases c on b.TestCaseId = c.CaseId WHERE c.ScenarioID = :scenarioid ORDER BY b.id DESC) a " &
+											 "ON a.StatusID = TTestStatus.id " &
 											 "GROUP BY TTestStatus.id, Status " &
 											 "ORDER BY TTestStatus.id");
 		return qryResult.getResult();
@@ -107,25 +107,47 @@ component
 		qryNew = new query();
 		qryNew.setName("getTestCaseHistory");
 		qryNew.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
-		qryResult = qryNew.execute(sql="SELECT DISTINCT d.TestTitle, a.CaseId, a.DateOfAction, a.Action, c.UserName FROM TTestCaseHistory a " &
-										"INNER JOIN TTestScenarioCases b on a.CaseId = b.CaseId " &
+		qryResult = qryNew.execute(sql="SELECT DISTINCT d.TestTitle, a.TestCaseId, a.DateTested, e.Status, c.UserName FROM TTestResult a " &
+										"INNER JOIN TTestScenarioCases b on a.TestCaseId = b.CaseId " &
 										"INNER JOIN TTestTester c on a.TesterID = c.id " &
-										"INNER JOIN TTestCase d on a.CaseId = d.id " &
-										"WHERE b.ScenarioId = :scenarioid AND DateActionClosed IS NULL");
+										"INNER JOIN TTestCase d on a.TestCaseId = d.id " &
+										"INNER JOIN TTestStatus e on a.StatusID = e.id " &
+										"WHERE b.ScenarioId = :scenarioid");
 		return qryResult.getResult();
 	}
 	public query function qryTestCaseHistoryAllForScenario(scenarioid) {
 		qrynew = new query();
 		qrynew.setName("getTestCaseHistory");
 		qrynew.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
-		qryResult = qrynew.execute(sql="SELECT d.TestTitle, a.Action, b.UserName, a.DateOfAction " &
-									   "FROM TTestCaseHistory a " &
+		qryResult = qrynew.execute(sql="SELECT d.TestTitle, e.Status, b.UserName, a.DateTested " &
+									   "FROM TTestResult a " &
 									   "INNER JOIN TTestTester b ON a.TesterID = b.id " &
-									   "INNER JOIN TTestScenarioCases c ON a.CaseId = c.CaseId " &
-									   "INNER JOIN TTestCased d on a.CaseId = d.id " &
+									   "INNER JOIN TTestScenarioCases c ON a.TestCaseId = c.CaseId " &
+									   "INNER JOIN TTestCase d on a.TestCaseId = d.id " &
+									   "INNER JOIN TTestStatus e on a.StatusID = e.id " &
 									   "WHERE c.ScenarioId = :scenarioid " &
-									   "AND DateOfAction BETWEEN GETDATE() AND DATEADD(DAY,-14,GETDATE()) " &
-									   "ORDER BY TestTitle, DateOfAction");
+									   "AND DateTested BETWEEN GETDATE() AND DATEADD(DAY,-14,GETDATE()) " &
+									   "ORDER BY TestTitle, DateTested");
+		return qryResult.getResult();
+	}
+	public query function qryTestCasesAssignedScenario(scenarioid) {
+		qryNew = new query();
+		qryNew.setName("getScenarioTestCases");
+		qryNew.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
+		qryResult = qryNew.execute(sql="SELECT b.TestTitle, c.DateOfAction, d.UserName FROM TTestScenarioCases a " &
+										"INNER JOIN TTestCase b ON b.id = a.CaseId " &
+										"INNER JOIN TTestCaseHistory c on c.CaseID = a.CaseId " &
+										"INNER JOIN TTestTester d on d.id = c.TesterID " &
+										"WHERE a.ScenarioId = :scenarioid AND c.Action = 'Assigned'");
+		return qryResult.getResult();
+	}
+	public query function qryGetCurrentTestStatus(caseid) {
+		qryNew = new query();
+		qryNew.setName("getCaseStatus");
+		qryNew.addParam(name="caseid",value=arguments.caseid,cfsqltype="cf_sql_int");
+		qryResult = qryNew.execute(sql="SELECT ISNULL(d.Status,'Assigned') as Status FROM TTestCase a " &
+				"LEFT JOIN (SELECT TOP 1 c.TestCaseId, b.Status FROM TTestResult c INNER JOIN TTestStatus b on b.id = c.StatusID ORDER BY c.id DESC) d ON d.TestCaseId = a.id " &
+				"WHERE a.id = :caseid");
 		return qryResult.getResult();
 	}
 }

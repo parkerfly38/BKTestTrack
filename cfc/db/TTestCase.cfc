@@ -5,7 +5,7 @@ component table="TTestCase" persistent="true"
 	property name="TestDetails";
 	property name="PriorityId";
 	property name="TypeId";
-	property name="SectionId";
+	//property name="SectionId";
 	property name="Preconditions";
 	property name="Steps";
 	property name="ExpectedResult";

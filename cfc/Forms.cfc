@@ -74,7 +74,6 @@
 							TestDetails : $("##txtTestDetails").val(),
 							PriorityId : $("##ddlPriorityId").val(),
 							TypeId : $("##ddlTypeId").val(),
-							SectionId : $("##ddlSectionId").val(),
 							ProjectID : "#Session.ProjectID#",
 							Preconditions : $("##txtPreconditions").val(),
 							Steps : $("##txtSteps").val(),
@@ -132,15 +131,7 @@
 					<cfloop array="#arrTypes#" index="type">
 					<option value="#type.getId()#" <Cfif arrTestCase.getTypeId() eq type.getId()>selected</cfif>>#type.getType()#</option>
 					</cfloop>
-				</select>
-				<label for="ddlSectionId">Testing Section</label>
-				<cfset arrSections = EntityLoad("TTestProjectTestSection",{ProjectID = Session.ProjectID})>
-				<select class="form-control selectpicker" id="ddlSectionId" name="ddlSectionId" data-style="btn-info">
-					<option value="0" <cfif arrTestCase.getSectionId() eq 0>selected</cfif>>Select a section</option>
-					<cfloop array="#arrSections#" index="section">
-					<option value="#section.getId()#" <cfif arrTestCase.getSectionId() eq section.getId()>selected</cfif>>#section.getSection()#</option>
-					</cfloop>
-				</select>
+				</select>	
 				<label for="txtEstimate">Estimated Time (in hours)</label>
 				<input type="text" class="form-control" name="txtEstimate" id="txtEstimate" value="#arrTestCase.getEstimate()#" />
 				<label for="txtTestDetails">References</label>
@@ -245,11 +236,54 @@
 		</div>
 			
 	</cffunction>
-				
+	
+	<cffunction name="TestSectionForm" access="remote" output="true">
+		<cfargument name="sectionid" required="false" default="0" type="numeric">
+		<cfif !(StructKeyExists(Session,"ProjectID"))>
+			<cfreturn>
+		</cfif>
+		<cfif arguments.sectionid gt 0>
+			<cfset arrSections = EntityLoadByPK("TTestProjectTestSection",arguments.sectionid)>
+		<cfelse>
+			<cfset arrSections = entityNew("TTestProjectTestSection")>
+			<cfset arrSections.setId(0)>
+			<cfset arrSections.setProjectId(0)>
+		</cfif>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(document).off("click","##btnSave");
+				$(document).on("click","##btnSave",function(event) {
+					event.preventDefault();
+					$.ajax({
+						url: "CFC/forms.cfc?method=saveSection",
+						type: "POST",
+						data: {
+							id : $("##txtID").val(),
+							Section : $("##txtSection").val()
+						}
+					}).done(function(data) {
+						if ( data == "true" )
+						{
+							$("##smallModal").modal('hide');
+						} else {
+							alert("There was an error with your save.  Please contact system administrator.");
+						}
+					});
+				});		
+			});
+			</script>
+		<div class="form-group required">
+				<input type="hidden" name="txtID" id="txtID" value="#arrSections.getId()#" />
+				<label for="txtSection">Section Name</label><br />
+				<input type="text" name="txtSection" id="txtSection" value="#arrSections.getSection()#" />
+				<p class="help-block">Ex: <i>Page-by-Page Validations</i></p>
+		</div>
+	</cffunction>
+	
 	<cffunction name="TestScenarioForm" access="remote" output="true">
 		<cfargument name="testscenarioid" required="False" default="0" type="numeric">
 		<cfif !(StructKeyExists(Session,"ProjectID"))>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfif arguments.testscenarioid gt 0>
 			<cfset arrTestScenario = EntityLoadByPK("TTestScenario",arguments.testscenarioid)>
@@ -259,10 +293,11 @@
 		</cfif>
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			login
-			<cfexit>
+			<cfreturn>
 		</cfif>
 			<script type="text/javascript">
 			$(document).ready(function() {
+				$(".selectpicker").selectpicker();
 				$(document).on("click","a.lnkMilestone", function(event) {
 					event.preventDefault();
 					var rpvalue = $(this).attr("msvalue");
@@ -292,7 +327,8 @@
 							TestDescription : $("##txtTestDescription").val(),
 							MilestoneID : $("##txtMilestoneID").val(),
 							TestDescription : $("##txtTestDescription").val(),
-							ProjectID : '#Session.ProjectID#'
+							ProjectID : '#Session.ProjectID#',
+							SectionID : $("##ddlSectionId").val()
 						}
 					}).done(function(data) {
 						if ( data == "true" )
@@ -328,6 +364,14 @@
 			<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 			
 			<div class="form-group">
+				<label for="ddlSectionId">Testing Section</label>
+				<cfset arrSections = EntityLoad("TTestProjectTestSection",{ProjectID = Session.ProjectID})>
+				<select class="form-control selectpicker" id="ddlSectionId" name="ddlSectionId" data-style="btn-info">
+					<option value="0" <cfif arrTestScenario.getSectionId() eq 0>selected</cfif>>Select a section</option>
+					<cfloop array="#arrSections#" index="section">
+					<option value="#section.getId()#" <cfif arrTestScenario.getSectionId() eq section.getId()>selected</cfif>>#section.getSection()#</option>
+					</cfloop>
+				</select>
 				<input type="hidden" name="txtMilestoneID" id="txtMilestoneID" value="#arrTestScenario.getMilestoneID()#">
 				<label>Milestone</label><br />
 				<div class="btn-group" style="margin-top:-5px;">
@@ -358,7 +402,8 @@
 				<div class="form-group">
 				<label>Assigned Test Cases</label>
 				<cfset objData = CreateObject("component","Data")>
-				<cfset qryTestCases = objData.qryTestCaseForScenarios(arrTestScenario.getId())>
+				<cfset qryTestCases = objData.qryTestCasesAssignedScenario(arrTestScenario.getId())>
+				
 				<cfif qryTestCases.RecordCount eq 0>
 					<div class="alert alert-warning small"><h4>No Test Cases Assigned</h4>Click below to assign a test case.</div>
 				<cfelse>
@@ -500,6 +545,27 @@
 	</cffunction>
 	<!--- form processing --->
 	
+	<cffunction name="saveSection" access="remote" returntype="any" returnFormat="JSON">
+		<cfargument name="id" type="numeric">
+		<cfargument name="Section">
+		<cfscript>
+			if ( arguments.id > 0 ){
+				arrSection = EntityLoadByPK("TTestProjectTestSection",arguments.id);
+			} else {
+				arrSection = EntityNew("TTestProjectTestSection");
+			}
+			arrSection.setSection(arguments.Section);
+			arrSection.setProjectID(SESSION.ProjectID);
+			try
+			{
+				EntitySave(arrSection);
+				return true;
+			} catch (any ex) {
+				return serializeJSON(ex);
+			}
+		</cfscript>
+	</cffunction>
+	
 	<cffunction name="saveMilestone" access="remote" returntype="any" returnformat="JSON">
 		<cfargument name="id" type="numeric">
 		<cfargument name="Milestone" required="true">
@@ -533,7 +599,6 @@
 		<cfargument name="TestDetails">
 		<cfargument name="PriorityId">
 		<cfargument name="TypeId">
-		<cfargument name="SectionId">
 		<cfargument name="ProjectId">
 		<cfargument name="Preconditions">
 		<cfargument name="Steps">
@@ -550,7 +615,6 @@
 			arrTestCase.setTestDetails(arguments.TestDetails);
 			arrTestCase.setPriorityId(arguments.PriorityId);
 			arrTestCase.setTypeId(arguments.TypeId);
-			arrTestCase.setSectionId(arguments.SEctionId);
 			arrTestCase.setProjectID(arguments.ProjectID);
 			arrTestCase.setPreconditions(arguments.preconditions);
 			arrTestCase.setSteps(arguments.Steps);
@@ -572,6 +636,7 @@
 		<cfargument name="MilestoneID">
 		<cfargument name="TestDescription">
 		<cfargument name="ProjectID">
+		<cfargument name="SectionID" required="true">
 		<cfscript>
 			if ( arguments.id > 0 ) {
 				arrScenario = EntityLoadByPK("TTestScenario",arguments.id);
@@ -583,6 +648,7 @@
 			arrScenario.setTestDescription(arguments.TestDescription);
 			arrScenario.setProjectId(arguments.ProjectID);
 			arrScenario.setCreatorUserId(SESSION.UserIDInt);
+			arrScenario.setSectionId(isNumeric(arguments.SectionID) ? arguments.SectionID : 0);
 			try {
 				EntitySave(arrScenario);
 				return true;

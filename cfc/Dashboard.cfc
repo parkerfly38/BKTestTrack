@@ -273,7 +273,7 @@
 	
 	<cffunction name="Actions" access="remote" output="true">
 		<cfif !StructKeyExists(Session,"ProjectID")>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfquery name="qryProject" dbtype="hql">
 			FROM TTestProject
@@ -288,7 +288,11 @@
 					</div>
 					<div class="row rowoffset">
 					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-tachometer fa-fw"></i></span></h1></div>
-					<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight: bold;">Tests</span><br /><a href="##" class="lnkViewTests">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddTest">Add</a></div>
+					<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight: bold;">Test Cases</span><br /><a href="##" class="lnkViewTests">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddTest">Add</a></div>
+					</div>
+					<div class="row rowoffset">
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-th fa-fw"></i></span></h1></div>
+						<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight: bold;">Test Sections</span><br /><a href="##" class="lnkViewSections">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddSections">Add</a></div>
 					</div>
 					<div class="row rowoffset">
 						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right: 0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-suitcase fa-fw"></i></span></h1></div>
@@ -301,14 +305,14 @@
 	
 	<cffunction name="AllMilestones" access="remote" output="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfif !StructKeyExists(SESSION,"ProjectID")>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfset arrMilestones = EntityLoad("TTestMilestones",{ProjectID = SESSION.ProjectID},"DueOn ASC")>
 		<div id="allmilestonespanel" class="panel panel-default">
-			<div class="panel-heading"><i class="fa fa-map-marker"></i> Milestones</div>
+			<div class="panel-heading"><i class="fa fa-map-marker"></i> <strong>Milestones</strong></div>
 			<div class="panel-body">
 				<cfif ArrayLen(arrMilestones) gt 0>
 				<div class="well well-sm" id="overduewell" style="display:none;color:##F00;font-weight:bold;">Overdue</div>
@@ -398,15 +402,15 @@
 	
 	<cffunction name="AllScenarios" access="remote" output="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfif !StructKeyExists(SESSION,"ProjectID")>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfset arrTestScenarios = EntityLoad("TTestScenario",{ProjectID = Session.ProjectID})>
 		<cfset objData = createObject("component","Data")>
 		<div id="scenariospanel" class="panel panel-default">
-			<div class="panel-heading">Test Scenarios</div>
+			<div class="panel-heading"><i class="fa fa-tachometer"></i> <strong>Test Scenarios</strong></div>
 			<div class="panel-body">
 				<div class="well well-sm" style="font-weight:bold;">Active</div>
 				<cfif ArrayLen(arrTestScenarios) gt 0>
@@ -470,13 +474,14 @@
 	
 	<cffunction name="AllTests" access="remote" output="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfset objData = createObject("component","Data")>
 		<cfset arrTestCases = objData.getTestCasesByProject(Session.ProjectID)>
 		<div id="panelalltestcases" class="panel panel-default">
-			<div class="panel-heading">Test Cases</div>
+			<div class="panel-heading"><i class="fa fa-tachometer"></i> <strong>Test Cases</strong></div>
 			<div class="panel-body">
+				<cfif ArrayLen(arrTestCases) gt 0>
 				<!---<div class="navbar">
 					<div class="navbar-inner">
 						<ul class="nav">
@@ -507,6 +512,9 @@
 						</cfloop>
 					</tbody>
 				</table>
+				<cfelse>
+				<div class="alert alert-warning"><h4>This project doesn't contain any test cases.</h4>Please add one from the actions link to the right.</div>
+				</cfif>	
 			</div>
 		</div>				
 	</cffunction>
@@ -538,7 +546,7 @@
 										<cfcase value="Failed">
 										color : "##d9534f",
 										</cfcase>
-										<cfcase value="Untested">
+										<cfcase value="Untested,Assigned">
 										color : "##5bc0de",
 										</cfcase>
 										<cfcase value="Blocked">
@@ -579,7 +587,7 @@
 	<cffunction name="TestScenarioActivity" access="remote" output="true">
 		<cfargument name="scenarioid" type="numeric" required="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfstoredproc procedure="PReturnTestResultCountsByScenario">
 			<cfprocparam cfsqltype="cf_sql_int" value="#Session.projectid#">
@@ -673,13 +681,13 @@
 	<cffunction name="TestScenarioHub" access="remote" output="true">
 		<cfargument name="scenarioid" type="numeric" required="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfset objData = createObject("component","Data")>
 		<cfset arrScenarioData = EntityLoadByPK("TTestScenario",arguments.scenarioid)>
 		<cfset qryTestCases = objData.qryTestCaseForScenarios(arrScenarioData.getId())>
 		<cfset qryTestCounts = objData.qryTestCaseHistoryForScenarios(arrScenarioData.getId())>
-		<cfset qryTestCasesAssigned = objData.qryTestCaseHistoryDataForScenario(arrScenarioData.getId())>
+		<cfset qryTestCasesAssigned = objData.qryTestCasesAssignedScenario(arrScenarioData.getId())>
 		<cfset arrStatus = EntityLoad("TTestStatus")>
 		<script type="text/javascript">
 			$(document).ready(function() {
@@ -730,15 +738,17 @@
 							</tr>
 						</thead>
 						<tbody>
-						<cfloop query="qryTestCasesAssigned">
+						<cfloop query="qryTestCases">
 						<tr>
-							<td><input type="checkbox" id="cbxId" name="cbxId" class="cbxTestId" caseid="#caseid#" onclick="onRowSelect(this);"  /></td>
-							<td>TC#caseid#</td>
+							<td><input type="checkbox" id="cbxId" name="cbxId" class="cbxTestId" caseid="#testcaseid#" onclick="onRowSelect(this);"  /></td>
+							<td>TC#testcaseid#</td>
 							<td>#TestTitle#</td>
 							<td>#UserName#</td>
-							<td style="width:8%"><select class="form-control selectpicker" caseid="#caseid#" data-style="#returnBSLabelStyle(Action,"btn")# btn-xs">
+							<td style="width:8%">
+								<cfset qryTestStatus = objData.qryGetCurrentTestStatus(testcaseid)>
+								<select class="form-control selectpicker" caseid="#testcaseid#" data-style="#returnBSLabelStyle(qryTestStatus.Status[1],"btn")# btn-xs">
 								<cfloop array="#arrStatus#" index="indstatus">
-									<option value="#indstatus.getId()#"<cfif indstatus.getStatus() eq Action> selected</cfif>>#indstatus.getStatus()#</option>
+									<option value="#indstatus.getId()#"<cfif qryTestStatus.Status[1] eq indstatus.getStatus()> selected</cfif>>#indstatus.getStatus()#</option>
 								</cfloop>
 								</select>
 							</td>
@@ -756,7 +766,7 @@
 		<cfargument name="page" type="numeric" required="true" default="1">
 		<cfargument name="pageSize" type="numeric" required="true" default="10">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfscript>
 			objData = createObject("component","Data");
@@ -815,7 +825,7 @@
 
 	<cffunction name="mostRecentTests" access="remote" output="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfquery name="recenttests" dbtype="hql" ormoptions=#{maxResults=10}#>
 			FROM TTestResult
@@ -856,7 +866,7 @@
 	<cffunction name="getMilestones" access="remote" output="true" httpmethod="post">
 		<cfargument name="projectid" required="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfquery name="qryMilestones" dbtype="hql" ormoptions=#{maxresults=5}#>
 			FROM TTestMilestones
@@ -900,10 +910,10 @@
 	<cffunction name="getTestScenarios" access="remote" output="true" httpmethod="post">
 		<cfargument name="projectid" required="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfif !StructKeyExists(SESSION,"ProjectID")>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfquery name="qryTestScenarios" dbtype="hql" ormoptions=#{maxresults=5}#>
 			FROM	TTestScenario
@@ -991,7 +1001,7 @@
 	<cffunction name="allProjectsJSON" access="remote" returnformat="JSON" returntype="string">
 		<cfargument name="includeInactiveProjects" type="boolean" required="false" default="false">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfquery name="qryActiveProjects" dbtype="hql">
 			FROM TTestProject
@@ -1013,14 +1023,14 @@
 	<cffunction name="setSessionProject" access="remote" returntype="void" httpmethod="POST">
 		<cfargument name="projectid" required="true" type="numeric">		
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfset Session.ProjectID = arguments.projectid>
 	</cffunction>
 	
 	<cffunction name="removeSessionProject" access="remote" returntype="void" httpmethod="post">
 		<cfif (!StructKeyExists(Session,"LoggedIn") || !Session.Loggedin)>
-			<cfexit>
+			<cfreturn>
 		</cfif>
 		<cfset StructDelete(Session,"ProjectID")>
 	</cffunction>
@@ -1039,7 +1049,7 @@
 				<cfcase value="Blocked">
 					<cfset local.labelstyle = "#arguments.element#-default">
 				</cfcase>
-				<cfcase value="Untested">
+				<cfcase value="Untested,Assigned">
 					<cfset local.labelstyle = "#arguments.element#-info">
 				</cfcase>
 				<cfcase value="Retest">
