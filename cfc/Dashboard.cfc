@@ -303,6 +303,21 @@
 		</div>
 	</cffunction>
 	
+	<cffunction name="AllReports" access="remote" output="true">
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			<cfreturn>
+		</cfif>
+		<cfif !StructKeyExists(SESSION,"ProjectID")>
+			<cfreturn>
+		</cfif>
+		<div class="panel panel-default">
+			<div class="panel-heading"><strong><i class="fa fa-bars"></i> Reports</strong></div>
+			<div class="panel-body">
+				<div class='alert alert-danger' role='alert'><strong>There are no reports configured.</strong><br />Set up reports by selecting report types from the right.</div>
+			</div>
+		</div>
+	</cffunction>
+	
 	<cffunction name="AllMilestones" access="remote" output="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfreturn>

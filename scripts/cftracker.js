@@ -64,6 +64,7 @@ $(document).ready(function() {
 			projectid = null;
 			$("#panelprojects").remove();
 			$("#panel-actions").remove();
+			$("#lnkReturnToProject").hide();
 			homeLoad();
 		});
 	});
@@ -193,6 +194,10 @@ $(document).ready(function() {
 		$("#lnkReturnToProject").attr("pjid",projectid);
 		$("#lnkReturnToProject").show();
 	});
+	$(document).on("click","a.lnkViewReports",function(event){
+		event.preventDefault();
+		reportScreen();
+	});
 	$(document).on("click","a.lnkQuickTSReport",function(event) {
 		if ($(this).attr("reportvalue") != "") {
 			$.ajax({
@@ -238,6 +243,11 @@ function insertTodos() {
 		});
 	}
 	window.clearInterval(todotimervar);
+}
+
+function reportScreen() {
+	$("#topcontent").load("cfc/Dashboard.cfc?method=AllReports");
+	$("#actioncontent").load("cfc/Dashboard.cfc?method=getCreateReports");
 }
 
 function insertLinks() {
