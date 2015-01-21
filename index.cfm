@@ -18,12 +18,15 @@
 		<link rel="stylesheet" href="style/bootstrap-select.min.css" />
 		<script type="text/javascript" src="scripts/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+		<cfoutput>
 		<script type="text/javascript">
-			// <!--
-			var projectid<cfif StructKeyExists(Session,"ProjectID")> = <cfoutput>#Session.ProjectID#</cfoutput></cfif>;
-			// -->
+			
+			var projectid;
+			<cfif StructKeyExists(Session,"ProjectID")>projectid = #Session.ProjectID#;</cfif>
+			
 		</script>
-		<script type="text/javascript" src="scripts/functions.js"></script>
+		</cfoutput>
+		<script type="text/javascript" src="scripts/cftracker.js"></script>
 		<script type="text/javascript" src="scripts/ChartNew.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap-datepicker.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap-select.min.js"></script>
@@ -51,10 +54,13 @@
 		      <div id="navbar" class="navbar-collapse collapse">
 		        <ul id="uldashboard" class="nav navbar-nav navbar-right" <cfif !StructKeyExists(Session,"ProjectID")>style="display:none;"</cfif>>
 		        	<li><a id="lnkReturnAllProjects" href="#"><i class="fa fa-long-arrow-left"></i> All Projects Dashboard</a></li>
-		        	<li><a id="lnkReturnToProject" class="pjlink" href="#" style="display:none;"><i class="fa fa-long-arrow-left"></i>  Back to Project</a></li>
 		        </ul>
 		        <ul class="nav navbar-nav">
-		          <li><a id="lnkAssignedTests" href="#" userid="<cfoutput>#Session.UserIDInt#</cfoutput>"> <i class="fa fa-tasks"></i> Tests Assigned <span class="badge"><cfoutput>#local.testsAssigned#</cfoutput></span></a></li>
+		          <li><a id="lnkReturnToProject" class="pjlink" href="#"><i class="fa fa-home"></i> Project Home</a></li>
+		          <li><a class="lnkViewMilestones" href="#"><i class="fa fa-map-marker"> </i> Milestones</a></li>
+		          <li><a class="lnkViewScenarios" href="#"><i class="fa fa-suitcase"> </i> Test Scenarios</a></li>
+		          <li><a class="lnkViewTests" href="#"><i class="fa fa-tachometer"> </i> Test Cases</a></li>
+		          <li><a class="lnkViewReports" href="#"><i class="fa fa-bars"> </i> Reporting</a></li>
 		          <li><a href="index.html"> <i class="fa fa-gear"></i> Settings</a></li>
 		          <li><a href="cfc/Logon.cfc?method=Logout"> <i class="fa fa-power-off"></i> Log out</a></li>
 		        </ul>

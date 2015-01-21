@@ -1,6 +1,5 @@
 var jsonMilestones = [];
 var jsonDashMenu = [];
-var jsonLinks = [];
 var jsonProjectCounts = [];
 var jsonProjects = [];
 var jsonTodos = [];
@@ -30,9 +29,6 @@ $(document).ready(function() {
 	});
 	$.getJSON("cfc/Dashboard.cfc?method=MilestonesJSON", function(data) {
 		jsonMilestones = data;
-	});
-	$.getJSON("cfc/Dashboard.cfc?method=LinksJSON", function(data) {
-		jsonLinks = data;
 	});
 	$.getJSON("cfc/Dashboard.cfc?method=allProjectsJSON",function(data){
 		jsonProjects = data;
@@ -110,9 +106,8 @@ $(document).ready(function() {
 			projectLoad();
 			$("#panelprojects").remove();
 		});
-		$("#lnkReturnToProject").hide();
+		//$("#lnkReturnToProject").hide();
 		todotimervar = setInterval(function() {insertTodos()},10);
-		//linkstimervar = setInterval(function() {insertLinks()},10);
 		insertActions();
 	});
 	$(document).on("click","a.lnkAddScenario", function(event) {
@@ -235,37 +230,26 @@ function projectIDCheck(){
 }
 
 function insertTodos() {
-	if (jsonTodos.length > 0) {
-		$("#todopanel").remove();
-		$("#actioncontent").append("<div id='todopanel' class='panel panel-default'><div class='panel-heading'><i class='fa fa-check-square-o'></i> Todos</div><div class='panel-body'><table id='todotable' class='table table-striped'><tbody></tbody></table></div></div>");
-		if (jsonTodos[0][0] != 0) {
-		if ($("#todotable tbody").html().length == 0) {
-			$.each(jsonTodos,function(index){
-				$("#todotable tbody").append("<tr><td>"+jsonTodos[index][0]+"</td><td>("+jsonTodos[index][1]+")</td></tr>");
-			});
-			$("#todoalert").remove();
-		}
-		} else {
-			$("#todoalert").remove();
-			$("#todotable").parent().append("<div id='todoalert' class='alert alert-warning' role='alert'>No to-dos for you at this time.</div>");
-		}
-		window.clearInterval(todotimervar);
+	if ($("#todopanel").length == 0) {
+		$.ajax({
+			url: "cfc/Dashboard.cfc?method=getTodos"
+		}).done(function(data){
+			$("#actioncontent").append(data);
+		});
 	}
+	window.clearInterval(todotimervar);
 }
 
 function insertLinks() {
-	if (jsonLinks.length > 0) {
-		var newcontent = "<div class='panel panel-default'><div class='panel-heading'><i class='fa fa-code'></i> Links</span></div>"
-		newcontent += "<div class='panel-body'><table class='table table-striped'><tbody>";
-		$.each(jsonLinks,function(index) {
-			newcontent += "<tr><td><a href='"+jsonLinks[index].LinkHref+"' style='margin-bottom:5px;text-decoration:none;'><i class='fa fa-link'></i> "+jsonLinks[index].LinkDesc+"</a></td></tr>";
+	if ($("#linkspanel").length == 0)
+	{
+		$.ajax({
+			url: "cfc/Dashboard.cfc?method=getLinks"
+		}).done(function(data){
+			$("#actioncontent").append(data);
 		});
-		newcontent += "</tbody></table></div></div>";
-		setTimeout(function() {
-			$("#actioncontent").append(newcontent);
-		},100);
-		window.clearInterval(linkstimervar);
 	}
+	window.clearInterval(linkstimervar);
 }
 
 function insertAdditional() {
@@ -290,10 +274,6 @@ function insertDashMenu() {
 	$(".lnkQuickReport").click(function(event) {
 		event.preventDefault();
 		if ($(this).attr("reportvalue") != "") {
-			//$("#featurecontent").load("cfc/Dashboard.cfc?method="+$(this).attr("reportvalue"),function() {
-			//	insertDashMenu();
-			//	insertAdditional();
-			//});
 			$.ajax({
 				url: "cfc/Dashboard.cfc?method="+$(this).attr("reportvalue"),
 				type: "POST",
@@ -301,9 +281,6 @@ function insertDashMenu() {
 			}).done(function(data) {
 				$("#topcontent").replaceWith(data);
 				insertDashMenu();
-				/*insertAdditional();
-				insertMilestones();
-				insertScenarios();*/
 			});
 		}
 	});

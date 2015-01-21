@@ -950,6 +950,121 @@
 		</div>
 	</cffunction>
 	
+	<cffunction name="getLinks" access="remote" output="true">
+		<div id="linkspanel" class='panel panel-default'><div class='panel-heading'><i class='fa fa-code'></i> Links</span></div>
+		<div class='panel-body'>
+		<cfset arrLinks = entityload("TTestLinks")>
+		<cfif ArrayLen(arrLinks) gt 0>
+			<table class='table table-striped'><tbody>
+			<cfloop array="#arrLinks#" index="link">	
+				<tr>
+					<td><a href='#link.getLinkHref()#' style='margin-bottom:5px;text-decoration:none;'><i class='fa fa-link'></i> #link.getLinkDesc()#</a></td>
+				</tr>
+			</cfloop>
+		</tbody></table>
+		<cfelse>
+		<div class="alert alert-warning"><h4>No links.</h4>Administrators may add links from settings.</div>
+		</cfif></div></div>
+	</cffunction>
+	
+	<cffunction name="getTodos" access="remote" output="true">
+		<cfstoredproc procedure="PTodos">
+			<cfprocparam cfsqltype="CF_SQL_INTEGER" value="#Session.UserIDInt#">
+			<cfprocresult name="qryTodos" />
+		</cfstoredproc>
+		<div id='todopanel' class="panel panel-default"><div class="panel-heading"><i class="fa fa-check-square-o"></i> Todos</div>
+			<div class='panel-body'>
+				<cfif qryTodos.RecordCount gt 0>
+				<table id='todotable' class='table table-striped'>
+					<tbody>
+						<cfloop query="qryTodos">
+							<tr><td>#Section#</td><td>(#ItemCount#)</td></tr>
+						</cfloop>
+					</tbody>
+				</table>
+				<cfelse>
+				<div class="alert alert-warning"><h4>No todos.</h4>Either consider yourself lucky or find something to do.</div>
+				</cfif>
+			</div>
+		</div>
+	</cffunction>
+	
+	<cffunction name="getCreateReports" access="remote" output="true">
+		<div class="panel panel-default">
+			<div class="panel-heading"><i class="fa fa-bars"></i> Create Reports</div>
+			<div class="panel-body">
+				<strong>Projects</strong><br />
+				<table class="table table-condensed">
+					<tbody>
+						<tr><td style="width:85%">Activity</td>
+							<td></td>
+						</tr>
+						<tr><td style="width:85%">Coverage for References</td>
+							<td></td>
+						</tr>
+						<tr><td style="width:85%">Property Distribution</td>
+							<td></td>
+						</tr>
+						<tr><td style="width:85%">Problem Test Cases</td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+				<br />
+				<strong>Defects</strong>
+				<br />
+				<table class="table table-condensed">
+					<tbody>
+						<tr>
+							<td style="width:85%">Defect Summary</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td style="width:85%">Summary for Test Cases</td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+				<br />
+				<strong>Test Results</strong>
+				<br />
+				<table class="table table-condensed">
+					<tbody>
+						<tr>
+							<td style="width:85%">Case Comparison</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Reference Comparison</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Property Distribution</td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+				<br />
+				<strong>Summary</strong>
+				<br />
+				<table class="table table-condensed">
+					<tbody>
+						<tr><td  style="width:85%">Milestone Summary</td><td></td></tr>
+						<tr><td style="width:85%">Scenario Summary</td><td></td></tr>
+						<tr><td style="width:85%">Project Summary</td><td></td></tr>
+					</tbody>
+				</table>
+				<br />
+				<strong>Users</strong>
+				<br />
+				<table class="table table-condensed">
+					<tbody>
+						<tr><td style="width:85%">User Workload Summary</td><td></td></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</cffunction>
 	<!--- JSON and single value functions --->
 		
 	<cffunction name="TodosBySection" access="remote" returnformat="JSON" returntype="string">
