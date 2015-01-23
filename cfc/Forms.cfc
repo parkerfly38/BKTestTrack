@@ -43,7 +43,6 @@
 			<cfset arrTestCase = EntityNew("TTestCase")>
 			<cfset arrTestCase.setId(0)>
 			<cfset arrTestCase.setPriorityId(0)>
-			<cfset arrTestCase.setSectionID(0)>
 			<cfset arrTestCase.setTypeId(0)>
 		</cfif>
 		<script type="text/javascript">

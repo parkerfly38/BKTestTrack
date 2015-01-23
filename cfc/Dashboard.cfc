@@ -311,7 +311,7 @@
 			<cfreturn>
 		</cfif>
 		<div class="panel panel-default">
-			<div class="panel-heading"><strong><i class="fa fa-bars"></i> Reports</strong></div>
+			<div class="panel-heading"><strong><i class="fa fa-bars"></i> Reporting</strong></div>
 			<div class="panel-body">
 				<div class='alert alert-danger' role='alert'><strong>There are no reports configured.</strong><br />Set up reports by selecting report types from the right.</div>
 			</div>
@@ -1005,76 +1005,67 @@
 	</cffunction>
 	
 	<cffunction name="getCreateReports" access="remote" output="true">
-		<div class="panel panel-default">
+		<div id="createreportpanel" class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-bars"></i> Create Reports</div>
 			<div class="panel-body">
 				<strong>Projects</strong><br />
-				<table class="table table-condensed">
+				<table class="table table-condensed table-hover">
 					<tbody>
-						<tr><td style="width:85%">Activity</td>
-							<td></td>
+						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Activity</td>
 						</tr>
-						<tr><td style="width:85%">Coverage for References</td>
-							<td></td>
+						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Coverage for References</td>
 						</tr>
-						<tr><td style="width:85%">Property Distribution</td>
-							<td></td>
+						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Property Distribution</td>
 						</tr>
-						<tr><td style="width:85%">Problem Test Cases</td>
-							<td></td>
+						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Problem Test Cases</td>
 						</tr>
 					</tbody>
 				</table>
 				<br />
 				<strong>Defects</strong>
 				<br />
-				<table class="table table-condensed">
+				<table class="table table-condensed table-hover">
 					<tbody>
 						<tr>
-							<td style="width:85%">Defect Summary</td>
-							<td></td>
+							<td><i class="fa fa-plus-circle" style="color:green;"></i> Defect Summary</td>
 						</tr>
 						<tr>
-							<td style="width:85%">Summary for Test Cases</td>
-							<td></td>
+							<td><i class="fa fa-plus-circle" style="color:green;"></i> Summary for Test Cases</td>
 						</tr>
 					</tbody>
 				</table>
 				<br />
 				<strong>Test Results</strong>
 				<br />
-				<table class="table table-condensed">
+				<table class="table table-condensed table-hover">
 					<tbody>
 						<tr>
-							<td style="width:85%">Case Comparison</td>
-							<td></td>
+							<td><i class="fa fa-plus-circle" style="color:green;"></i> Case Comparison</td>
 						</tr>
 						<tr>
-							<td>Reference Comparison</td>
-							<td></td>
+							<td><i class="fa fa-plus-circle" style="color:green;"></i> Reference Comparison</td>
 						</tr>
 						<tr>
-							<td>Property Distribution</td>
-							<td></td>
+							<td><i class="fa fa-plus-circle" style="color:green;"></i> Property Distribution</td>
 						</tr>
 					</tbody>
 				</table>
 				<br />
 				<strong>Summary</strong>
 				<br />
-				<table class="table table-condensed">
+				<table class="table table-condensed table-hover">
 					<tbody>
-						<tr><td  style="width:85%">Milestone Summary</td><td></td></tr>
-						<tr><td style="width:85%">Scenario Summary</td><td></td></tr>
-						<tr><td style="width:85%">Project Summary</td><td></td></tr>
+						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Milestone Summary</td></tr>
+						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Scenario Summary</td></tr>
+						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Project Summary</td></tr>
 					</tbody>
 				</table>
 				<br />
 				<strong>Users</strong>
 				<br />
-				<table class="table table-condensed">
+				<table class="table table-condensed table-hover">
 					<tbody>
-						<tr><td style="width:85%">User Workload Summary</td><td></td></tr>
+						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> User Workload Summary</td></tr>
 					</tbody>
 				</table>
 			</div>
@@ -1084,6 +1075,7 @@
 		
 	<cffunction name="TodosBySection" access="remote" returnformat="JSON" returntype="string">
 		<cfstoredproc procedure="PTodos">
+			<cfprocparam cfsqltype="CF_SQL_INTEGER" value="#Session.UserIDInt#">
 			<cfprocresult name="qryTodos" />
 		</cfstoredproc>
 		<cfreturn serializeJSON(qryTodos) />

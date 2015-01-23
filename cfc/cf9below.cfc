@@ -1,6 +1,6 @@
-<cfcomponent>
+<cfcomponent implements="ICommon">
 
-	<cffunction name="qryTasks" returntype="Query">
+	<cffunction name="getScheduleQuery" returntype="Query">
 		<cfsavecontent variable="local.tasks">
 	    	<cfschedule action="run" task="__list">
 	    	</cfsavecontent>

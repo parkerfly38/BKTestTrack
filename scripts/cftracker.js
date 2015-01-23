@@ -64,7 +64,12 @@ $(document).ready(function() {
 			projectid = null;
 			$("#panelprojects").remove();
 			$("#panel-actions").remove();
+			$("#createreportpanel").remove();
 			$("#lnkReturnToProject").hide();
+			$(".lnkViewMilestones").hide();
+			$(".lnkViewScenarios").hide();
+			$(".lnkViewTests").hide();
+			$(".lnkViewReports").hide();
 			homeLoad();
 		});
 	});
@@ -106,7 +111,13 @@ $(document).ready(function() {
 			projectIDCheck();
 			projectLoad();
 			$("#panelprojects").remove();
+			$("#createreportpanel").remove();
 		});
+		$("#lnkReturnToProject").show();
+		$(".lnkViewMilestones").show();
+		$(".lnkViewScenarios").show();
+		$(".lnkViewTests").show();
+		$(".lnkViewReports").show();
 		//$("#lnkReturnToProject").hide();
 		todotimervar = setInterval(function() {insertTodos()},10);
 		insertActions();
@@ -164,7 +175,8 @@ $(document).ready(function() {
 		$("#midrow").empty();
 		$("#activitypanel").remove();
 		$("#lnkReturnToProject").attr("pjid",projectid);
-		$("#lnkReturnToProject").show();
+		$("#lnkReturnToProject").show();		
+		$("#createreportpanel").remove();
 	});
 	$(document).on("click","a.lnkViewMilestones",function(event) {
 		event.preventDefault();
@@ -175,6 +187,7 @@ $(document).ready(function() {
 		$("#lnkReturnToProject").attr("pjid",projectid);
 		$("#lnkReturnToProject").show();
 		currentview = "milestones";
+		$("#createreportpanel").remove();
 	});
 	$(document).on("click","a.lnkViewScenarios",function(event) {
 		event.preventDefault();
@@ -184,6 +197,7 @@ $(document).ready(function() {
 		$("#activitypanel").remove();
 		$("#lnkReturnToProject").attr("pjid",projectid);
 		$("#lnkReturnToProject").show();
+		$("#createreportpanel").remove();
 	});
 	$(document).on("click","a.lnkOpenScenarioHub",function(event) {
 		event.preventDefault();
@@ -193,6 +207,7 @@ $(document).ready(function() {
 		$("#activitypanel").remove();
 		$("#lnkReturnToProject").attr("pjid",projectid);
 		$("#lnkReturnToProject").show();
+		$("#createreportpanel").remove();
 	});
 	$(document).on("click","a.lnkViewReports",function(event){
 		event.preventDefault();
@@ -231,6 +246,12 @@ function projectIDCheck(){
 		}).done(function(data) {
 				recentresultscontent = data;
 		});
+		
+		$("#lnkReturnToProject").show();
+		$(".lnkViewMilestones").show();
+		$(".lnkViewScenarios").show();
+		$(".lnkViewTests").show();
+		$(".lnkViewReports").show();
 	}
 }
 
@@ -247,7 +268,16 @@ function insertTodos() {
 
 function reportScreen() {
 	$("#topcontent").load("cfc/Dashboard.cfc?method=AllReports");
-	$("#actioncontent").load("cfc/Dashboard.cfc?method=getCreateReports");
+	//$("#actioncontent").load("cfc/Dashboard.cfc?method=getCreateReports");
+	if ($("#createreportpanel").length == 0) {
+		$.ajax({
+			url: "cfc/Dashboard.cfc?method=getCreateReports"
+		}).done(function(data){
+			$("#actioncontent").prepend(data);
+		});
+	}
+	$("#midrow").empty();
+	$("#activitypanel").remove();
 }
 
 function insertLinks() {

@@ -37,6 +37,12 @@
 				content:"*";
 				color:red;
 			}
+			.linkhide {
+				display: none;
+			}
+			.linkshow {
+				display: block;
+			}
 		</style>
 	</head>
 	<body>
@@ -56,11 +62,11 @@
 		        	<li><a id="lnkReturnAllProjects" href="#" style="display:none;"><i class="fa fa-long-arrow-left"></i> All Projects Dashboard</a></li>
 		        </ul>
 		        <ul class="nav navbar-nav">
-		          <li><a id="lnkReturnToProject" class="pjlink" href="#"><i class="fa fa-home"></i> Project Home</a></li>
-		          <li><a class="lnkViewMilestones" href="#"><i class="fa fa-map-marker"> </i> Milestones</a></li>
-		          <li><a class="lnkViewScenarios" href="#"><i class="fa fa-suitcase"> </i> Test Scenarios</a></li>
-		          <li><a class="lnkViewTests" href="#"><i class="fa fa-tachometer"> </i> Test Cases</a></li>
-		          <li><a class="lnkViewReports" href="#"><i class="fa fa-bars"> </i> Reporting</a></li>
+		          <li><a id="lnkReturnToProject" class="pjlink" style="display:none;" href="#"><i class="fa fa-home"></i> Project Home</a></li>
+		          <li><a class="lnkViewMilestones" href="#" style="display:none;"><i class="fa fa-map-marker"> </i> Milestones</a></li>
+		          <li><a class="lnkViewScenarios" href="#" style="display:none;"><i class="fa fa-suitcase"> </i> Test Scenarios</a></li>
+		          <li><a class="lnkViewTests" href="#" style="display:none;"><i class="fa fa-tachometer"> </i> Test Cases</a></li>
+		          <li><a class="lnkViewReports" href="#" style="display:none;"><i class="fa fa-bars"> </i> Reporting</a></li>
 		          <li><a href="index.html"> <i class="fa fa-gear"></i> Settings</a></li>
 		          <li><a href="cfc/Logon.cfc?method=Logout"> <i class="fa fa-power-off"></i> Log out</a></li>
 		        </ul>

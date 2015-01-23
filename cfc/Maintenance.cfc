@@ -5,11 +5,11 @@
     	<cfcase value="8,9">
 	    	<cfset local = structnew()>
 	    	<cfset objCF9 = createObject("component","cf9below")>
-	    	<cfset qryScheduledTasks = objCF9.qryTasks()>
+	    	<cfset qryScheduledTasks = objCF9.getScheduleQuery()>
 	    </cfcase>
 	    <cfcase value="10,11">
 	   		<cfset objCF10 = createObject("component","cf10plus")>
-	   		<cfset qryScheduledTasks = objCF10.qryTasks()>
+	   		<cfset qryScheduledTasks = objCF10.getScheduleQuery()>
 	    </cfcase>
 	</cfswitch>
     <cfquery dbtype="query" name="qrytasks">
