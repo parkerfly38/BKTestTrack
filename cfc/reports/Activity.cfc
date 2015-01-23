@@ -35,8 +35,6 @@ component implements="COGTestTrack.cfc.IReports"
 			variables.ReportOptions.GroupingAndChanges = StructNew();
 			variables.ReportOptions.GroupingAndChanges.GroupChangesBy = "Day";
 			variables.ReportOptions.GroupingAndChanges.IncludeChanges = "New,Updated";
-			variables.ReportOptions.GroupingAndChanges.StartDate = Now();
-			variables.ReportOptions.GroupingAndChanges.EndDate = Now();
 			variables.ReportOptions.TestSuites = "";
 			variables.ReportOptions.TestCases = "";
 		}
@@ -46,11 +44,13 @@ component implements="COGTestTrack.cfc.IReports"
 		if ( structIsEmpty(variables.AccessAndScheduling) )
 		{
 			variables.AccessAndScheduling.AccessBy = 0;
-			variables.AccessAndScheduling.CreateReport = "OneTime";
+			variables.AccessAndScheduling.CreateReport = "once";
 			variables.AccessAndScheduling.Email = StructNew();
 			variables.AccessAndScheduling.Email.NotifyMe = true;
 			variables.AccessAndScheduling.Email.SendLinkToUserIds = "";
 			variables.AccessAndScheduling.Email.SendAsAttachmentTo = "";
+			variables.AccessAndScheduling.StartDate = Now();
+			variables.AccessAndScheduling.StartTime = "17:00";
 		}
 		return variables.AccessAndScheduling;
 	}
@@ -79,6 +79,9 @@ component implements="COGTestTrack.cfc.IReports"
 	{
 		return "Projects";
 	}
+	public numeric function getReportId() {
+		return variables.reportid;
+	}
 	
 	public void function saveReport()
 	{
@@ -96,7 +99,12 @@ component implements="COGTestTrack.cfc.IReports"
 		report.setReportOptions(objFunctions.toWddx(this.GetReportOptions()));
 		report.setReportAccessAndScheduling(objFunctions.toWddx(this.getAccessAndScheduling()));
 		EntitySave(report);
-		//TODO:  create scheduled task at this point for new report
+		variables.reportid = report.getId();
+		if ( variables.AccessAndScheduling.CreateReport != "once" ) {
+			objMaintenance = createObject("component","COGTestTrack.cfc.Maintenance");
+			objMaintenance.createTask(report.getId(),variables.AccessAndScheduling.CreateReport,variables.AccessAndScheduling.StartDate,variables.AccessAndScheduling.StartTime);
+		}
+		
 	}
 	public any function runReport() {
 		// if report is one time, we'll look to see if expected PDF already exists, and stop here for superflous processing

@@ -11,8 +11,11 @@ component
 		variables.report.runReport();
 	}
 	
-	public void function saveReport()
+	public any function saveReport()
 	{
 		variables.report.saveReport();	
+	}
+	public numeric function getReportId() {
+		return variables.report.getReportId();
 	}
 }

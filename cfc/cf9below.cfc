@@ -1,4 +1,4 @@
-<cfcomponent implements="ICommon">
+<cfcomponent>
 
 	<cffunction name="getScheduleQuery" returntype="Query">
 		<cfsavecontent variable="local.tasks">
