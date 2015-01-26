@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+		<frameChart isInterpolated="false">
+          <dataLabels style="Value" font="Arial-12" isMultiline="false">
+          <![CDATA[ $(value) ]]>
+          </dataLabels>
+        </frameChart>

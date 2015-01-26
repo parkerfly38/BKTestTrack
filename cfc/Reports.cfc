@@ -6,9 +6,9 @@ component
 		return this;
 	}
 	
-	public void function runReport()
+	public any function runReport()
 	{
-		variables.report.runReport();
+		return variables.report.runReport();
 	}
 	
 	public any function saveReport()
