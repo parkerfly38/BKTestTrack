@@ -42,8 +42,8 @@ component implements="COGTestTrack.cfc.IReports"
 	public struct function getAccessAndScheduling() {
 		if ( structIsEmpty(variables.AccessAndScheduling) )
 		{
-			variables.AccessAndScheduling.AccessBy = 0;
-			variables.AccessAndScheduling.CreateReport = "once";
+			variables.AccessAndScheduling.AccessBy = Session.UserIDInt;
+			variables.AccessAndScheduling.CreateReport = "Once";
 			variables.AccessAndScheduling.Email = StructNew();
 			variables.AccessAndScheduling.Email.NotifyMe = true;
 			variables.AccessAndScheduling.Email.SendLinkToUserIds = "";
@@ -139,41 +139,6 @@ component implements="COGTestTrack.cfc.IReports"
 		q1 = new Query();
 		q1.setSQL(sql);
 		rs1 = q1.execute().getResult();
-		temp1 = queryAddRow(rs1);
-		temp1 = QuerySetCell(rs1,"Action","Created",1);
-		temp1 = QuerySetCell(rs1,"DateOfAction","2014-01-23",1);
-		temp1 = QuerySetCell(rs1,"TestTitle","EatMyShorts",1);
-		temp1 = QuerySetCell(rs1,"UserName","Brian Kresge",1);
-		temp1 = queryAddRow(rs1);
-		temp1 = QuerySetCell(rs1,"Action","Assigned",2);
-		temp1 = QuerySetCell(rs1,"DateOfAction","2014-01-24",2);
-		temp1 = QuerySetCell(rs1,"TestTitle","EatMyShorts",2);
-		temp1 = QuerySetCell(rs1,"UserName","Brian Kresge",2);
-		temp1 = queryAddRow(rs1);
-		temp1 = QuerySetCell(rs1,"Action","Created",3);
-		temp1 = QuerySetCell(rs1,"DateOfAction","2014-01-25",3);
-		temp1 = QuerySetCell(rs1,"TestTitle","EatMyShorts",3);
-		temp1 = QuerySetCell(rs1,"UserName","Brian Kresge",3);
-		temp1 = queryAddRow(rs1);
-		temp1 = QuerySetCell(rs1,"Action","Created",4);
-		temp1 = QuerySetCell(rs1,"DateOfAction","2014-01-23",4);
-		temp1 = QuerySetCell(rs1,"TestTitle","EatMyShorts",4);
-		temp1 = QuerySetCell(rs1,"UserName","Brian Kresge",4);
-		temp1 = queryAddRow(rs1);
-		temp1 = QuerySetCell(rs1,"Action","Assigned",5);
-		temp1 = QuerySetCell(rs1,"DateOfAction","2014-01-24",5);
-		temp1 = QuerySetCell(rs1,"TestTitle","EatMyShorts",5);
-		temp1 = QuerySetCell(rs1,"UserName","Brian Kresge",5);
-		temp1 = queryAddRow(rs1);
-		temp1 = QuerySetCell(rs1,"Action","Retest",6);
-		temp1 = QuerySetCell(rs1,"DateOfAction","2014-01-25",6);
-		temp1 = QuerySetCell(rs1,"TestTitle","EatMyShorts",6);
-		temp1 = QuerySetCell(rs1,"UserName","Brian Kresge",6);
-		temp1 = queryAddRow(rs1);
-		temp1 = QuerySetCell(rs1,"Action","Retest",7);
-		temp1 = QuerySetCell(rs1,"DateOfAction","2014-01-24 ",7);
-		temp1 = QuerySetCell(rs1,"TestTitle","EatMyShorts",7);
-		temp1 = QuerySetCell(rs1,"UserName","Brian Kresge",7);
 		
 		reportoutput = "<table border='0' cellspacing='0' cellpadding='2' align='center'><tbody>";
 		if ( ListContainsNoCase(variables.ReportOptions.GroupingAndChanges.IncludeChanges,"New") > 0 && ListContainsNoCase(variables.ReportOptions.GroupingAndChanges.IncludeChanges,"Updated") > 0)

@@ -22,6 +22,9 @@ component table="TTestResult" persistent="true"
 		newcasehistory.setAction(this.getTTestStatus().getStatus());
 		newcasehistory.setTesterID(this.getTTestTester().getId());
 		newcasehistory.setDateOfAction(Now());
+		if ( this.getTTestStatus().getStatus() == "Passed" ) {
+			newcasehistory.setDateActionClosed(now());
+		}
 		newcasehistory.setCaseId(this.getTestCaseID());
 		EntitySave(newcasehistory);
 	}

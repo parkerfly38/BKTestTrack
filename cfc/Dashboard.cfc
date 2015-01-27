@@ -1,6 +1,7 @@
 <cfcomponent>
 	
 	<!--- dashboard charting --->
+	<cfset objFunctions = createObject("component","Functions")>
 	
 	<cffunction name="HubChart" access="remote" output="true" httpmethod="POST">
 		<cfargument name="projectid" required="false" default="0">
@@ -313,7 +314,37 @@
 		<div class="panel panel-default">
 			<div class="panel-heading"><strong><i class="fa fa-bars"></i> Reporting</strong></div>
 			<div class="panel-body">
+				<cfset arrReports = EntityLoad("TTestReports",{ProjectID = Session.ProjectID})>
+				<cfif ArrayLen(arrReports) GT 0>
+					<div class="well well-sm" style="font-weight:bold;">Configured Reports</div>
+					<table class="table table-striped table-condensed table-hover">
+						<thead>
+							<tr>
+								<th>Report Type</th>
+								<th>Report Name</th>
+								<th>Report Time Span</th>
+								<th>Report Frequency</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<cfloop array="#arrReports#" index="report">
+								<cfset optionsStruct = objFunctions.toCFML(report.getReportOptions())>
+								<cfset skedStruct = objFunctions.toCFML(report.getReportAccessAndScheduling())>
+							<tr>
+								<td>#report.getReportTypeName()#</td>
+								<td>#report.getReportName()#</td>
+								<td>#optionsStruct.TimeFrame#</td>
+								<td>#skedStruct.CreateReport#</td>
+								<td><div class="btn-group"><a class="btn btn-primary btn-sm" href="reportpdfs/#report.getId()#.pdf" target="_blank">View</a><a class="btn btn-primary btn-sm" href="##">Delete</a></div></td>
+							</tr>
+							</cfloop>
+						</tbody>
+					</table>
+				<cfelse>
+						
 				<div class='alert alert-danger' role='alert'><strong>There are no reports configured.</strong><br />Set up reports by selecting report types from the right.</div>
+				</cfif>
 			</div>
 		</div>
 	</cffunction>

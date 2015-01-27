@@ -211,6 +211,7 @@ $(document).ready(function() {
 	});
 	$(document).on("click","a.lnkViewReports",function(event){
 		event.preventDefault();
+		$("#topcontent").removeClass("panel").removeClass("panel-default");
 		reportScreen();
 	});
 	$(document).on("click","a.lnkQuickTSReport",function(event) {

@@ -8,5 +8,6 @@ component table="TTestReports" persistent="true"
 	property name="ReportName";
 	property name="ReportDescription";
 	property name="ReportOptions";
-	property name="ReportAccessAndScheduling";	
+	property name="ReportAccessAndScheduling";
+	property name="ProjectID";
 }

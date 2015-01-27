@@ -5,7 +5,7 @@
 	blarg = activityreport.getAccessAndScheduling();
 	//writeDump(blarg);
 	writeDump(activityreport.getReportOptions());
-	blarg.createreport = "weekly";
+	blarg.createreport = "Weekly";
 	//writeDump(blarg);
 	//writeOutput(activityreport.getAuthor());
 	testreport = new cfc.Reports(activityreport);
