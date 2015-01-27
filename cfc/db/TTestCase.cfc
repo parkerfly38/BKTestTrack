@@ -5,7 +5,6 @@ component table="TTestCase" persistent="true"
 	property name="TestDetails";
 	property name="PriorityId";
 	property name="TypeId";
-	//property name="SectionId";
 	property name="Preconditions";
 	property name="Steps";
 	property name="ExpectedResult";
@@ -16,6 +15,11 @@ component table="TTestCase" persistent="true"
 	property name="TTestResult" fieldtype="one-to-many" cfc="TTestResult" inversejoincolumn="id" fkcolumn="TestCaseID";
 	
 	public void function postInsert() {
-			
+		newcasehistory = EntityNew("TTestCaseHistory");
+		newcasehistory.setAction("Created");
+		newcasehistory.setTesterID(Session.UserIDInt);
+		newcasehistory.setDateOfAction(Now());
+		newcasehistory.setCaseId(this.getId());
+		EntitySave(newcasehistory);
 	}
 }

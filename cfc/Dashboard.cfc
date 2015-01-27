@@ -437,6 +437,11 @@
 					<cfset qryTestCounts = objData.qryTestCaseHistoryForScenarios(scenario.getId())>
 						<tr>
 							<td><h5><a href="##" class="lnkOpenScenarioHub" scenarioid="#scenario.getId()#">#scenario.getTestScenario()#</a><h5>
+								<cfset untestedPercent = 0>
+								<cfset blockedPercent = 0>
+								<Cfset retestPercent = 0>
+								<Cfset passedPercent = 0>
+								<cfset failedPercent = 0>
 								<cfloop query="qryTestCounts">
 									<!--- conditional for percentage counts --->
 									<cfif Status eq "Untested">
