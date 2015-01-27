@@ -14,4 +14,8 @@ component table="TTestCase" persistent="true"
 	property name="ProjectID";
 	property name="TTestCaseHistory" fieldtype="one-to-many" cfc="TTestCaseHistory" inversejoincolumn="id" fkcolumn="CaseId";
 	property name="TTestResult" fieldtype="one-to-many" cfc="TTestResult" inversejoincolumn="id" fkcolumn="TestCaseID";
+	
+	public void function postInsert() {
+			
+	}
 }

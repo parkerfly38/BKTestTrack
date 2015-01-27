@@ -113,12 +113,13 @@ component implements="COGTestTrack.cfc.IReports"
 				return;
 			}
 		}
-		sql = "SELECT a.TestTitle, b.Action, b.DateOfAction ";
+		sql = "SELECT a.TestTitle, b.Action, b.DateOfAction,d.UserName ";
 		sql &= "FROM TTestCase a INNER JOIN TTestCaseHistory b ";
 		sql &= "ON a.id = b.CaseId ";
 		if ( Len(variables.ReportOptions.TestScenarios) > 0 ) {
 			sql &= "INNER JOIN TTestScenarioCases c ON a.id = c.CaseId ";
 		}
+		sql &= "INNER JOIN TTestTester d ON b.TesterId = d.id ";
 		sql &= "WHERE b.DateActionClosed IS NULL ";
 		if ( ListContainsNoCase(variables.ReportOptions.GroupingAndChanges.IncludeChanges,"New") > 0 && ListContainsNoCase(variables.ReportOptions.GroupingAndChanges.IncludeChanges,"Updated") == 0)
 			sql &= "AND b.Action = 'Created' ";
@@ -142,30 +143,37 @@ component implements="COGTestTrack.cfc.IReports"
 		temp1 = QuerySetCell(rs1,"Action","Created",1);
 		temp1 = QuerySetCell(rs1,"DateOfAction","2014-01-23",1);
 		temp1 = QuerySetCell(rs1,"TestTitle","EatMyShorts",1);
+		temp1 = QuerySetCell(rs1,"UserName","Brian Kresge",1);
 		temp1 = queryAddRow(rs1);
 		temp1 = QuerySetCell(rs1,"Action","Assigned",2);
 		temp1 = QuerySetCell(rs1,"DateOfAction","2014-01-24",2);
 		temp1 = QuerySetCell(rs1,"TestTitle","EatMyShorts",2);
+		temp1 = QuerySetCell(rs1,"UserName","Brian Kresge",2);
 		temp1 = queryAddRow(rs1);
 		temp1 = QuerySetCell(rs1,"Action","Created",3);
 		temp1 = QuerySetCell(rs1,"DateOfAction","2014-01-25",3);
 		temp1 = QuerySetCell(rs1,"TestTitle","EatMyShorts",3);
+		temp1 = QuerySetCell(rs1,"UserName","Brian Kresge",3);
 		temp1 = queryAddRow(rs1);
 		temp1 = QuerySetCell(rs1,"Action","Created",4);
 		temp1 = QuerySetCell(rs1,"DateOfAction","2014-01-23",4);
 		temp1 = QuerySetCell(rs1,"TestTitle","EatMyShorts",4);
+		temp1 = QuerySetCell(rs1,"UserName","Brian Kresge",4);
 		temp1 = queryAddRow(rs1);
 		temp1 = QuerySetCell(rs1,"Action","Assigned",5);
 		temp1 = QuerySetCell(rs1,"DateOfAction","2014-01-24",5);
 		temp1 = QuerySetCell(rs1,"TestTitle","EatMyShorts",5);
+		temp1 = QuerySetCell(rs1,"UserName","Brian Kresge",5);
 		temp1 = queryAddRow(rs1);
 		temp1 = QuerySetCell(rs1,"Action","Retest",6);
 		temp1 = QuerySetCell(rs1,"DateOfAction","2014-01-25",6);
 		temp1 = QuerySetCell(rs1,"TestTitle","EatMyShorts",6);
+		temp1 = QuerySetCell(rs1,"UserName","Brian Kresge",6);
 		temp1 = queryAddRow(rs1);
 		temp1 = QuerySetCell(rs1,"Action","Retest",7);
 		temp1 = QuerySetCell(rs1,"DateOfAction","2014-01-24 ",7);
 		temp1 = QuerySetCell(rs1,"TestTitle","EatMyShorts",7);
+		temp1 = QuerySetCell(rs1,"UserName","Brian Kresge",7);
 		
 		reportoutput = "<table border='0' cellspacing='0' cellpadding='2' align='center'><tbody>";
 		if ( ListContainsNoCase(variables.ReportOptions.GroupingAndChanges.IncludeChanges,"New") > 0 && ListContainsNoCase(variables.ReportOptions.GroupingAndChanges.IncludeChanges,"Updated") > 0)
@@ -177,18 +185,16 @@ component implements="COGTestTrack.cfc.IReports"
 			q2.setSQL("SELECT [Action] as Item, COUNT([Action]) as ItemCount FROM [rs] GROUP BY [Action]");
 			rs2 = q2.execute().getResult();
 			reportoutput &= "<tr><td>" & objFunctions.piechart(rs2,"Activity Counts") & "</td></tr>";
-			//pdfvar = objFunctions.createPDFfromContent(reportoutput);
-			//fileWrite(GetDirectoryFromPath(GetCurrentTemplatePath())&"/pdfs/"& variables.reportid & ".pdf",pdfvar);
+			
 		}
-		reportoutput &= "<tr><td><h3>Activity for Date Range</h3><table border='0' cellspacing='0' cellpadding='3'><thead><tr><th>Action</th><th>Date</th><th>Test Title</th></tr></thead><tbody>";
+		reportoutput &= "<tr><td><h3>Activity for Date Range</h3><table border='0' cellspacing='0' cellpadding='3'><thead><tr><th>Action</th><th>Date</th><th>Test Title</th><th>Assigned To</th></tr></thead><tbody>";
 		for ( q in rs1 ) {
-			reportoutput &= "<tr><td>" & q.Action & "</td><td>" & q.DateOfAction & "</td><td>" & q.TestTitle & "</td></tr>";
+			reportoutput &= "<tr><td>" & q.Action & "</td><td>" & q.DateOfAction & "</td><td>" & q.TestTitle & "</td><td>" & q.UserName & "</td></tr>";
 		}
 		reportoutput &= "</tbody></table></td></tr></tbody></table>";
-		//TODO:  Create PDF here, if it doesn't already exist
 		writeOutput(reportoutput); 
 		pdfvar = objFunctions.createPDFfromContent(reportoutput);
-		fileWrite(GetDirectoryFromPath(GetCurrentTemplatePath())&"/pdfs/"& variables.reportid & ".pdf",pdfvar);
+		fileWrite(ExpandPath("/reportpdfs/") & variables.reportid & ".pdf",pdfvar);
 		//TODO:  if it's scheduled, handle email disposition
 	}
 }
