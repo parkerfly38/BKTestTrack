@@ -1,4 +1,4 @@
-<cfscript>
+<!---<cfscript>
 	//writeDump(Application);
 	activityreport = new cfc.reports.Activity(0,"Weekly Activity Report",StructNew(),StructNew());
 	//writeDump(activityreport);
@@ -10,10 +10,14 @@
 	//writeDump(blarg);
 	//writeOutput(activityreport.getAuthor());
 	testreport = new cfc.Reports(activityreport);
-	writeOutput(testreport.getFormFields());
-	//testreport.saveReport();
-	testreport.runReport();
+	//writeOutput(testreport.getFormFields());
+	testreport.saveReport();
+	//testreport.runReport();
 	//objMaintenance = createObject("component","cfc.Maintenance");
 	//writeDump(objMaintenance.returnTasks());
 	//writeOutput(testreport.saveReport()); 
-</cfscript>
+</cfscript>--->
+<cfset jsonvar = '{"ReportOptions":[{"GroupingAndChanges":[{"IncludeChanges":""}]},{"TimeFrame":"Today"},{"TestScenarios":""}]}'>
+<CFDUMP VAR="#deserializejson(jsonvar)#">
+<cfset jsonvar2 = '{"AccessAndScheduling":[{},{"CreateReport":"once"},{"Email":[{},{"SendLinkToUserIds":""},{"SendAsAttachmentTo":""}]},{"StartDate":"2015-01-29"},{"StartTime":"0:00"}]}'>
+<cfdump var="#deserializejson(jsonvar2)#">

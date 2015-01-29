@@ -292,9 +292,18 @@
 		</cfquery>
 		<script type="text/javascript">
 			$(document).ready(function() {
+				$(document).off("click","##btnClose");
+					$(document).on("click","##btnClose",function(event) {
+						event.preventDefault();					
+						if (confirm("Are you sure you want to close without saving?"))
+						{
+							$("##smallModal").modal('hide');
+						}
+					});
 				$(document).off("click","##btnSave");
 				$(document).on("click","##btnSave", function(event) {
 					event.preventDefault();
+					
 					var multipleValues = $("##testcases").val() || [];
 					$.ajax({
 						url : "CFC/Forms.cfc?method=saveCasesToScenario",
@@ -341,6 +350,22 @@
 					{
 						$("##largeModal").modal('hide');
 					}
+				});
+				$(document).off("click","##btnSave");
+				$(document).on("click","##btnSave",function(event) {
+					#report.getJSONFormDataForPost()#;
+					$.ajax({
+						url : "cfc/forms.cfc?method=saveReport",
+						type : "POST",
+						data: {  reportType : '#arguments.reporttype#',
+								 reportName : $("##reportname").val(),
+								 reportOptions : JSON.stringify(reportOptions),
+								 reportAandS : JSON.stringify(reportAandS)
+							
+						 }
+					}).done(function(data) {
+						$("##largeModal").modal('hide');
+					});
 				});
 			});
 		</script>
@@ -796,6 +821,26 @@
 				return serializeJSON(ex);
 			}
 		</cfscript>
+	</cffunction>
+	
+	<cffunction name="saveReport" access="remote" returntype="any" returnformat="JSON">
+		<cfargument name="reportType" required="true">
+		<cfargument name="reportName" required="true">
+		<cfargument name="reportOptions" type="string">
+		<cfargument name="reportAandS" type="string">
+		<!--- convert options and ands to cfml from wddx --->
+		<cfset s1 = deserializeJSON(arguments.reportOptions)>
+		<cfset s2 = deserializeJSON(arguments.reportAandS)>
+		<cfset ReportOptions = s1.ReportOptions>
+		<cfset AccessAndScheduling = s2.AccessAndScheduling>
+		<cfscript>
+			report = createObject("component","reports.#arguments.reportType#").init(0,arguments.reportName,s1,s2);
+			newreport = new Reports(report);
+			newreport.saveReport();
+			if ( structAandS.CreateReport == "Once")
+				newreport.runReport();
+		</cfscript>
+		
 	</cffunction>
 	
 	<cffunction name="deleteReport" access="remote" returntype="any" returnformat="JSON">

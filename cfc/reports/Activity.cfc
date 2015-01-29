@@ -54,6 +54,32 @@ component implements="COGTestTrack.cfc.IReports"
 		return variables.AccessAndScheduling;
 	}
 	
+	
+	public string function getJSONFormDataForPost(){
+		sReturn =	"var includechanges = $('##includechanges:checked').map(function(){ " & chr(10) & chr(13);
+		sReturn &= 	"	return $(this).val();" & chr(10) & chr(13);
+		sReturn &=	"}).get();" & chr(10) & chr(13);
+		sReturn &=	"var ts = $('##testscenarios').val() || [];" & chr(10) & chr(13);
+		sReturn &=	"var includechangevalues = includechanges.join(',');" & chr(10) & chr(13);
+		sReturn &=	"var reportOptions = { 'ReportOptions' :  [
+									 {'GroupingAndChanges' :  { 'IncludeChanges' : includechangevalues } } ,
+									 {'TimeFrame' : $('##timeframe').val() },
+									 {'TestScenarios' : ts.join(',')}] 
+									}" & chr(10) & chr(13);
+		sReturn &=	"var reportAandS = { 'AccessAndScheduling' : [
+											{ 'AccessBy' : ''} ,
+											{ 'CreateReport' : $('##createreport').val() },
+											{ 'Email' : [ 
+												 {'NotifyMe' : ''} ,
+												{'SendLinkToUserIds' : $('##sendlinktouserids').val()},
+												 {'SendAsAttachmentTo' : $('##sendasattachmentto').val()} 
+												 ]},
+											{ 'StartDate' : '" & DateFormat(Now(),"yyyy-mm-dd") & "' },
+											{ 'StartTime' : $('##starttime').val() }
+										]}" & chr(10) & chr(13);
+		return sReturn;
+	}
+	
 	public string function getFormFields() {
 		formbody = 	"<script type='text/javascript'>";
 		formbody &= "$(document).ready(function() { $('.selectpicker').selectpicker(); });";
@@ -98,8 +124,6 @@ component implements="COGTestTrack.cfc.IReports"
 		formbody &= "</select></div></div>";
 		return formbody;
 	}
-		
-	public string function getJSONFormDataForPost(){}
 	
 	public string function getReportDescription()
 	{
@@ -154,7 +178,7 @@ component implements="COGTestTrack.cfc.IReports"
 		
 	}
 	public any function runReport() {
-		if ( StructKeyExists(variables.AccessAndScheduling,"CreateReport") && variables.AccessAndScheduling.CreateReport == "OneTime")
+		if ( StructKeyExists(variables.AccessAndScheduling,"CreateReport") && variables.AccessAndScheduling.CreateReport == "Once")
 		{
 			if ( FileExists("../../reportpdfs/"&variables.reportid&".pdf") ) 
 			{

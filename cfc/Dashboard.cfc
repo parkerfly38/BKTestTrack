@@ -580,8 +580,12 @@
 		<div id="scenarioreport">
 		<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
 				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+					<cfset totaltests = 0>
+					<cfloop query="qryTestcounts">
+						<cfset totaltests = totaltests + StatusCount >
+					</cfloop>
 					<cfloop query="qryTestCounts">
-					<p><span class="label #returnBSLabelStyle(Status)#">#StatusCount# #Status#</span><br />#NumberFormat((StatusCount gt 0 AND qryTestCases.RecordCount gt 0) ? (StatusCount / qryTestCases.RecordCount) * 100 : 0,"0.0")#% set to #Status#</p>
+					<p><span class="label #returnBSLabelStyle(Status)#">#StatusCount# #Status#</span><br />#NumberFormat((StatusCount gt 0 AND totaltests gt 0) ? (StatusCount / totaltests) * 100 : 0,"0.0")#% set to #Status#</p>
 					</cfloop>
 				</div>
 				<script type="text/javascript">
@@ -746,12 +750,15 @@
 			});
 			function onRowSelect(objCheckbox) {
 				if ($(objCheckbox).is(":checked")) {
-					$("##addlink").removeClass("disabled");
+					$("##addLink").removeClass("disabled");
+					$("##removeLink").removeClass("disabled");
 				} else {
 					if ( $("input:checkbox[name=cbxId]").is(":checked") ) {
-						$("##addlink").removeClass("disabled");
+						$("##addLink").removeClass("disabled");
+						$("##removeLink").removeClass("disabled");
 					} else {
-						$("##addlink").addClass("disabled");
+						$("##addLink").addClass("disabled");
+						$("##removeLink").addClass("disabled");
 					}
 				}
 			}
@@ -774,7 +781,13 @@
 					<div class="navbar">
 						<div class="navbar-inner">
 							<ul class="nav navbar-nav navbar-right">
-								<li><div class="btn-group"><a href="##" class="lnkAddResults btn btn-info btn-xs disabled"><i class="fa fa-plus-square"></i> Update/Add Results</a><a href="##" class="lnkAddTestCaseToScenario btn btn-info btn-xs" scenarioid="#arguments.scenarioid#"><i class="fa fa-plus-square"></i> Add Test Case</a></div></li>
+								<li>
+									<div class="btn-group">
+										<a href="##" id="addLink" class="lnkAddResults btn btn-info btn-xs disabled"><i class="fa fa-plus-square"></i> Update/Add Results</a>
+										<a href="##" id="removeLink" class="lnkRemoveTestCases btn btn-info btn-xs disabled"><i class="fa fa-trash-o"></i> Remove Test Case(s)</a>
+										<a href="##" class="lnkAddTestCaseToScenario btn btn-info btn-xs" scenarioid="#arguments.scenarioid#"><i class="fa fa-plus-square"></i> Add Test Case</a>
+									</div>
+								</li>
 							</ul>
 						</div>
 					</div>
@@ -879,8 +892,27 @@
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfreturn>
 		</cfif>
-		<cfquery name="recenttests" dbtype="hql" ormoptions=#{maxResults=10}#>
-			FROM TTestResult
+		<cfif (!StructKeyExists(SESSION,"ProjectID"))>
+			<cfreturn>
+		</cfif>
+		<cfquery name="recenttests">
+			SELECT TOP 10 id, Status, TestTitle, UserName, DateTest FROM (
+				SELECT TOP 20 a.id, c.Status, a.TestTitle, d.UserName, b.DateTested as DateTest
+				FROM TTestCase a
+				INNER JOIN TTestResult b on a.id = b.TestCaseId
+				INNER JOIN TTestStatus c on b.StatusId = c.id
+				INNER JOIN TTestTester d on b.TesterID = d.id
+				WHERE a.ProjectID = <cfqueryparam value="#Session.ProjectID#">
+				ORDER By b.DateTested DESC
+				UNION ALL
+				SELECT TOP 20 a.id, b.Action as Status, a.TestTitle, d.UserName, b.DateOfAction as DateTest
+				FROM TTestCase a
+				INNER JOIN TTestCaseHistory b on a.id = b.CaseId
+				INNER JOIN TTestTester d on b.TesterID = d.Id
+				WHERE a.ProjectID = <cfqueryparam value="#Session.ProjectID#">
+				ORDER BY b.DateOfAction
+			) stuff 
+			ORDER BY DateTest
 		</cfquery>
 		
 		<div class="clearfix"></div>	
@@ -897,15 +929,15 @@
 				</tr>
 			</thead>
 			<tbody>
-		<cfloop array="#recenttests#" index="test">
-			<cfquery name="caseinfo" dbtype="hql" ormoptions=#{maxResults=1}#>
-				FROM TTestCase WHERE id = <cfqueryparam value="#test.getTestCaseID()#">
-			</cfquery>
+		<cfloop query="recenttests">
+			<!---<cfquery name="caseinfo" dbtype="hql" ormoptions=#{maxResults=1}#>
+				FROM TTestCase WHERE id = <cfqueryparam value="#id#">
+			</cfquery>--->
 			<tr><cfoutput>
-				<td class="right"><h4 style="margin:0px;"><span class="label #returnBSLabelStyle(test.getTTestStatus().getStatus())#">#test.getTTestStatus().getStatus()#</span></h4></td>
-				<td>#caseinfo[1].getTestTitle()#</td>
-				<td>Tested by <span style="font-weight: bold;">#test.getTTestTester().getUserName()#</span></td>
-				<td><a href="##" class="testcaseeditlink" editid="#test.getTestCaseID()#">Edit</a>&nbsp;&nbsp;</td>
+				<td class="right"><h4 style="margin:0px;"><span class="label #returnBSLabelStyle(status)# label-xs">#Status#</span></h4></td>
+				<td>#TestTitle#</td>
+				<td>Tested by/Assigned To <span style="font-weight: bold;">#UserName#</span></td>
+				<td><a href="##" class="testcaseeditlink btn btn-default btn-xs" editid="#id#"><i class="fa fa-pencil"></i> Edit</a></td>
 				</cfoutput>
 			</tr>
 		</cfloop>

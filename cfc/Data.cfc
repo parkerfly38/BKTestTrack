@@ -88,19 +88,14 @@ component
 		QueryHistory.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
 		qryResult = QueryHistory.execute(sql="SELECT a.id as TestCaseId, a.TestTitle, b.DateOfAction, c.UserName, b.DateActionClosed" &
 				" FROM TTestCaseHistory b INNER JOIN TTestCase a ON a.id = b.CaseId INNER JOIN TTestTester c on b.TesterID = c.id INNER JOIN TTestScenarioCases d ON a.id = d.CaseId" &
-				" WHERE d.ScenarioId = :scenarioid");
+				" WHERE d.ScenarioId = :scenarioid and b.Action = 'Assigned'");
 		return qryResult.getResult();
 	}
 	public query function qryTestCaseHistoryForScenarios(scenarioid) {
 		QueryHistory = new query();
 		QueryHistory.setName("getTestCaseHistory");
 		QueryHistory.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
-		qryResult = QueryHistory.execute(sql="Select TTestStatus.id, Status, ISNULL(Count(a.id),0) as StatusCount" &
-											 " FROM TTestStatus " &
-											 "LEFT JOIN (SELECT TOP 1 b.id, b.StatusID FROM TTestResult b INNER JOIN TTestScenarioCases c on b.TestCaseId = c.CaseId WHERE c.ScenarioID = :scenarioid ORDER BY b.id DESC) a " &
-											 "ON a.StatusID = TTestStatus.id " &
-											 "GROUP BY TTestStatus.id, Status " &
-											 "ORDER BY TTestStatus.id");
+		qryResult = QueryHistory.execute(sql="SELECT id,Status,Sum(StatusCount) as StatusCount FROM ( Select TTestStatus.id, Status, ISNULL(Count(a.id),0) as StatusCount FROM TTestStatus LEFT JOIN (SELECT TOP 1 b.id, b.StatusID FROM TTestResult b INNER JOIN TTestScenarioCases c on b.TestCaseId = c.CaseId WHERE c.ScenarioID = :scenarioid ORDER BY b.id DESC) a ON a.StatusID = TTestStatus.id GROUP BY TTestStatus.id, Status  UNION ALL SELECT 1 as id,(CASE WHEN [Action] IN ('Created','Assigned') THEN 'Untested' END) as Status, ISNULL(Count(TTestCaseHistory.id),0) as StatusCount FROM TTestCaseHistory INNER JOIN TTestScenarioCases on TTestScenarioCases.CaseID = TTestCaseHistory.CaseID WHERE ScenarioId = :scenarioid AND [Action] IN ('Created','Assigned') AND DateActionClosed IS NULL GROUP BY [Action] ) DERIVED GROUP BY id, Status");
 		return qryResult.getResult();
 	}
 	public query function qryTestCaseHistoryDataForScenario(scenarioid) {
