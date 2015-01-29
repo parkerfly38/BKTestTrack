@@ -85,6 +85,17 @@ $(document).ready(function() {
 		$("#smallModal .modal-body").load("cfc/forms.cfc?method=TestSectionForm");
 		$("#smallModal").modal("show");
 	});
+	$(document).on("click","a.lnkAddTestCaseToScenario",function(event) {
+		$("#smallModal .modal-title").text("Add Test Cases to Scenario");
+		$.ajax({
+			url: "cfc/forms.cfc?method=AddTestCasesForm",
+			type: "POST",
+			data: { scenarioid : $(this).attr("scenarioid")	}
+		}).done(function(data){
+			$("#smallModal .modal-body").html(data);
+			$("#smallModal").modal("show");
+		});
+	});
 	$(document).on("click","a#lnkAddProject",function(event) {
 		event.preventDefault();
 		$("#largeModal .modal-title").text("Add Project");
@@ -168,6 +179,14 @@ $(document).ready(function() {
 		$("#largeModal").modal("show");		
 		
 	});
+	$(document).on("click","a.lnkCreateReport",function(event) {
+		event.preventDefault();
+		$("#largeModal .modal-title").text("Add New Report");
+		var reporttype = $(this).attr("reporttype");
+		$("#largeModal .modal-body").load("cfc/forms.cfc?method=ReportForm&reporttype="+reporttype);
+		$("#largeModal").modal("show");
+		
+	});
 	$(document).on("click","a.lnkViewTests",function(event){
 		event.preventDefault();
 		$("#topcontent").removeClass("panel").removeClass("panel-default");
@@ -213,6 +232,17 @@ $(document).ready(function() {
 		event.preventDefault();
 		$("#topcontent").removeClass("panel").removeClass("panel-default");
 		reportScreen();
+	});
+	$(document).on("click","a.lnkReportDelete",function(event) {
+		event.preventDefault();
+		$.ajax({
+			url: "CFC/forms.cfc?method=deleteReport",
+			type: "POST",
+			data: {reportid : $(this).attr("reportid") }
+		}).done(function(data){
+			$("#topcontent").removeClass("panel").removeClass("panel-default");
+			reportScreen();
+		});
 	});
 	$(document).on("click","a.lnkQuickTSReport",function(event) {
 		if ($(this).attr("reportvalue") != "") {

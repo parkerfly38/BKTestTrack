@@ -12,6 +12,9 @@ interface hint="this shapes the expected output from any report - please use imp
 	public struct function getReportOptions();
 	public struct function getAccessAndScheduling();
 	
+	public string function getFormFields();
+	//public string function getJSONFormDataForPost();
+	
 	public void function saveReport();
 	public any function runReport();
 	

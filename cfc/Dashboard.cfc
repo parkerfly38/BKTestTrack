@@ -135,7 +135,7 @@
 								<cfcase value="Failed">
 								color : "##d9534f",
 								</cfcase>
-								<cfcase value="Untested">
+								<cfcase value="Untested,Assigned,Created">
 								color : "##5bc0de",
 								</cfcase>
 								<cfcase value="Blocked">
@@ -336,7 +336,7 @@
 								<td>#report.getReportName()#</td>
 								<td>#optionsStruct.TimeFrame#</td>
 								<td>#skedStruct.CreateReport#</td>
-								<td><div class="btn-group"><a class="btn btn-primary btn-sm" href="reportpdfs/#report.getId()#.pdf" target="_blank">View</a><a class="btn btn-primary btn-sm" href="##">Delete</a></div></td>
+								<td><div class="btn-group"><a class="btn btn-primary btn-sm" href="reportpdfs/#report.getId()#.pdf" target="_blank">View</a><a class="lnkReportDelete btn btn-primary btn-sm" reportid="#report.getId()#" href="##">Delete</a></div></td>
 							</tr>
 							</cfloop>
 						</tbody>
@@ -597,7 +597,7 @@
 										<cfcase value="Failed">
 										color : "##d9534f",
 										</cfcase>
-										<cfcase value="Untested,Assigned">
+										<cfcase value="Untested,Assigned,Created">
 										color : "##5bc0de",
 										</cfcase>
 										<cfcase value="Blocked">
@@ -774,7 +774,7 @@
 					<div class="navbar">
 						<div class="navbar-inner">
 							<ul class="nav navbar-nav navbar-right">
-								<li id="addlink" class="disabled"><a href="##" class="lnkAddResults"><i class="fa fa-plus-square"></i> Update/Add Results</a></li>
+								<li><div class="btn-group"><a href="##" class="lnkAddResults btn btn-info btn-xs disabled"><i class="fa fa-plus-square"></i> Update/Add Results</a><a href="##" class="lnkAddTestCaseToScenario btn btn-info btn-xs" scenarioid="#arguments.scenarioid#"><i class="fa fa-plus-square"></i> Add Test Case</a></div></li>
 							</ul>
 						</div>
 					</div>
@@ -797,11 +797,12 @@
 							<td>#UserName#</td>
 							<td style="width:8%">
 								<cfset qryTestStatus = objData.qryGetCurrentTestStatus(testcaseid)>
-								<select class="form-control selectpicker" caseid="#testcaseid#" data-style="#returnBSLabelStyle(qryTestStatus.Status[1],"btn")# btn-xs">
+								<!---<select class="form-control selectpicker" caseid="#testcaseid#" data-style="#returnBSLabelStyle(qryTestStatus.Status[1],"btn")# btn-xs">
 								<cfloop array="#arrStatus#" index="indstatus">
 									<option value="#indstatus.getId()#"<cfif qryTestStatus.Status[1] eq indstatus.getStatus()> selected</cfif>>#indstatus.getStatus()#</option>
 								</cfloop>
-								</select>
+								</select>--->
+								<span class="label #returnBSLabelStyle(qryTestStatus.Status[1],'label')# label-xs">#qryTestStatus.Status[1]#</span>
 							</td>
 						</tr>
 						</cfloop>
@@ -1047,7 +1048,7 @@
 				<strong>Projects</strong><br />
 				<table class="table table-condensed table-hover">
 					<tbody>
-						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Activity</td>
+						<tr><td><a href="##" class="lnkCreateReport" reporttype="Activity"><i class="fa fa-plus-circle" style="color:green;"></i> Activity</a></td>
 						</tr>
 						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Coverage for References</td>
 						</tr>
@@ -1107,6 +1108,7 @@
 			</div>
 		</div>
 	</cffunction>
+	
 	<!--- JSON and single value functions --->
 		
 	<cffunction name="TodosBySection" access="remote" returnformat="JSON" returntype="string">

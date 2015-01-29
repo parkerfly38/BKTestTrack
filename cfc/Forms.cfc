@@ -279,6 +279,87 @@
 		</div>
 	</cffunction>
 	
+	<cffunction name="AddTestCasesForm" access="remote" output="true">
+		<cfargument name="scenarioid" required="true" type="numeric">
+		<cfif !(StructKeyExists(Session,"ProjectID"))>
+			<cfreturn>
+		</cfif>
+		<cfquery name="getTestCases">
+			SELECT id, TestTitle
+			FROM TTestCase
+			WHERE ProjectID = #Session.ProjectID#
+			AND id not in (SELECT CaseID from TTestScenarioCases where ScenarioId = #arguments.scenarioid#)
+		</cfquery>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(document).off("click","##btnSave");
+				$(document).on("click","##btnSave", function(event) {
+					event.preventDefault();
+					var multipleValues = $("##testcases").val() || [];
+					$.ajax({
+						url : "CFC/Forms.cfc?method=saveCasesToScenario",
+						type : "POST",
+						data : {testcases : multipleValues.join(", "),scenarioid : "#arguments.scenarioid#"}
+					}).done(function(data) {
+						$("##smallModal").modal("hide");
+						event.preventDefault();
+						$("##topcontent").removeClass("panel").removeClass("panel-default");
+						$("##topcontent").load("cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid=#arguments.scenarioid#");
+						$("##midrow").empty();
+						$("##activitypanel").remove();
+						$("##lnkReturnToProject").attr("pjid",#session.projectid#);
+						$("##lnkReturnToProject").show();
+						$("##createreportpanel").remove();
+					});
+				});
+			});
+		</script>
+		<div class="form-group">
+			<select name="testcases" id="testcases" class="form-control" multiple>
+				<cfloop query="getTestCases">
+					<option value="#id#">#TestTitle#</option>
+				</cfloop>
+			</select>
+		</div>
+	</cffunction>
+	
+	<cffunction name="ReportForm" access="remote" output="true">
+		<cfargument name="reporttype" required="true">
+		<cfscript>
+			report = createObject("component","reports.#arguments.reporttype#");
+			report.getReportOptions();
+			report.getAccessAndScheduling();
+			newreport = new Reports(report);
+			outputbody = newreport.getFormFields();
+		</cfscript>
+		<script type='text/javascript'>
+			$(document).ready(function() {
+				$(document).off("click","##btnClose");
+				$(document).on("click","##btnClose",function(event) {
+					event.preventDefault();					
+					if (confirm("Are you sure you want to close without saving your report?"))
+					{
+						$("##largeModal").modal('hide');
+					}
+				});
+			});
+		</script>
+		<div class='well well-default'>
+			<h3>#newreport.getReportTypeName()#</h3>
+			<table border="0" cellspacing="0" cellpadding="2">
+				<tr><td>Group:</td>
+					<td>#newreport.getGroup()#</td>
+				<tr>
+					<td>Author:</td>
+					<td>#newreport.getAuthor()#</td>
+				</tr>
+			</table>
+			<p>#newreport.getReportDescription()#</p>
+		</div>
+		<label>Report Name: <br /><input type="text" class="form-control" id='reportname' name='reportname' value='#arguments.reporttype# #DateFormat(now(),"mm-dd-yyyy")#' /></label>
+		#outputbody#
+	</cffunction>
+	
 	<cffunction name="TestScenarioForm" access="remote" output="true">
 		<cfargument name="testscenarioid" required="False" default="0" type="numeric">
 		<cfif !(StructKeyExists(Session,"ProjectID"))>
@@ -544,6 +625,31 @@
 	</cffunction>
 	<!--- form processing --->
 	
+	<cffunction name="saveCasesToScenario" access="remote" returntype="any" returnformat="JSON">
+		<cfargument name="testcases">
+		<cfargument name="scenarioid">
+		<cfloop list="#arguments.testcases#" index="i">
+			<cfquery>
+				INSERT INTO TTestScenarioCases (CaseId, ScenarioId)
+				VALUES (#i#,#arguments.scenarioid#)
+			</cfquery>
+			<cfscript>
+				updatequery = new Query();
+				updatequery.setSql("UPDATE TTestCaseHistory SET DateActionClosed = :dateactionclosed WHERE caseid = :caseid AND DateActionClosed is NULL");
+				updatequery.addParam(name="dateactionclosed",value=now(),cfsqltype="cf_sql_date");
+				updatequery.addParam(name="caseid",value=i,cfsqltype="cf_sql_integer");
+				updatequery.execute();
+				newcasehistory = EntityNew("TTestCaseHistory");
+				newcasehistory.setAction("Assigned");
+				newcasehistory.setTesterID(Session.UserIDInt);
+				newcasehistory.setDateOfAction(Now());
+				newcasehistory.setCaseId(i);
+				EntitySave(newcasehistory);
+			</cfscript>
+		</cfloop>
+		<cfreturn>
+	</cffunction>
+	
 	<cffunction name="saveSection" access="remote" returntype="any" returnFormat="JSON">
 		<cfargument name="id" type="numeric">
 		<cfargument name="Section">
@@ -692,5 +798,18 @@
 		</cfscript>
 	</cffunction>
 	
-		
+	<cffunction name="deleteReport" access="remote" returntype="any" returnformat="JSON">
+		<cfargument name="reportid" required="true" type="numeric">
+		<cfscript>
+			report = EntityLoadByPK("TTestReports",arguments.reportid);
+			try {
+				EntityDelete(report);
+			} catch (any e)
+			{
+				return false;
+			}
+			FileDelete(ExpandPath("/reportpdfs/") & arguments.reportid & ".pdf");
+			return true;
+		</cfscript>
+	</cffunction>
 </cfcomponent>

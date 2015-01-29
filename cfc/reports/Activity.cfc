@@ -54,6 +54,53 @@ component implements="COGTestTrack.cfc.IReports"
 		return variables.AccessAndScheduling;
 	}
 	
+	public string function getFormFields() {
+		formbody = 	"<script type='text/javascript'>";
+		formbody &= "$(document).ready(function() { $('.selectpicker').selectpicker(); });";
+		formbody &= "</script>";
+		formbody &= "<ul class='nav nav-tabs'>";
+		formbody &=	"<li class='active'><a data-toggle='tab' href='##Options'>Options</a></li>";
+		formbody &= "<li><a data-toggle='tab' href='##Access'>Access and Scheduling</a></li>";
+		formbody &= "<li><a data-toggle='tab' href='##TestScenarios'>Test Scenarios</a></ul>";
+		formbody &= "<div class='tab-content'>";
+		formbody &= "<div id='Options' class='tab-pane fade in active'>";
+		formbody &= "<div class='input-group'>";
+		formbody &= "<h5>Include New Test Cases and/or Updates</h5>";
+		formbody &= "<label><input type='checkbox' value='new' id='includechanges' name='includechanges'> New</label><br />";
+		formbody &= "<label><input type='checkbox' value='updated' id='includechanges' name='includechanges'> Updated</label>";
+		formbody &= "</div><div class='input-group'>";
+		formbody &= "<label for='timeframe'>Use the following time frame:<br />";
+		formbody &= "<select id='timeframe' name='timeframe' class='selectpicker' data-style='btn-info btn-xs'><option value='Today' selected>Today</option><option value='Week'>This Week</option><option value='Month'>This Month</option><option value='All'>All Time</option></select></label>";
+		formbody &= "</div></div>";
+		formbody &= "<div id='Access' class='tab-pane fade in'>";
+		formbody &= "<h5>This report can be viewed by:</h5>";
+		formbody &= "<label><input type='radio' value='" & Session.UserIDInt & "' id='AccessBy' name='AccessBy'> You</label><br />";
+		formbody &= "<label><input type='radio' value='0' id='AccessBy' name='AccessBy'> Everyone</label>";
+		formbody &= "<h5>Create (and Schedule):</h5>";
+		formbody &= "<select id='createreport' name='createreport' class='selectpicker' data-style='btn-info'><option value='once'>Once</option><option value='weekly'>Weekly</option><option value='monthly'>Monthly</option></select>&nbsp;&nbsp;";
+		formbody &= "<select id='starttime' name='starttime' class='selectpicker' data-style='btn-info'>";
+		for (i = 0; i LTE 23; i++ ) {
+			formbody &= "<option>" & i & ":00</option>";
+		}
+		formbody &= "</select>";
+		formbody &= "<h5>Send report to:</h5>";
+		formbody &= "<div class='input-group'><label><input type='checkbox' id='notifyme' name='notifyme' value='true'> You</label><br />";
+		formbody &= "<label for='sendlintousers'>Email link to the following addresses (separate by comma):</label>";
+		formbody &= "<textarea id='sendlinktouserids' name='sendlinktouserids' class='form-control' rows='4'></textarea>";
+		formbody &= "<label for='sendasattachmentto'>Email link to the following addresses as attachment (separate by comma):</label>";
+		formbody &= "<textarea id='sendasattachmentto' name='sendasattachmentto' class='form-control' rows='4'></textarea>";
+		formbody &= "</div></div><div id='TestScenarios' class='tab-pane fade in'>";
+		scenarios = EntityLoad("TTestScenario",{ProjectID = Session.ProjectID});
+		formbody &= "<select id='testscenarios' name='testscenarios' class='form-control' multiple>";
+		for (scenario in scenarios) {
+			formbody &= "<option value='" & scenario.getId() & "'>" & scenario.getTestScenario() & "</option>";
+		}
+		formbody &= "</select></div></div>";
+		return formbody;
+	}
+		
+	public string function getJSONFormDataForPost(){}
+	
 	public string function getReportDescription()
 	{
 		return "Shows a summary of new and updated test cases.  Refer to the Options section below to configure the report specific options.";
@@ -97,6 +144,7 @@ component implements="COGTestTrack.cfc.IReports"
 		report.setReportDescription(this.getReportDescription());
 		report.setReportOptions(objFunctions.toWddx(this.GetReportOptions()));
 		report.setReportAccessAndScheduling(objFunctions.toWddx(this.getAccessAndScheduling()));
+		report.setProjectID(Session.ProjectID);
 		EntitySave(report);
 		variables.reportid = report.getId();
 		if ( variables.AccessAndScheduling.CreateReport != "once" ) {
@@ -134,7 +182,7 @@ component implements="COGTestTrack.cfc.IReports"
 			} else {
 				mostRecentMonday = dateAdd("d",-6,now());
 			}
-			sql &= "AND DateofAction > '" & CreateOdbcDate(mostRecentMonday) & "' AND DateOfAction <= DateAdd(d,7,'" & CreateOdbcDate(mostRecentMonday) & "') ";
+			sql &= "AND DateofAction > '" & DateFormat(mostRecentMonday,"YYYY-mm-dd") & "' AND DateOfAction <= '" & DateFormat(dateAdd("d",7,CreateOdbcDate(mostRecentMonday)),"yyyy-mm-dd") & "' ";
 		}
 		q1 = new Query();
 		q1.setSQL(sql);
