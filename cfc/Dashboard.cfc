@@ -10,7 +10,7 @@
 			WHERE id = <cfqueryparam value="#arguments.projectid#">
 		</cfquery>
 		<div id="topcontent" class="panel panel-default">
-		<div class="panel-heading" id="activitytitle">#qryName[1].getProjectTitle()#</div>
+		<div class="panel-heading" id="activitytitle"><span class="label label-info">P#qryName[1].getId()#</span> #qryName[1].getProjectTitle()#</div>
 		<div class="panel-body">
 		<cfstoredproc procedure="PReturnTestResultCounts">
 			<cfprocparam cfsqltype="cf_sql_int" value="#arguments.projectid#">
@@ -314,7 +314,7 @@
 		<div class="panel panel-default">
 			<div class="panel-heading"><strong><i class="fa fa-bars"></i> Reporting</strong></div>
 			<div class="panel-body">
-				<cfset arrReports = EntityLoad("TTestReports",{ProjectID = Session.ProjectID})>
+				<cfset arrReports = EntityLoad("TTestReports",{ProjectID = Session.ProjectID},{maxresults=10})>
 				<cfif ArrayLen(arrReports) GT 0>
 					<div class="well well-sm" style="font-weight:bold;">Configured Reports</div>
 					<table class="table table-striped table-condensed table-hover">
@@ -345,7 +345,32 @@
 						
 				<div class='alert alert-danger' role='alert'><strong>There are no reports configured.</strong><br />Set up reports by selecting report types from the right.</div>
 				</cfif>
-			</div>
+				<cfset objMaintenance = createObject("component","Maintenance")>
+				<cfset qryTasks = objMaintenance.returnTasks()>
+				<cfif qryTasks.RecordCount gt 0>
+					<div class="well well-sm" style="font-weight:bold;">Scheduled Reports</div>
+					<table class="table table-striped table-condensed table-hover">
+						<thead>
+							<tr>
+							<th>Task</th>
+							<th>Interval</th>
+							<th>Start Date</th>
+							<th>Last Run</th>
+							</tr>
+						</thead>
+						<tbody>
+						<cfloop query="qryTasks">
+							<tr>
+								<td>#task#</td>
+								<td>#interval#</td>
+								<td><cfif isDefined("start_date")>#DateFormat(start_date,"mm/dd/yyyy")#<cfelse>#DateFormat(startdate,"mm/dd/yyyy")#</cfif></td>
+								<td><cfif isDefineD("last_run")>#last_run#<cfelse>#last_fire#</cfif></td>
+							</tr>
+						</cfloop>
+						</tbody>
+					</table>
+				</cfif>
+					</div>
 		</div>
 	</cffunction>
 	
@@ -1252,5 +1277,15 @@
 				</cfdefaultcase>
 			</cfswitch>
 		<cfreturn local.labelstyle>
+	</cffunction>
+	
+	<cffunction name="checkLoggedIn" access="remote" returntype="String" returnformat="JSON">
+		<cfset x = structnew()>
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			<cfset x.loggedin = false>
+		<cfelse>
+			<Cfset x.loggedin = true>
+		</cfif>
+		<cfreturn serializeJSON(x)>
 	</cffunction>
 </cfcomponent>

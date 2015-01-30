@@ -48,7 +48,7 @@ component implements="COGTestTrack.cfc.IReports"
 			variables.AccessAndScheduling.Email.NotifyMe = true;
 			variables.AccessAndScheduling.Email.SendLinkToUserIds = "";
 			variables.AccessAndScheduling.Email.SendAsAttachmentTo = "";
-			variables.AccessAndScheduling.StartDate = Now();
+			variables.AccessAndScheduling.StartDate = DateFormat(Now(),"YYYY-MM-DD");
 			variables.AccessAndScheduling.StartTime = "17:00";
 		}
 		return variables.AccessAndScheduling;
@@ -56,27 +56,18 @@ component implements="COGTestTrack.cfc.IReports"
 	
 	
 	public string function getJSONFormDataForPost(){
-		sReturn =	"var includechanges = $('##includechanges:checked').map(function(){ " & chr(10) & chr(13);
-		sReturn &= 	"	return $(this).val();" & chr(10) & chr(13);
-		sReturn &=	"}).get();" & chr(10) & chr(13);
-		sReturn &=	"var ts = $('##testscenarios').val() || [];" & chr(10) & chr(13);
-		sReturn &=	"var includechangevalues = includechanges.join(',');" & chr(10) & chr(13);
-		sReturn &=	"var reportOptions = { 'ReportOptions' :  [
-									 {'GroupingAndChanges' :  { 'IncludeChanges' : includechangevalues } } ,
-									 {'TimeFrame' : $('##timeframe').val() },
-									 {'TestScenarios' : ts.join(',')}] 
-									}" & chr(10) & chr(13);
-		sReturn &=	"var reportAandS = { 'AccessAndScheduling' : [
-											{ 'AccessBy' : ''} ,
-											{ 'CreateReport' : $('##createreport').val() },
-											{ 'Email' : [ 
-												 {'NotifyMe' : ''} ,
-												{'SendLinkToUserIds' : $('##sendlinktouserids').val()},
-												 {'SendAsAttachmentTo' : $('##sendasattachmentto').val()} 
-												 ]},
-											{ 'StartDate' : '" & DateFormat(Now(),"yyyy-mm-dd") & "' },
-											{ 'StartTime' : $('##starttime').val() }
-										]}" & chr(10) & chr(13);
+		sReturn =	"var reportOptions = " & serializeJSON(getReportOptions()) & chr(13) & chr(10);
+		sReturn &=	"var reportAandS = " & serializeJSON(getAccessAndScheduling()) & chr(13) & chr(10);
+		sReturn &=	"reportOptions.GROUPINGANDCHANGES.INCLUDECHANGES = $('##includechanges:checked').map(function() {return this.value;}).get().join(',');" & chr(13) & chr(10);
+		sReturn &=	"reportOptions.TIMEFRAME = $('##timeframe').val();" & chr(13) & chr(10);
+		sReturn &=	"var ts = $('##testscenarios').val() || [];" & chr(13) & chr(10);
+		sReturn &=	"reportOptions.TESTSCENARIOS = ts.join(',');" & chr(13) & chr(10);
+		sReturn &=	"reportAandS.ACCESSBY = $('##AccessBy').val();" & chr(13) & chr(10);
+		sReturn &=	"reportAandS.CREATEREPORT = $('##createreport').val();" & chr(13) & chr(10);
+		sReturn &=	"reportAandS.EMAIL.NOTIFYME = $('##notifyme:checked').length == 1 ? '"& session.useridint & "' : '0';" & chr(13) & chr(10);
+		sReturn &=	"reportAandS.EMAIL.SENDLINKTOUSERIDS = $('##sendlinktouserids').val();" & chr(13) & chr(10);
+		sReturn &=  "reportAandS.EMAIL.SENDASATTACHMENTTO = $('##sendasattachmentto').val();" & chr(13) & chr(10);
+		sReturn &=	"reportAandS.STARTTIME = $('##starttime').val();" & chr(13) & chr(10);
 		return sReturn;
 	}
 	
@@ -92,8 +83,8 @@ component implements="COGTestTrack.cfc.IReports"
 		formbody &= "<div id='Options' class='tab-pane fade in active'>";
 		formbody &= "<div class='input-group'>";
 		formbody &= "<h5>Include New Test Cases and/or Updates</h5>";
-		formbody &= "<label><input type='checkbox' value='new' id='includechanges' name='includechanges'> New</label><br />";
-		formbody &= "<label><input type='checkbox' value='updated' id='includechanges' name='includechanges'> Updated</label>";
+		formbody &= "<label><input type='checkbox' value='new' id='includechanges' name='includechanges' value='new'> New</label><br />";
+		formbody &= "<label><input type='checkbox' value='updated' id='includechanges' name='includechanges' value='updated'> Updated</label>";
 		formbody &= "</div><div class='input-group'>";
 		formbody &= "<label for='timeframe'>Use the following time frame:<br />";
 		formbody &= "<select id='timeframe' name='timeframe' class='selectpicker' data-style='btn-info btn-xs'><option value='Today' selected>Today</option><option value='Week'>This Week</option><option value='Month'>This Month</option><option value='All'>All Time</option></select></label>";
@@ -232,6 +223,14 @@ component implements="COGTestTrack.cfc.IReports"
 		writeOutput(reportoutput); 
 		pdfvar = objFunctions.createPDFfromContent(reportoutput);
 		fileWrite(ExpandPath("/reportpdfs/") & variables.reportid & ".pdf",pdfvar);
-		//TODO:  if it's scheduled, handle email disposition
+		objFunctions = createObject("component","cfc.Functions");
+		if ( variables.AccessAndScheduling.Email.NotifyMe gt 0) {
+			arruser = EntityLoadByPK("TTestTester",variables.AccessAndScheduling.Email.NotifyMe);
+			emailbody = "<h1>" & variables.ReportName & "</h1><p>Your report is available <a href='http://" & cgi.SERVER_NAME & "/" & Application.applicationname & "/reportpdfs/" & variables.reportid & ".pdf'>here</a>.</p>";
+			objFunctions.MailerFunction(arruser.getEmail(),application.MailerDaemonAddress,variables.ReportName & " Available",emailbody);
+		}
+		if ( len(variables.AccessAndScheduling.Email.sendlinktouserids) gt 0 && IsValid("email",ListGetat(variables.AccessAndScheduling.Email.sendlinktouserids,1))) {
+			
+		}
 	}
 }

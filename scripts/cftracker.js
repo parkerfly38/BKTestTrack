@@ -40,6 +40,7 @@ $(document).ready(function() {
 	linkstimervar = setInterval(function() {insertLinks()},10);
 	todotimervar = setInterval(function() {insertTodos()},10);
 	timervar = setInterval(function() {insertAdditional()},10);
+	logincheck = setInterval(function() {checkLoggedIn()},10000);
 		
 	$("a#lnkAssignedTests").click(function(event) {
 		event.preventDefault();
@@ -323,6 +324,18 @@ function insertLinks() {
 	window.clearInterval(linkstimervar);
 }
 
+function checkLoggedIn() {
+	$.ajax({
+		url: "cfc/Dashboard.cfc?method=checkLoggedIn",
+		type: "POST",
+		dataType: "json"
+	}).done(function(data) {
+		if (!data.LOGGEDIN) {
+			location.href = "login.cfm";
+		}
+	});
+}
+
 function insertAdditional() {
 	if (recentresultscontent.length > 0 && $("#activitypanel").length == 0 ) {
 		$("#featurecontent").append(recentresultscontent);
@@ -365,7 +378,7 @@ function insertProjectInfo() {
 			pjcontent += "<div class='col-xs-2 col-sm-2 col-md-2 col-lg-2 text-right' style='padding-left:0px;padding-right:0px;'>";
 			pjcontent += "<h1 style='margin:0px;'><span class='label label-primary' style='padding:5px;background-color: #"+jsonProjects[index].Color+";'>";
 			pjcontent += "<i class='projects fa fa-wrench fa-fw'></i></span></h1></div>";
-			pjcontent += "<div class='col-xs-10 col-sm-10 col-md-10 col-lg-10'><h5><a href='#' class='pjlink' pjid='" + jsonProjects[index].id + "'>"+jsonProjects[index].ProjectTitle+"</a>&nbsp;&nbsp;<a href='#' class='lnkEditProject btn btn-default btn-xs' projectid='"+jsonProjects[index].id+"'><i class='fa fa-pencil'></i> Edit</a></h5>";
+			pjcontent += "<div class='col-xs-10 col-sm-10 col-md-10 col-lg-10'><h5><span class='label label-info'>P"+jsonProjects[index].id+"</span> <a href='#' class='pjlink' pjid='" + jsonProjects[index].id + "'>"+jsonProjects[index].ProjectTitle+"</a>&nbsp;&nbsp;<a href='#' class='lnkEditProject btn btn-default btn-xs' projectid='"+jsonProjects[index].id+"'><i class='fa fa-pencil'></i> Edit</a></h5>";
 			pjcontent += "<a href='#'>Todos</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
 			pjcontent += "<a href='#'>Milestones</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
 			pjcontent += "<a href='#'>Tests</a>&nbsp;&nbsp;|&nbsp;&nbsp;";

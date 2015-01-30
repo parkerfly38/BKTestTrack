@@ -361,10 +361,11 @@
 								 reportName : $("##reportname").val(),
 								 reportOptions : JSON.stringify(reportOptions),
 								 reportAandS : JSON.stringify(reportAandS)
-							
 						 }
 					}).done(function(data) {
 						$("##largeModal").modal('hide');
+						$("##topcontent").removeClass("panel").removeClass("panel-default");
+						reportScreen();
 					});
 				});
 			});
@@ -829,15 +830,14 @@
 		<cfargument name="reportOptions" type="string">
 		<cfargument name="reportAandS" type="string">
 		<!--- convert options and ands to cfml from wddx --->
-		<cfset s1 = deserializeJSON(arguments.reportOptions)>
-		<cfset s2 = deserializeJSON(arguments.reportAandS)>
-		<cfset ReportOptions = s1.ReportOptions>
-		<cfset AccessAndScheduling = s2.AccessAndScheduling>
+		<cfset s1 = deserializeJSON(arguments.reportOptions,false)>
+		<cfset s2 = deserializeJSON(arguments.reportAandS,false)>
+		
 		<cfscript>
 			report = createObject("component","reports.#arguments.reportType#").init(0,arguments.reportName,s1,s2);
 			newreport = new Reports(report);
 			newreport.saveReport();
-			if ( structAandS.CreateReport == "Once")
+			if ( s2.CreateReport == "Once")
 				newreport.runReport();
 		</cfscript>
 		

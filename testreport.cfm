@@ -17,7 +17,9 @@
 	//writeDump(objMaintenance.returnTasks());
 	//writeOutput(testreport.saveReport()); 
 </cfscript>--->
-<cfset jsonvar = '{"ReportOptions":[{"GroupingAndChanges":[{"IncludeChanges":""}]},{"TimeFrame":"Today"},{"TestScenarios":""}]}'>
+<!---<cfset jsonvar = '{"ReportOptions":[{"GroupingAndChanges":[{"IncludeChanges":""}]},{"TimeFrame":"Today"},{"TestScenarios":""}]}'>
 <CFDUMP VAR="#deserializejson(jsonvar)#">
 <cfset jsonvar2 = '{"AccessAndScheduling":[{},{"CreateReport":"once"},{"Email":[{},{"SendLinkToUserIds":""},{"SendAsAttachmentTo":""}]},{"StartDate":"2015-01-29"},{"StartTime":"0:00"}]}'>
-<cfdump var="#deserializejson(jsonvar2)#">
+<cfdump var="#deserializejson(jsonvar2)#">--->
+<cfschedule action='list' result='qryScheduledTasks' mode="server" />
+	    	<cfdump var="#qryScheduledTasks#">
