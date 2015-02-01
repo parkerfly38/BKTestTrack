@@ -711,26 +711,31 @@
 							{
 								title : "Passed",
 								strokeColor : "##5cb85c",
+								fillColor : "rgba(92, 184, 92, .5)",
 								data : [#ValueList(qryCounts.PassedCount,",")#]
 							},
 							{
 								title : "Failed",
 								strokeColor : "##d9534f",
+								fillColor : "rgba(217, 83, 79, .5)",
 							    data : [#ValueList(qryCounts.FailedCount,",")#]
 							},
 							{
 								title : "Untested",
 								strokeColor : "##5bc0de",
+								fillColor : "rgba(91, 192, 222, .5)",
 								data : [#ValueList(qryCounts.UntestedCount,",")#]
 							},
 							{
 								title : "Blocked",
 								strokeColor : "##777",
+								fillColor : "rgba(119, 119, 119, .5)",
 								data : [#ValueList(qryCounts.BlockedCount,",")#]
 							},
 							{
 								title : "Retest",
 								strokeColor : "##f0ad4e",
+								fillColor : "rgba(240, 173, 78, .5)",
 								data : [#ValueList(qryCounts.RetestCount,",")#]
 							}
 						]

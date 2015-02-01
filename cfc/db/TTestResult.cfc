@@ -12,12 +12,12 @@ component table="TTestResult" persistent="true"
 	property name="TTestStatus" fieldtype="one-to-one" cfc="TTestStatus" fkcolumn="StatusID";
 	property name="TTestTester" fieldtype="one-to-one" cfc="TTestTester" fkcolumn="TesterID";
 	
-	public void function preInsert() {
+	public void function postInsert() {
 		//update any old case history for caseid
 		updatequery = new Query();
 		updatequery.setSql("UPDATE TTestCaseHistory SET DateActionClosed = GETDATE() WHERE caseid = :caseid AND DateActionClosed is NULL");
 		updatequery.addParam(name="caseid",value=this.getTestCaseID(),cfsqltype="cf_sql_integer");
-		updatequery.execute();
+		updatequery.execute().getResult();
 		newcasehistory = EntityNew("TTestCaseHistory");
 		newcasehistory.setAction(this.getTTestStatus().getStatus());
 		newcasehistory.setTesterID(this.getTTestTester().getId());

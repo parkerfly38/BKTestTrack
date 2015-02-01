@@ -96,7 +96,7 @@ component
 		QueryHistory = new query();
 		QueryHistory.setName("getTestCaseHistory");
 		QueryHistory.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
-		qryResult = QueryHistory.execute(sql="SELECT id,Status,Sum(StatusCount) as StatusCount FROM ( Select TTestStatus.id, Status, ISNULL(Count(a.id),0) as StatusCount FROM TTestStatus LEFT JOIN (SELECT TOP 1 b.id, b.StatusID FROM TTestResult b INNER JOIN TTestScenarioCases c on b.TestCaseId = c.CaseId WHERE c.ScenarioID = :scenarioid ORDER BY b.id DESC) a ON a.StatusID = TTestStatus.id GROUP BY TTestStatus.id, Status  UNION ALL SELECT 1 as id,(CASE WHEN [Action] IN ('Created','Assigned') THEN 'Untested' END) as Status, ISNULL(Count(TTestCaseHistory.id),0) as StatusCount FROM TTestCaseHistory INNER JOIN TTestScenarioCases on TTestScenarioCases.CaseID = TTestCaseHistory.CaseID WHERE ScenarioId = :scenarioid AND [Action] IN ('Created','Assigned') AND DateActionClosed IS NULL GROUP BY [Action] ) DERIVED GROUP BY id, Status");
+		qryResult = QueryHistory.execute(sql="SELECT id,Status,Sum(StatusCount) as StatusCount FROM ( Select TTestStatus.id, Status, ISNULL(Count(a.id),0) as StatusCount FROM TTestStatus LEFT JOIN ( SELECT b.id, b.[Action] FROM TTestCaseHistory b INNER JOIN TTestScenarioCases c on b.CaseId = c.CaseId WHERE c.ScenarioId = :scenarioid and b.DateActionClosed is null ) a ON a.Action = TTestStatus.Status GROUP BY TTestStatus.id, Status  UNION ALL SELECT 1 as id,(CASE WHEN [Action] IN ('Created','Assigned') THEN 'Untested' END) as Status, ISNULL(Count(TTestCaseHistory.id),0) as StatusCount FROM TTestCaseHistory INNER JOIN TTestScenarioCases on TTestScenarioCases.CaseID = TTestCaseHistory.CaseID WHERE ScenarioId = :scenarioid AND [Action] IN ('Created','Assigned') AND DateActionClosed IS NULL GROUP BY [Action] ) DERIVED GROUP BY id, Status");
 		return qryResult.getResult();
 	}
 	public query function qryTestCaseHistoryDataForScenario(scenarioid) {
@@ -122,7 +122,7 @@ component
 									   "INNER JOIN TTestCase d on a.TestCaseId = d.id " &
 									   "INNER JOIN TTestStatus e on a.StatusID = e.id " &
 									   "WHERE c.ScenarioId = :scenarioid " &
-									   "AND DateTested BETWEEN GETDATE() AND DATEADD(DAY,-14,GETDATE()) " &
+									   "AND DateTested BETWEEN DATEADD(DAY,1,GETDATE()) AND DATEADD(DAY,-14,GETDATE()) " &
 									   "ORDER BY TestTitle, DateTested");
 		return qryResult.getResult();
 	}
@@ -142,7 +142,7 @@ component
 		qryNew.setName("getCaseStatus");
 		qryNew.addParam(name="caseid",value=arguments.caseid,cfsqltype="cf_sql_int");
 		qryResult = qryNew.execute(sql="SELECT ISNULL(d.Status,'Assigned') as Status FROM TTestCase a " &
-				"LEFT JOIN (SELECT TOP 1 c.TestCaseId, b.Status FROM TTestResult c INNER JOIN TTestStatus b on b.id = c.StatusID ORDER BY c.id DESC) d ON d.TestCaseId = a.id " &
+				"LEFT JOIN (SELECT TOP 1 c.TestCaseId, b.Status FROM TTestResult c INNER JOIN TTestStatus b on b.id = c.StatusID WHERE c.TestCaseId = :caseid ORDER BY c.id DESC) d ON d.TestCaseId = a.id " &
 				"WHERE a.id = :caseid");
 		return qryResult.getResult();
 	}
