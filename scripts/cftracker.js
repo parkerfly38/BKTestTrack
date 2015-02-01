@@ -11,6 +11,7 @@ var todotimervar;
 var chartheight = 300;
 var chartwidth = 840;
 var currentview = "allprojects";
+var allTests = [];
 
 $(document).ready(function() {
 	$.getJSON("cfc/Dashboard.cfc?method=chartList", function(data) {
@@ -40,7 +41,7 @@ $(document).ready(function() {
 	linkstimervar = setInterval(function() {insertLinks()},10);
 	todotimervar = setInterval(function() {insertTodos()},10);
 	timervar = setInterval(function() {insertAdditional()},10);
-	logincheck = setInterval(function() {checkLoggedIn()},10000);
+	logincheck = setInterval(function() {checkLoggedIn()},100000);
 		
 	$("a#lnkAssignedTests").click(function(event) {
 		event.preventDefault();
@@ -187,6 +188,17 @@ $(document).ready(function() {
 		$("#largeModal .modal-body").load("cfc/forms.cfc?method=ReportForm&reporttype="+reporttype);
 		$("#largeModal").modal("show");
 		
+	});
+	$(document).on("click","a.lnkAddResults",function(event) {
+		event.preventDefault();
+		$("#largeModal .modal-title").text("Add Test Results");
+		allTests = [];
+		$("input:checkbox[name=cbxId]:checked").each(function(){
+			allTests.push($(this).attr("caseid"));
+		});
+		var scenarioid = $(this).attr("scenarioid");
+		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestResultForm&testcaseids="+allTests.join()+"&scenarioid="+scenarioid);
+		$("#largeModal").modal("show");
 	});
 	$(document).on("click","a.lnkViewTests",function(event){
 		event.preventDefault();

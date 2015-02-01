@@ -88,7 +88,8 @@ component
 		QueryHistory.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
 		qryResult = QueryHistory.execute(sql="SELECT a.id as TestCaseId, a.TestTitle, b.DateOfAction, c.UserName, b.DateActionClosed" &
 				" FROM TTestCaseHistory b INNER JOIN TTestCase a ON a.id = b.CaseId INNER JOIN TTestTester c on b.TesterID = c.id INNER JOIN TTestScenarioCases d ON a.id = d.CaseId" &
-				" WHERE d.ScenarioId = :scenarioid and b.Action = 'Assigned'");
+				" WHERE d.ScenarioId = :scenarioid and b.DateActionClosed IS NULL");
+				//" WHERE d.ScenarioId = :scenarioid and b.Action = 'Assigned'");
 		return qryResult.getResult();
 	}
 	public query function qryTestCaseHistoryForScenarios(scenarioid) {

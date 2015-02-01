@@ -28,6 +28,102 @@
 		</div>
 	</cffunction>
 	
+	<cffunction name="TestResultForm" access="remote" output="true">
+		<cfargument name="testcaseids" required="true">
+		<cfargument name="scenarioid">
+			<cfif !(StructKeyExists(Session,"ProjectID"))>
+			<cfexit>
+		</cfif>
+		<cfif !(StructKeyExists(Session,"LoggedIn")) || !Session.LoggedIn>
+			<cfexit>
+		</cfif>
+		<cfset arrStatus = EntityLoad("TTestStatus")>
+		<cfset arrTesters = EntityLoad("TTestTester")>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(".selectpicker").selectpicker();
+				$(document).off("click","##btnClose");
+				$(document).on("click","##btnClose",function(event) {
+					event.preventDefault();					
+					if (confirm("Are you sure you want to close without saving your test results?"))
+					{
+						$("##largeModal").modal('hide');
+					}
+				});
+				$(document).off("click","##btnSave");
+				$(document).on("click","##btnSave",function(event) {
+					event.preventDefault();
+					$.ajax({
+						url: "CFC/forms.cfc?method=saveTestResult",
+						type: "POST",
+						data: {
+							caseidslist : allTests.join(),
+							statusid : $("##ddlStatus").val(),
+							testerid : $("##ddlTester").val(),
+							version : $("##txtVersion").val(),
+							elapsedtime : $("##txtElapsedTime").val(),
+							comment : $("##txtComment").val(),
+							defects : $("##txtDefects").val()
+						}
+					}).done(function(data) {
+						if ( data == "true" )
+						{
+							$("##largeModal").modal('hide');
+							$("##topcontent").removeClass("panel").removeClass("panel-default");
+							$("##topcontent").load("cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid=#arguments.scenarioid#");
+							$("##midrow").empty();
+							$("##activitypanel").remove();
+							$("##lnkReturnToProject").attr("pjid",#session.projectid#);
+							$("##lnkReturnToProject").show();
+							$("##createreportpanel").remove();
+						} else {
+							alert("There was an error with your save.  Please contact system administrator.");
+						}
+					});
+				});
+			});
+		</script>
+		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+			<div class="form-group">
+				<label for="ddlStatus">Status</label><br />
+				<select name="ddlStatus" id="ddlStatus" class="selectpicker">
+					<cfloop array="#arrStatus#" index="status">
+					<option value="#status.getId()#" data-content="<span class='label #returnBSLabelStyle(status.getStatus())#'>#status.getStatus()#</span>">#status.getStatus()#</option>
+					</cfloop>
+				</select>
+				<p class="help-block">Set the status of tests.  Did it pass, or fail?</p>
+				<label for="txtComment">Comment</label>
+				<textarea name="txtComment" id="txtComment" rows="5" class="form-control"></textarea>
+				<p class="help-block">Describe your results or set of results.</p>
+				<p><a href="##" id="addAttachment" class="btn btn-info btn-xs"><i class="fa fa-paperclip"></i> Upload Attachment</a></p>
+			</div>
+		</div>
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			<div class="form-group">
+				<label for="ddlTester">Assigned to</label>
+				<select name="ddlTester" id="ddlTester" class="selectpicker" data-style="btn-info">
+					
+						<option value="0">Unassigned</option>
+						<option data-divider="true"></option>
+					<optgroup label="Users">
+					<cfloop array="#arrTesters#" index="tester">
+					<option value="#tester.getId()#">#tester.getUserName()#</option>
+					</cfloop>
+					</optgroup>
+				</select>
+				<p class="help-block">Assign to another user, or unassign.</p>
+				<label for="txtVersion">Version</label>
+				<input type="text" id="txtVersion" name="txtVersion" class="form-control" />
+				<p class="help-block">Version tested against, if applicable.</p>
+				<label for="txtElapsedTime">Elapsed Time</label>
+				<input type="text" id="txtElapsedTime" name="txtElapsedTime" class="form-control" />
+				<label for="txtDefects">Defects</label>
+				<input type="text" id="txtDefects" name="txtDefects" class="form-control" />
+				<p class="help-block">List of AxoSoft bug ids capturing defects for resolution.</p>
+			</div>
+		</div>
+	</cffunction>
+	
 	<cffunction name="TestCaseForm" access="remote" output="true">
 		<cfargument name="testcaseid" required="false" default="0" type="numeric">
 		<cfif !(StructKeyExists(Session,"ProjectID"))>
@@ -824,6 +920,35 @@
 		</cfscript>
 	</cffunction>
 	
+	<cffunction name="saveTestResult" access="remote" returntype="any" returnformat="JSON">
+		<cfargument name="caseidslist" required="true">
+		<cfargument name="statusid" type="numeric" required="true">
+		<cfargument name="testerid" type="numeric" required="true">
+		<cfargument name="version">
+		<cfargument name="elapsedtime">
+		<cfargument name="comment">
+		<cfargument name="AttachmentList" default="">
+		<cfargument name="defects" default="">
+		<cfloop index="ListElement" list="#arguments.caseidslist#">
+			<cfscript>
+				var testresult = EntityNew("TTestResult");
+				StatusObj = EntityLoadByPk("TTestStatus",arguments.statusid);
+				testresult.setTTestStatus(StatusObj);
+				TesterObj = EntityLoadByPk("TTestTester",arguments.testerid);
+				testresult.setTTestTester(TesterObj);
+				testresult.setVersion(arguments.version);
+				testresult.setElapsedTime(arguments.elapsedtime);
+				testresult.setComment(arguments.comment);
+				testresult.setAttachmentList(arguments.attachmentlist);
+				testresult.setDefects(arguments.defects);
+				testresult.setDateTested(Now());
+				testresult.setTestCaseID(ListElement);
+				EntitySave(testresult);
+			</cfscript>
+		</cfloop>
+		<cfreturn true />
+	</cffunction>
+	
 	<cffunction name="saveReport" access="remote" returntype="any" returnformat="JSON">
 		<cfargument name="reportType" required="true">
 		<cfargument name="reportName" required="true">
@@ -856,5 +981,32 @@
 			FileDelete(ExpandPath("/reportpdfs/") & arguments.reportid & ".pdf");
 			return true;
 		</cfscript>
+	</cffunction>
+	
+	<cffunction name="returnBSLabelStyle" access="private" returntype="string">
+		<cfargument name="labelExpression" required="true">
+		<cfargument name="element" required="false" default="label">
+		<cfset local.labelstyle = "">
+		<cfswitch expression="#arguments.labelExpression#">
+				<cfcase value="Passed">
+					<cfset local.labelstyle = "#arguments.element#-success">
+				</cfcase>
+				<cfcase value="Failed">
+					<cfset local.labelstyle = "#arguments.element#-danger">
+				</cfcase>
+				<cfcase value="Blocked">
+					<cfset local.labelstyle = "#arguments.element#-default">
+				</cfcase>
+				<cfcase value="Untested,Assigned">
+					<cfset local.labelstyle = "#arguments.element#-info">
+				</cfcase>
+				<cfcase value="Retest">
+					<cfset local.labelstyle = "#arguments.element#-warning">
+				</cfcase>
+				<cfdefaultcase>
+					<cfset local.labelstyle = "#arguments.element#-default">
+				</cfdefaultcase>
+			</cfswitch>
+		<cfreturn local.labelstyle>
 	</cffunction>
 </cfcomponent>
