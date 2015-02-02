@@ -520,21 +520,31 @@
 							</td>
 							<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
 							<td style="width:33%"><div class="progress">
+									<cfif passedPercent gt 0>
 									<div class="progress-bar progress-bar-success progress-bar-striped" style="width:#passedPercent#%;">
 										<span class="sr-only">#passedPercent#% Passed</span>
 									</div>
+									</cfif>
+									<cfif retestPercent gt 0>
 									<div class="progress-bar progress-bar-warning progress-bar-striped" style="width:#retestPercent#%;">
 										<span class="sr-only">#retestPercent#% Retest</span>
 									</div>
-									<div class="progress-bar progess-bar-danger progress-bar-striped" style="width:#failedPercent#%;">
+									</cfif>
+									<cfif failedPercent gt 0>
+									<div class="progress-bar progress-bar-danger progress-bar-striped" style="width:#failedPercent#%;">
 										<span class="sr-only">#failedPercent#% Failed</span>
 									</div>
+									</cfif>
+									<cfif untestedPercent gt 0>
 									<div class="progress-bar progress-bar-info progress-bar-striped" style="width:#untestedPercent#%;">
 										<span class="sr-only">#untestedPercent#% Untested</span>
 									</div>
+									</cfif>
+									<cfif blockedPercent gt 0>
 									<div class="progress-bar progress-bar-default progress-bar-striped" style="width:#blockedPercent#%;">
 										<span class="sr-only">#blockedPercent#% Blocked</span>
 									</div>
+									</cfif>
 								</div>
 									
 							</td>
