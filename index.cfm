@@ -43,6 +43,11 @@
 			.linkshow {
 				display: block;
 			}
+			 canvas{
+		        width: 100% !important;
+		        /*max-width: 800px;
+		        height: auto !important;*/
+		    }
 		</style>
 	</head>
 	<body>

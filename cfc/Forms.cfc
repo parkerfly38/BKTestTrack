@@ -968,12 +968,40 @@
 		
 	</cffunction>
 	
+	<cffunction name="deleteTestCase" access="remote" returntype="void">
+		<cfargument name="tcid" type="numeric" required="true">
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			login
+			<cfexit>
+		</cfif>
+		<cfset testcase = EntityLoadByPK("TTestCase",arguments.tcid)>
+		<cfscript>
+			EntityDelete(testcase);
+			// delete related stuff
+			arrTCScenarios = EntityLoad("TTestScenarioCases",{CaseId = arguments.tcid});
+			for (tcasescenario in arrTCScenarios) {
+				EntityDelete(tcasescenario);
+			}
+			arrTestHistory = EntityLoad("TTestCaseHistory",{CaseId = arguments.tcid});
+			for ( history in arrTestHistory) {
+				EntityDelete(history);
+			}
+			arrTestResults = EntityLoad("TTestResult",{TestCaseId = arguments.tcid});
+			for ( result in arrTestResults )
+			{
+				EntityDelete(result);
+			}
+		</cfscript> 
+	</cffunction>
+	
 	<cffunction name="deleteReport" access="remote" returntype="any" returnformat="JSON">
 		<cfargument name="reportid" required="true" type="numeric">
 		<cfscript>
 			report = EntityLoadByPK("TTestReports",arguments.reportid);
+			objMaintenance = createobject("component","Maintenance");
 			try {
 				EntityDelete(report);
+				objMaintenance.deleteTask(arguments.reportid);
 			} catch (any e)
 			{
 				return false;
