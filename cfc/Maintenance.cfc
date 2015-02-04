@@ -59,10 +59,8 @@
 			{
 				ArrayAppend(arrayPriorities,priority.getPriorityName());
 			}
-			writeDump(arrayPriorities);
 			addressList = cellRangeList.init(1,100,2,2);
 			dvConstraint = dvConstraint.createExplicitListConstraint(arrayPriorities);
-			writeDump(dataValidation);
 			dataValidation = dataValidation.init(addressList,dvConstraint);
 			dataValidation.setSuppressDropDownArrow(false);
 			sheet.addValidationData(dataValidation);
