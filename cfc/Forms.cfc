@@ -747,6 +747,23 @@
 	</cffunction>
 	<!--- form processing --->
 	
+	<cffunction name="removeTestCases" access="remote" returntype="void">
+		<cfargument name="testcases" type="string" required="true">
+		<cfargument name="scenarioid" required="true">
+		<cfloop list="#arguments.testcases#" index="i">
+			<cfquery>
+				DELETE FROM TTestScenarioCases
+				WHERE CaseId = #i# AND ScenarioId = #arguments.scenarioid#
+			</cfquery>
+			<cfquery>
+				DELETE FROM TTestResult
+				WHERE TestCaseID = #i#
+				DELETE FROM TTestCaseHistory
+				WHERE CaseID = #i#
+			</cfquery>
+		</cfloop>
+	</cffunction>
+	
 	<cffunction name="saveCasesToScenario" access="remote" returntype="any" returnformat="JSON">
 		<cfargument name="testcases">
 		<cfargument name="scenarioid">

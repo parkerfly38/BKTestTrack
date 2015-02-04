@@ -9,6 +9,7 @@
 	<cfset this.ormSettings.eventhandling = true />
 	<cfset this.directory = getdirectoryfrompath(getcurrenttemplatepath()) >
 	<cfset this.mappings["/reportpdfs"] = "#this.directory#reportpdfs/">
+	<cfset this.mappings["/excel"] = "#this.directory#excel/">
 	
 	<cffunction name="onRequestStart" returntype="void" output="true">
 		<!--- debug only, remove otherwise --->

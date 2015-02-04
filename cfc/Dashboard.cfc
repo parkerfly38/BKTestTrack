@@ -824,7 +824,7 @@
 								<li>
 									<div class="btn-group">
 										<a href="##" id="addLink" class="lnkAddResults btn btn-info btn-xs disabled" scenarioid="#arguments.scenarioid#"><i class="fa fa-plus-square"></i> Update/Add Results</a>
-										<a href="##" id="removeLink" class="lnkRemoveTestCases btn btn-info btn-xs disabled"><i class="fa fa-trash-o"></i> Remove Test Case(s)</a>
+										<a href="##" id="removeLink" class="lnkRemoveTestCases btn btn-info btn-xs disabled" scenarioid="#arguments.scenarioid#"><i class="fa fa-trash-o"></i> Remove Test Case(s)</a>
 										<a href="##" class="lnkAddTestCaseToScenario btn btn-info btn-xs" scenarioid="#arguments.scenarioid#"><i class="fa fa-plus-square"></i> Add Test Case</a>
 									</div>
 								</li>

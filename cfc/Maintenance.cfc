@@ -39,4 +39,62 @@
 		<cfschedule action="delete" task="TestTrack#arguments.testid#">
 	</cffunction>
 
+	<cffunction name="createSpreadsheetTestCaseTemplate" returntype="void" output="true" access="remote">
+		<cfscript>
+			objSpreadsheet = SpreadsheetNew("TestCases");
+			SpreadSheetAddRow(objSpreadsheet,"TestTitle,TestDetails,Priority,Type,Project,Preconditions,Steps,ExpectedResult,Estimate");
+			
+			workbook = objSpreadSheet.getWorkBook();
+			sheet = workbook.getSheet("TestCases");
+			
+			dvConstraint = createObject("java","org.apache.poi.hssf.usermodel.DVConstraint");
+			cellRangeList = createObject("java","org.apache.poi.ss.util.CellRangeAddressList");
+			dataValidation = createObject("java","org.apache.poi.hssf.usermodel.HSSFDataValidation");
+			dataValidationA = createObject("java","org.apache.poi.hssf.usermodel.HSSFDataValidation");
+			dataValidationB = createObject("java","org.apache.poi.hssf.usermodel.HSSFDataValidation");
+			//get repeatable for dresslist
+			arrTestPriorities = EntityLoad("TTestPriorityType");
+			arrayPriorities = [];
+			for (priority in arrTestPriorities)
+			{
+				ArrayAppend(arrayPriorities,priority.getPriorityName());
+			}
+			writeDump(arrayPriorities);
+			addressList = cellRangeList.init(1,100,2,2);
+			dvConstraint = dvConstraint.createExplicitListConstraint(arrayPriorities);
+			writeDump(dataValidation);
+			dataValidation = dataValidation.init(addressList,dvConstraint);
+			dataValidation.setSuppressDropDownArrow(false);
+			sheet.addValidationData(dataValidation);
+			
+			//get repeatable for type	
+			arrTestTypes = EntityLoad("TTestType");
+			arrayTypes = [];
+			for (ttype in arrTestTypes) {
+				ArrayAppend(arrayTypes,ttype.getType());
+			}
+			addressList = cellRangeList.init(1,100,3,3);
+			dvConstraint = dvConstraint.createExplicitListConstraint(arrayTypes);
+			dataValidationA = dataValidationA.init(addressList,dvConstraint);
+			dataValidationA.setSuppressDropDownArrow(false);
+			sheet.addValidationData(dataValidationA);
+			
+			//get repeatable for project
+			arrProjects = EntityLoad("TTestProject");
+			arrayProjects = [];
+			for (project in arrProjects) {
+				ArrayAppend(arrayProjects,project.getProjectTitle());
+			}
+			
+			addressList = cellRangeList.init(1,100,4,4);
+			dvConstraint = dvConstraint.createExplicitListConstraint(arrayProjects);
+			dataValidationB = dataValidationB.init(addressList,dvConstraint);
+			dataValidationB.setSuppressDropDownArrow(false);
+			sheet.AddValidationData(dataValidationB);
+			
+			SpreadSheetWrite(objSpreadsheet,ExpandPath("/excel/")&"fordownload.xls","yes");
+			
+		</cfscript>
+	</cffunction>
+
 </cfcomponent>

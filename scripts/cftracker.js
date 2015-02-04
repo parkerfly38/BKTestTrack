@@ -12,6 +12,7 @@ var chartheight = 300;
 var chartwidth = 840;
 var currentview = "allprojects";
 var allTests = [];
+var removeTests = [];
 
 $(document).ready(function() {
 	$.getJSON("cfc/Dashboard.cfc?method=chartList", function(data) {
@@ -199,6 +200,25 @@ $(document).ready(function() {
 		var scenarioid = $(this).attr("scenarioid");
 		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestResultForm&testcaseids="+allTests.join()+"&scenarioid="+scenarioid);
 		$("#largeModal").modal("show");
+	});
+	$(document).on("click","a.lnkRemoveTestCases",function(event){
+		event.preventDefault();
+		removeTests = [];
+		$("input:checkbox[name=cbxId]:checked").each(function(){
+			removeTests.push($(this).attr("caseid"));
+		});
+		var scenarioid = $(this).attr("scenarioid");
+		$.ajax({
+			url: "cfc/forms.cfc?method=removeTestCases&testcases="+removeTests.join()+"&scenarioid="+scenarioid
+		}).done(function(){
+			$("#topcontent").removeClass("panel").removeClass("panel-default");
+			$("#topcontent").load("cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+scenarioid);
+			$("#midrow").empty();
+			$("#activitypanel").remove();
+			$("#lnkReturnToProject").attr("pjid",projectid);
+			$("#lnkReturnToProject").show();
+			$("#createreportpanel").remove();
+		});
 	});
 	$(document).on("click","a.lnkViewTests",function(event){
 		event.preventDefault();
