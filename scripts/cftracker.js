@@ -8,6 +8,7 @@ var timervar;
 var linkstimervar;
 var initialLoadTimer;
 var todotimervar;
+var tcfileuploadtimer;
 var chartheight = 300;
 var chartwidth = 840;
 var currentview = "allprojects";
@@ -277,6 +278,18 @@ $(document).ready(function() {
 			reportScreen();
 		});
 	});
+	$(document).on("click","a.lnkDownloadTestCaseTemplate", function(event) {
+		event.preventDefault();
+		$.ajax({
+			url: "CFC/Maintenance.cfc?method=createSpreadsheetTestCaseTemplate"
+		}).done(function()
+		{
+			window.open("excel/fordownload.xls");
+		});
+	});
+	$(document).on("click","a.lnkUploadTestCases",function(event){
+		window.open("cfc/Maintenance.cfc?method=TestCaseFileUpload");
+	})
 	$(document).on("click","a.lnkQuickTSReport",function(event) {
 		if ($(this).attr("reportvalue") != "") {
 			$.ajax({

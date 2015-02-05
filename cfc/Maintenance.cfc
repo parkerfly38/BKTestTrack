@@ -95,4 +95,39 @@
 		</cfscript>
 	</cffunction>
 
+	<cffunction name="createSpreadsheetTestResultTemplate" returntype="void" access="remote">
+		<cfscript>
+			
+		</cfscript>
+	</cffunction>
+	
+	<cffunction name="createUUID" access="remote" returntype="string">
+		<cfreturn createUUID()>
+	</cffunction>
+	
+	<cffunction name="TestCaseFileUpload" access="remote" output="true">
+		<script type="text/javascript" src="../scripts/jquery-1.10.2.min.js"></script>
+		<script>
+			function processFile(info) {
+				 console.log(info);
+				 $.ajax({
+				 	url: "Maintenance.cfc?method=importTCfromSheet",
+				 	type: "POST",
+				 	data:  { filename : info.FILENAME }
+				 }).done(function(){
+				 	window.close();
+				 });
+			}
+		</script>
+		<cffileupload title="Upload Excel Spreadsheet" name="uploader" extensionfilter="xls" maxfileselect="1" addbuttonlabel="Add" bgcolor="CCCCCC" clearButtonLabel="Clear" deletebuttonlabel="delete" progressbar="true" uploadbuttonlabel="Upload" url="Maintenance.cfc?method=saveTestCaseExcelfile" oncomplete="processFile" />
+	</cffunction>
+	
+	<cffunction name="saveTestCaseExcelFile" access="remote" output="true">
+		<cffile action="uploadAll" destination="#expandPath('/excel/')#" nameConflict="overwrite" />
+	</cffunction>
+	
+	<cffunction name="importTCfromSheet" access="remote" output="true">
+		<cfargument name="filename" required="true">
+		
+	</cffunction>
 </cfcomponent>

@@ -568,13 +568,16 @@
 			<div class="panel-heading"><i class="fa fa-tachometer"></i> <strong>Test Cases</strong></div>
 			<div class="panel-body">
 				<cfif ArrayLen(arrTestCases) gt 0>
-				<!---<div class="navbar">
+				<div class="navbar" style="margin-right: 10px;">
 					<div class="navbar-inner">
-						<ul class="nav">
-							<li>blank option</li>
+						<ul class="nav navbar-nav navbar-right">
+							<li><div class="btn-group">
+								<a href="##" class="lnkDownloadTestCaseTemplate btn btn-info">Download Test Case Template (*.xls)</a>
+								<a href="##" class="lnkUploadTestCases btn btn-info">Upload Via Excel</a></div>
+							</li>
 						</ul>
 					</div>
-				</div>--->
+				</div>
 				<h4>All Test Cases</h4>
 				<table class="table table-condensed table-striped table-hover">
 					<thead>
@@ -590,7 +593,7 @@
 						<cfloop array="#arrTestCases#" index="case">
 						<tr>
 							<td><input type="checkbox" id="cbxTestCase" caseid="#case.getId()#" /></td>
-							<td>TC#case.getId()#</td>
+							<td><span class="label label-info">TC#case.getId()#</label></td>
 							<td>#case.getTestTitle()#</td>
 							<td><a href="##" class="testcaseeditlink btn btn-default btn-xs" editid="#case.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
 							<td><cfif Application.AllowCaseDelete eq "true"><a href="##" class="testcasedeletelink btn btn-default btn-xs" editid="#case.getId()#"><i class="fa fa-trash"></i> Delete</a></cfif></td>
@@ -845,7 +848,7 @@
 						<cfloop query="qryTestCases">
 						<tr>
 							<td><input type="checkbox" id="cbxId" name="cbxId" class="cbxTestId" caseid="#testcaseid#" onclick="onRowSelect(this);"  /></td>
-							<td>TC#testcaseid#</td>
+							<td><span class="label label-info">TC#testcaseid#</span></td>
 							<td>#TestTitle#</td>
 							<td>#UserName#</td>
 							<td style="width:8%">
