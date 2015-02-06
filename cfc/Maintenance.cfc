@@ -114,15 +114,15 @@
 					$.ajax({
 				        xhr: function () {  
 				            return $.ajaxSettings.xhr();
-	        		},
-			        type: "POST",
-			        data: data,
-			        cache: false,
-			        contentType: false,
-			        processData: false,
-			        url: "cfc/Maintenance.cfc?method=saveTestCaseExcelFile",
-			        success: function () { },
-			        error: function () { },
+		        		},
+				        type: "POST",
+				        data: data,
+				        cache: false,
+				        contentType: false,
+				        processData: false,
+				        url: "cfc/Maintenance.cfc?method=saveTestCaseExcelFile",
+				        success: function () { },
+				        error: function () { }
 	    		});
     		});
     	</script>
