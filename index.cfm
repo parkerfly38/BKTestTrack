@@ -48,6 +48,10 @@
 		        /*max-width: 800px;
 		        height: auto !important;*/
 		    }
+	        .btn-file {
+			    position: relative;
+			    overflow: hidden;
+    		}
 		</style>
 	</head>
 	<body>

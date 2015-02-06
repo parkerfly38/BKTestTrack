@@ -288,8 +288,10 @@ $(document).ready(function() {
 		});
 	});
 	$(document).on("click","a.lnkUploadTestCases",function(event){
-		window.open("cfc/Maintenance.cfc?method=TestCaseFileUpload");
-	})
+		$("#smallModal .modal-title").text("Upload Excel File with Test Cases");
+		$("#smallModal .modal-body").load("cfc/Maintenance.cfc?method=TestCaseFileUpload");
+		$("#smallModal").modal("show");
+	});
 	$(document).on("click","a.lnkQuickTSReport",function(event) {
 		if ($(this).attr("reportvalue") != "") {
 			$.ajax({

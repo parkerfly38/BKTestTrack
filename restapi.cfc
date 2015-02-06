@@ -16,4 +16,14 @@ component restpath="restapi" rest="true"
 			return false;
 		}
 	}
+	
+	remote any function getTestsByScenario(string scenarioid restargsource="path") httpmethod="post" restpath="getTestsByScenario/{scenarioid}" returnformat="JSON"
+	{
+		if (!CheckAuthorization())
+			throw (errorcode="401", type="Unauthorized");
+		querynew = new Query();
+		querynew.setSql("SELECT TestTitle, TTestCase.id FROM TTestCase INNER JOIN TTestScenarioCases ON TTestScenarioCases.CaseId = TTestCase.id WHERE ScenarioId = :scenarioid");
+		querynew.addParam(name="scenarioid",value=arguments.scenarioid);
+		return serializeJSON(querynew.execute().getResult());
+	}
 }
