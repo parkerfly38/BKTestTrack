@@ -112,29 +112,41 @@
 				$(document).on("click","##btnSave",function(event) {
 					var data = new window.FormData($('##uploadFile')[0]);
 					$.ajax({
-				        xhr: function () {  
-				            return $.ajaxSettings.xhr();
-		        		},
 				        type: "POST",
 				        data: data,
 				        cache: false,
 				        contentType: false,
 				        processData: false,
-				        url: "cfc/Maintenance.cfc?method=saveTestCaseExcelFile",
-				        success: function () { },
-				        error: function () { }
+				        <cfif SERVER.OS.Name eq "Mac OS X">
+				        url: "upload.php",
+				        <cfelse>
+				        url: "http://localhost/COGTestTrack/uploadHandler.cfm",
+				        </cfif>
+				        //url: "../uploadHandler.cfm",
+				        success: function () {
+				        	$("##smallModal").modal("hide");
+				        	$("##topcontent").load("cfc/Dashboard.cfc?method=AllTests");
+				         },
+				        error: function () { alert("Because, fuck you, apparently"); }
+				   });
 	    		});
     		});
     	</script>
-		<form enctype="multipart/form-data" id="uploadFile">
+		<form enctype="multipart/form-data" id="uploadFile" method="post" action="http://localhost/COGTestTrack/uploadHandler.cfm">
 			
- 			<input type="file" name="fileUpload"/>
+ 			<input type="file" name="fileUpload" id="fileUpload" />
     		
 		</form>			
 	</cffunction>
 	
+	<cffunction name="getServerVersion" access="remote" returnformat="plain" returntype="string">
+		<cfreturn SERVER.OS.name>
+	</cffunction>
+	
 	<cffunction name="saveTestCaseExcelFile" access="remote" output="true">
-		<cffile action="upload" fileField="fileUpload" destination="#expandPath('/excel/')#"  nameConflict="overwrite" />
+		
+		<cffile action="upload" fileField="form.fileUpload" destination="#expandPath('/excel/')#"  nameConflict="overwrite" />
+		
 	</cffunction>
 	
 	<cffunction name="importTCfromSheet" access="remote" output="true">
