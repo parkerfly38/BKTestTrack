@@ -120,14 +120,19 @@
 				        <cfif SERVER.OS.Name eq "Mac OS X">
 				        url: "upload.php",
 				        <cfelse>
-				        url: "http://localhost/COGTestTrack/uploadHandler.cfm",
+				        url: "cfc/Maintenance.cfc?method=saveTestCaseExcelFile",
 				        </cfif>
-				        //url: "../uploadHandler.cfm",
-				        success: function () {
+				        success: function (datap) {
 				        	$("##smallModal").modal("hide");
 				        	$("##topcontent").load("cfc/Dashboard.cfc?method=AllTests");
+				        	<cfif SERVER.OS.Name eq "Mac OS X">
+				        	$.ajax({ url: "cfc/Maintenance.cfc?method=fileProcess",
+				        			 type: "POST",
+				        			 data: { filename : data }
+				       		});
+				       		</cfif>
 				         },
-				        error: function () { alert("Because, fuck you, apparently"); }
+				        error: function () { alert("Because, screw you, apparently"); }
 				   });
 	    		});
     		});
@@ -146,11 +151,46 @@
 	<cffunction name="saveTestCaseExcelFile" access="remote" output="true">
 		
 		<cffile action="upload" fileField="form.fileUpload" destination="#expandPath('/excel/')#"  nameConflict="overwrite" />
-		
+		<cfscript>
+			fileProcess(cffile.serverFile);
+		</cfscript>
 	</cffunction>
 	
-	<cffunction name="importTCfromSheet" access="remote" output="true">
-		<cfargument name="filename" required="true">
-		
+	<cffunction name="fileProcess" access="remote" returntype="void">
+		<cfargument name="filename" type="string" required="true">
+		<cfspreadsheet action="read" src="#ExpandPath('/excel/')##arguments.filename#" query="newtcs">
+		<cfloop query="newtcs" startrow="2">
+			<cfscript>
+				importTCfromSheet(col_1, col_2, col_3, col_4, col_5, col_6, col_7, col_8, col_9);
+			</cfscript>
+		</cfloop>
+	</cffunction>
+	
+	<cffunction name="importTCfromSheet" access="private" returntype="void">
+		<cfargument name="testtitle">
+		<cfargument name="testdetails">
+		<cfargument name="priority">
+		<cfargument name="type">
+		<cfargument name="project">
+		<cfargument name="preconditions">
+		<cfargument name="steps">
+		<cfargument name="expectedresult">
+		<cfargument name="estimate">
+		<cfset PriorityId = EntityLoad("TTestPriorityType",{PriorityName = arguments.priority})[1].getId()>
+		<cfset TypeId = EntityLoad("TTestType",{Type = arguments.type})[1].getID()>
+		<cfset ProjectID = EntityLoad("TTestProject",{ProjectTitle = arguments.project})[1].getId()>
+		<cfscript>
+			testcase = EntityNew("TTestCase");
+			testcase.setTestTitle(arguments.testtitle);
+			testcase.setPriorityId(PriorityId);
+			testcase.setTypeId(TypeId);
+			testcase.setProjectId(ProjectID);
+			testcase.setPreconditions(arguments.preconditions);
+			testcase.setSteps(arguments.steps);
+			testcase.setExpectedResult(arguments.expectedresult);
+			testcase.setEstimatE(arguments.estimate);
+			testcase.setMilestoneId(0);
+			EntitySave(testcase);
+		</cfscript>
 	</cffunction>
 </cfcomponent>

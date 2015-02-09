@@ -16,6 +16,9 @@ var allTests = [];
 var removeTests = [];
 
 $(document).ready(function() {
+	
+  	$('[data-toggle="tooltip"]').tooltip()
+	
 	$.getJSON("cfc/Dashboard.cfc?method=chartList", function(data) {
 		jsonDashMenu = data;
 	});
@@ -70,10 +73,11 @@ $(document).ready(function() {
 			$("#panel-actions").remove();
 			$("#createreportpanel").remove();
 			$("#lnkReturnToProject").hide();
-			$(".lnkViewMilestones").hide();
-			$(".lnkViewScenarios").hide();
-			$(".lnkViewTests").hide();
+			$(".ddmScenarios").hide();
+			$(".ddmTestCases").hide();
+			$(".ddmAutomationStudio").hide();
 			$(".lnkViewReports").hide();
+			$(".ddmMilestones").hide();
 			homeLoad();
 		});
 	});
@@ -129,9 +133,11 @@ $(document).ready(function() {
 			$("#createreportpanel").remove();
 		});
 		$("#lnkReturnToProject").show();
-		$(".lnkViewMilestones").show();
-		$(".lnkViewScenarios").show();
-		$(".lnkViewTests").show();
+		//$(".lnkViewMilestones").show();
+		$(".ddmMilestones").show();
+		$(".ddmScenarios").show();
+		$(".ddmAutomationStudio").show();
+		$(".ddmTestCases").show();
 		$(".lnkViewReports").show();
 		//$("#lnkReturnToProject").hide();
 		todotimervar = setInterval(function() {insertTodos()},10);
@@ -327,9 +333,10 @@ function projectIDCheck(){
 		});
 		
 		$("#lnkReturnToProject").show();
-		$(".lnkViewMilestones").show();
-		$(".lnkViewScenarios").show();
-		$(".lnkViewTests").show();
+		$(".ddmMilestones").show();
+		$(".ddmScenarios").show();
+		$(".ddmTestCases").show();
+		$(".ddmAutomationStudio").show();
 		$(".lnkViewReports").show();
 	}
 }

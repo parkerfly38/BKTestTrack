@@ -1118,12 +1118,17 @@
 	
 	<cffunction name="getCreateReports" access="remote" output="true">
 		<div id="createreportpanel" class="panel panel-default">
+			<script type="text/javascript">
+				$(document).ready(function() {
+					$('[data-toggle="tooltip"]').tooltip();
+				});
+			</script>
 			<div class="panel-heading"><i class="fa fa-bars"></i> Create Reports</div>
 			<div class="panel-body">
 				<strong>Projects</strong><br />
 				<table class="table table-condensed table-hover">
 					<tbody>
-						<tr><td><a href="##" class="lnkCreateReport" reporttype="Activity"><i class="fa fa-plus-circle" style="color:green;"></i> Activity</a></td>
+						<tr><td><a href="##" class="lnkCreateReport" reporttype="Activity" data-toggle="tooltip" data-placement="left" title="Shows a summary of new and updated test cases."><i class="fa fa-plus-circle" style="color:green;"></i> Activity</a></td>
 						</tr>
 						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Coverage for References</td>
 						</tr>

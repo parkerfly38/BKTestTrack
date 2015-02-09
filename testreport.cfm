@@ -21,5 +21,4 @@
 <CFDUMP VAR="#deserializejson(jsonvar)#">
 <cfset jsonvar2 = '{"AccessAndScheduling":[{},{"CreateReport":"once"},{"Email":[{},{"SendLinkToUserIds":""},{"SendAsAttachmentTo":""}]},{"StartDate":"2015-01-29"},{"StartTime":"0:00"}]}'>
 <cfdump var="#deserializejson(jsonvar2)#">--->
-<cfschedule action='list' result='qryScheduledTasks' mode="server" />
-	    	<cfdump var="#qryScheduledTasks#">
+<cfscript>selenium = new cfselenium.selenium();writeDump(selenium);</cfscript>
