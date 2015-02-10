@@ -25,5 +25,5 @@
 <cfscript>
 	objAutomationStudio = createObject("component","cfc.AutomationStudio");
 	//objAutomationStudio.
-	objAutomationStudio.RunTest('https://accesshometest.cogisi.com','*firefox C:\Program Files (x86)\Mozilla Firefox\firefox.exe',4,1);
+	objAutomationStudio.RunTest('https://accesshometest.cogisi.com','*iexplore',4,1);
 </cfscript>

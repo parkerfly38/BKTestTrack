@@ -24,7 +24,6 @@ component extends="cfselenium.CFSeleniumTestCase"
 				if ( step.getAction() CONTAINS "assert" )
 				{
 					evaluate("#step.getAction()#(#step.getValueOne()#,#step.getValueTwo()#)");
-					writeOutput("#step.getAction()#");
 				} else {
 					for ( i=1; i <= ListLen(AlphaListOfNames); i++) {
 						for ( func in mds.FUNCTIONS) {
@@ -37,15 +36,12 @@ component extends="cfselenium.CFSeleniumTestCase"
 					switch(paramLength) {
 						case 0:
 							evaluate("selenium.#step.getAction()#()");
-							writeOutput("#step.getAction()#");
 							break;
 						case 1:
 							evaluate("selenium.#step.getAction()#('#step.getValueOne()#')");
-							writeOutput("#step.getAction()#");
 							break;
 						case 2:
 							evaluate("selenium.#step.getAction()#('#step.getValueOne()#','#step.getValueTwo()#')");
-							writeOutput("#step.getAction()#");
 							break;
 					}
 				}
