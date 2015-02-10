@@ -20,5 +20,10 @@
 <!---<cfset jsonvar = '{"ReportOptions":[{"GroupingAndChanges":[{"IncludeChanges":""}]},{"TimeFrame":"Today"},{"TestScenarios":""}]}'>
 <CFDUMP VAR="#deserializejson(jsonvar)#">
 <cfset jsonvar2 = '{"AccessAndScheduling":[{},{"CreateReport":"once"},{"Email":[{},{"SendLinkToUserIds":""},{"SendAsAttachmentTo":""}]},{"StartDate":"2015-01-29"},{"StartTime":"0:00"}]}'>
-<cfdump var="#deserializejson(jsonvar2)#">--->
-<cfscript>selenium = new cfselenium.selenium();writeDump(selenium);</cfscript>
+<cfdump var="#deserializejson(jsonvar2)#">---><!---
+<cfscript>selenium = new cfselenium.selenium();writeDump(selenium);</cfscript>--->
+<cfscript>
+	objAutomationStudio = createObject("component","cfc.AutomationStudio");
+	//objAutomationStudio.
+	objAutomationStudio.RunTest('https://accesshometest.cogisi.com','*firefox C:\Program Files (x86)\Mozilla Firefox\firefox.exe',4,1);
+</cfscript>

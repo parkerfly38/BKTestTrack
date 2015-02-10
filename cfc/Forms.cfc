@@ -42,14 +42,6 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 				$(".selectpicker").selectpicker();
-				$(document).off("click","##btnClose");
-				$(document).on("click","##btnClose",function(event) {
-					event.preventDefault();					
-					if (confirm("Are you sure you want to close without saving your test results?"))
-					{
-						$("##largeModal").modal('hide');
-					}
-				});
 				$(document).off("click","##btnSave");
 				$(document).on("click","##btnSave",function(event) {
 					event.preventDefault();
@@ -148,14 +140,6 @@
 					format:"mm/dd/yyyy",
 					todayHighlight: true,
 					autoclose:true
-				});
-				$(document).off("click","##btnClose");
-				$(document).on("click","##btnClose",function(event) {
-					event.preventDefault();					
-					if (confirm("Are you sure you want to close without saving your test case?"))
-					{
-						$("##largeModal").modal('hide');
-					}
 				});
 				$(document).off("click","##btnSave");
 				$(document).on("click","##btnSave",function(event) {
@@ -258,14 +242,6 @@
 					format:"mm/dd/yyyy",
 					todayHighlight: true,
 					autoclose:true
-				});
-				$(document).off("click","##btnClose");
-				$(document).on("click","##btnClose",function(event) {
-					event.preventDefault();					
-					if (confirm("Are you sure you want to close without saving your milestone?"))
-					{
-						$("##largeModal").modal('hide');
-					}
 				});
 				$(document).off("click","##btnSave");
 				$(document).on("click","##btnSave",function(event) {
@@ -388,14 +364,6 @@
 		</cfquery>
 		<script type="text/javascript">
 			$(document).ready(function() {
-				$(document).off("click","##btnClose");
-					$(document).on("click","##btnClose",function(event) {
-						event.preventDefault();					
-						if (confirm("Are you sure you want to close without saving?"))
-						{
-							$("##smallModal").modal('hide');
-						}
-					});
 				$(document).off("click","##btnSave");
 				$(document).on("click","##btnSave", function(event) {
 					event.preventDefault();
@@ -439,14 +407,6 @@
 		</cfscript>
 		<script type='text/javascript'>
 			$(document).ready(function() {
-				$(document).off("click","##btnClose");
-				$(document).on("click","##btnClose",function(event) {
-					event.preventDefault();					
-					if (confirm("Are you sure you want to close without saving your report?"))
-					{
-						$("##largeModal").modal('hide');
-					}
-				});
 				$(document).off("click","##btnSave");
 				$(document).on("click","##btnSave",function(event) {
 					#report.getJSONFormDataForPost()#;
@@ -508,14 +468,6 @@
 					$(".list-group-item").removeClass("active");
 					$("##mslink").html(rptext);
 					$(this).addClass("active");
-				});
-				$(document).off("click","##btnClose");
-				$(document).on("click","##btnClose",function(event) {
-					event.preventDefault();					
-					if (confirm("Are you sure you want to close without saving your test scenario?"))
-					{
-						$("##largeModal").modal('hide');
-					}
 				});
 				$(document).off("click","##btnSave");
 				$(document).on("click","##btnSave",function(event) {
@@ -656,14 +608,6 @@
 					$("##txtRepositoryType").val(rpvalue);
 					$(".list-group-item").removeClass("active");
 					$(this).addClass("active");
-				});
-				$(document).off("click","##btnClose");
-				$(document).on("click","##btnClose",function(event) {
-					event.preventDefault();					
-					if (confirm("Are you sure you want to close without saving your project?"))
-					{
-						$("##largeModal").modal('hide');
-					}
 				});
 				$(document).off("click","##btnSave");
 				$(document).on("click","##btnSave",function(event) {

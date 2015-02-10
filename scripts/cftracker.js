@@ -88,6 +88,12 @@ $(document).ready(function() {
 		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestCaseForm&testcaseid="+editid);
 		$("#largeModal").modal("show");
 	});
+	$(document).on("click","a.lnkBuildAutomatedTest",function(event){
+		event.preventDefault();
+		$("#largeModal .modal-title").text("Build Automated Test(s)");
+		$("#largeModal .modal-body").load("cfc/AutomationStudio.cfc?method=getListObj");
+		$("#largeModal").modal("show");
+	})
 	$(document).on("click","a.lnkAddSections",function(event) {
 		$("#smallModal .modal-title").text("Add Section");
 		$("#smallModal .modal-body").load("cfc/forms.cfc?method=TestSectionForm");
@@ -316,6 +322,11 @@ $(document).ready(function() {
 			format:"mm/dd/yyyy",
 			todayHighlight: true
 		});
+	});
+	$(document).on("click","#btnClose",function(event) {
+		event.preventDefault();
+		$("#largeModal").modal('hide');
+		$("#smallModal").modal('hide');
 	});
 	$(window).resize(function() {
 		
