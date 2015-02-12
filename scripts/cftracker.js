@@ -76,6 +76,7 @@ $(document).ready(function() {
 			$(".ddmScenarios").hide();
 			$(".ddmTestCases").hide();
 			$(".ddmAutomationStudio").hide();
+			$(".ddmAutomationStudio").hide();
 			$(".lnkViewReports").hide();
 			$(".ddmMilestones").hide();
 			homeLoad();

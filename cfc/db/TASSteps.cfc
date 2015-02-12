@@ -6,5 +6,7 @@ component table="TASSteps" persistent="true"
 	property name="ValueOne";
 	property name="ValueTwo";
 	property name="ValueThree";
+	property name="ValueFour";
 	property name="AssertionMessage";
+	property name="OrderOfOperation";
 }
