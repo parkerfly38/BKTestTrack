@@ -52,6 +52,9 @@
 			    position: relative;
 			    overflow: hidden;
     		}
+    		@media screen and (min-width: 768px) {
+    			#largeModal .modal-dialog {width:95%;}
+    		}
 		</style>
 	</head>
 	<body>

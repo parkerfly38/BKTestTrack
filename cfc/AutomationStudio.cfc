@@ -200,13 +200,13 @@ component extends="cfselenium.CFSeleniumTestCase"
 			for (i=1;i <= x;  i++)
 			{
 				writeOutput("<tr><td><input type='hidden' class='automationid' value='"& Session.AutomationArray[i].AUTOMATIONID & "' /><input type='hidden' class='testid' value='" & Session.AutomationArray[i].TESTCASEID & "' />");
-				writeOutput("<input type='hidden' class='action' value='" & Session.AutomationArray[i].ACTION & "' />" & Session.AutomationArray[i].ACTION & "</td>");
-				writeOutput("<td><input type='hidden' class='valueone' value='" & Session.AutomationArray[i].VALUEONE & "' />" & Session.AutomationArray[i].VALUEONE & "</td>");
-				writeOutput("<td><input type='hidden' class='valuetwo' value='" & Session.AutomationArray[i].VALUETWO & "' />" & Session.AutomationArray[i].VALUETWO & "</td>");
-				writeOutput("<td><input type='hidden' class='valuethree' value='" & Session.AutomationArray[i].VALUETHREE & "' />" & Session.AutomationArray[i].VALUETHREE & "</td>");
-				writeOutput("<td><input type='hidden' class='valuefour' value='" & Session.AutomationArray[i].VALUEFOUR & "' />" & Session.AutomationArray[i].VALUEFOUR & "</td>");
-				writeOutput("<td><input type='hidden' class='assertionmessage' value='" & Session.AutomationArray[i].ASSERTIONMESSAGE & "' />" & Session.AutomationArray[i].ASSERTIONMESSAGE & "</td>");
-				writeOutput("<td><input type='hidden' class='orderofoperation' value='" & Session.AutomationArray[i].ORDEROFOPERATION & "' />" & Session.AutomationArray[i].ORDEROFOPERATION & "</td></tr>");
+				writeOutput("<input type='hidden' class='action' value='" & Session.AutomationArray[i].ACTION & "' disabled />" & Session.AutomationArray[i].ACTION & "</td>");
+				writeOutput("<td><input type='text' class='valueone' value='" & Session.AutomationArray[i].VALUEONE & "' /></td>");
+				writeOutput("<td><input type='text' class='valuetwo' value='" & Session.AutomationArray[i].VALUETWO & "' /></td>");
+				writeOutput("<td><input type='text' class='valuethree' value='" & Session.AutomationArray[i].VALUETHREE & "' /></td>");
+				writeOutput("<td><input type='text' class='valuefour' value='" & Session.AutomationArray[i].VALUEFOUR & "' /></td>");
+				writeOutput("<td><input type='text' class='assertionmessage' value='" & Session.AutomationArray[i].ASSERTIONMESSAGE & "' /></td>");
+				writeOutput("<td><input type='text' class='orderofoperation' size='3' value='" & Session.AutomationArray[i].ORDEROFOPERATION & "' /></td></tr>");
 			}
 			writeOutput("</tbody></table>");
 		}
@@ -256,7 +256,7 @@ component extends="cfselenium.CFSeleniumTestCase"
 		writeOutput("	});"&chr(13));
 		writeOutput("	$(document).off('change','##ddlTestCase');" & chr(13));
 		writeOutput("	$(document).on('change','##ddlTestCase',function() {" & chr(13));
-   		writeOutput("			$.ajax({ url: 'cfc/AutomationStudio.cfc?method=loadAutomationArray',type:'POST',data: { testcaseid : $(this).val() }}).done( function(data) { $('##actiontable').html(data);console.log(data); });" & chr(13));
+   		writeOutput("			$.ajax({ url: 'cfc/AutomationStudio.cfc?method=loadAutomationArray',type:'POST',data: { testcaseid : $(this).val() }}).done( function(data) { $('##actiontable').html(data); });" & chr(13));
    		writeOutput("	});" & chr(13));
    		writeOutput("	$(document).off('click','##btnAddTestStep');" & chr(13));
    		writeOutput("	$(document).on('click','##btnAddTestStep',function(event) { "& chr(13));
