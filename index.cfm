@@ -99,7 +99,7 @@
 		          		<li><a class="lnkUploadTestCases" href="#">Upload Via Excel</a></li>
 		          	</ul>
 		          </li>
-		          <li class="dropdown ddmAutomationStudio"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><i class="fa fa-list-alt"> </i> Automation Studio</a>
+		          <li class="dropdown ddmAutomationStudio" style="display:none;"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><i class="fa fa-list-alt"> </i> Automation Studio</a>
 		          	<ul class="dropdown-menu" role="menu">
 		          		<li><a class="lnkBuildAutomatedTest" href="#">Build Test</a></li>
 		          		<li><a class="lnkScheduleTests" href="#">Schedule Tests</a></li>

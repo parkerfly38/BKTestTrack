@@ -305,6 +305,12 @@ $(document).ready(function() {
 		$("#smallModal .modal-body").load("cfc/Maintenance.cfc?method=TestCaseFileUpload");
 		$("#smallModal").modal("show");
 	});
+	$(document).on("click","a.lnkScheduleTests",function(event) {
+		event.preventDefault();
+		$("#largeModal .modal-title").text("Schedule Automated Tests");
+		$("#largeModal .modal-body").load("cfc/AutomationStudio.cfc?method=skedAdd");
+		$("#largeModal").modal("show");
+	});
 	$(document).on("click","a.lnkQuickTSReport",function(event) {
 		if ($(this).attr("reportvalue") != "") {
 			$.ajax({

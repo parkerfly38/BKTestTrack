@@ -212,6 +212,18 @@ component extends="cfselenium.CFSeleniumTestCase"
 		}
 	}
 	
+	remote any function saveCaseData(numeric testcaseid, string testURL, string browsers) {
+		for (i = 1; i <= ListLen(arguments.browsers); i++ ) 
+		{
+			//save or update record
+			arrCase = EntityLoad("TASCaseByBrowser",{browser = ListGetAt(arguments.browsers,i),URL = arguments.testURL,testcaseid = arguments.testcaseid},true);
+			if (isNull(arrCase)) {	arrCase = EntityNew("TASCaseByBrowser"); }
+			arrCase.setTestcaseid(arguments.testcaseid);
+			arrCase.setBrowser(ListGetAt(arguments.browsers,i));
+			arrCase.setURL(arguments.testURL);
+		}
+	}
+	
 	remote any function saveRow(numeric automationid, numeric testid, string action, string valueone="", string valuetwo="", string valuethree="", string valuefour="", string assertionmessage="", numeric orderofoperation) {
 		if ( automationid > 0 ) {
 			arrNewRow = EntityLoadByPK("TASSteps",arguments.automationid);
@@ -227,6 +239,38 @@ component extends="cfselenium.CFSeleniumTestCase"
 		arrNewRow.setAssertionMessage(arguments.assertionmessage);
 		arrNewRow.setOrderOfOperation(arguments.orderofoperation);
 		EntitySave(arrNewRow);
+	}
+	
+	remote string function skedAdd() output="true" {
+		writeOutput("<div class='col-xs-4 col-sm-4 col-md-4 col-lg-4'><strong>Select Test Cases:</strong><br />");
+		//get our list of scriptable test cases - with steps
+		qryTestCases = new query();
+		qryTestCases.setName("getTestCases");
+		qryTestCases.setSql("SELECT ID, TestTitle FROM TTestCase WHERE ProjectID = :projectid AND id IN (SELECT TestID FROM TASSteps GROUP BY TestID)");
+		qryTestCases.addParam(name="projectid",value=SESSION.PROJECTID,cfsqltype="cf_sql_integer");
+		rsTestCases = qryTestCases.execute().getResult();
+		if (rsTestCases.RecordCount == 0) {
+			writeOutput("<strong><em>No test cases, please build a test first.</em></strong>");
+		} else {
+			writeOutput("<select id='ddlTestCases' size='5' style='height:150px;' class='form-control'>");
+			for ( i=1;i <= rsTestCases.RecordCount; i++ )
+			{
+				writeOutput("<option value='" & rsTestCases.ID[i] & "'>" & rsTestCases.TestTitle[i] & "</option>");
+			}
+			writeOutput("</select>");	
+		}
+		writeOutput("</div>");
+		writeOutput("<div class='col-xs-8 col-sm-8 col-md-8 col-lg-8'>");
+		writeOutput("<table class='table table-striped table-condensed table-hover'><thead><tr><th>Test Starting URL</th><th>Test Browser</th><th></th></tr></thead>");
+		qryTCByBrowser = new Query();
+		qryTCByBrowser.setName("getBrowsers");
+		qryTCByBrowser.setSQL("SELECT BrowserName, BrowserString FROM TASBrowserDef");
+		rsBrowser = qryTCByBrowser.execute().getResult();
+		writeOutput("<tbody><tr><td><input type='text' id='txtTestURL' class='form-control'></td><td><select id='ddlBrowser' class='form-control'>");
+		for(i=1;i <= rsBrowser.RecordCount; i++ ){
+			writeOutput("<option value='" & rsBrowser.BrowserString[i] & "'>" & rsBrowser.BrowserName[i] & "</option>");
+		}
+		writeOutput("</select></td></tr></tbody></table></div>");
 	}
 	
 	remote string function GetListObj() output="true" {
@@ -349,7 +393,6 @@ component extends="cfselenium.CFSeleniumTestCase"
 		
 		writeOutput("<p>Build an automated test case by selecting actions and setting their parameters below.  For <em>locator</em> parameters, remember you can use css classes (css=reference), ids (id=reference), names (name=), and complex XPath logic to get at the web piece you want.  See the wiki for more thorough documentation.</p>");
 		writeOutput("<div class='col-xs-4 col-sm-4 col-md-4 col-lg-4'>");
-		
 		writeOutput("<select id='ddlTAction' class='form-control' size='8' style='height:150px;'>");
 		writeOutput("<optgroup label='MXUnit Assertions'><option value='assertTrue'>assertTrue</option><option value='assertFalse'>assertFalse</option><option value='assertEquals'>assertEquals</option><option value='failNotEquals'>failNotEquals</option><optgroup>");
 		for (func in mds.FUNCTIONS) {
