@@ -1,6 +1,6 @@
-component implements="COGTestTrack.cfc.IReports"
+component implements="CFTestTrack.cfc.IReports"
 {
-	objFunctions = createObject("component","COGTestTrack.cfc.Functions");
+	objFunctions = createObject("component","CFTestTrack.cfc.Functions");
 	
 	variables.reportid = 0;
 	variables.ReportName = "";
@@ -163,7 +163,7 @@ component implements="COGTestTrack.cfc.IReports"
 		EntitySave(report);
 		variables.reportid = report.getId();
 		if ( variables.AccessAndScheduling.CreateReport != "once" ) {
-			objMaintenance = createObject("component","COGTestTrack.cfc.Maintenance");
+			objMaintenance = createObject("component","CFTestTrack.cfc.Maintenance");
 			objMaintenance.createTask(report.getId(),variables.AccessAndScheduling.CreateReport,variables.AccessAndScheduling.StartDate,variables.AccessAndScheduling.StartTime);
 		}
 		

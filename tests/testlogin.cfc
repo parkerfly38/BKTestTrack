@@ -6,7 +6,7 @@
 	
 	<cffunction name="testldapAuthenticate" access="public" returntype="void">
 		<cfscript>
-			objLogon = createObject("component","COGTestTracker.cfc.Logon");
+			objLogon = createObject("component","CFTestTracker.cfc.Logon");
     		assertTrue(objLogon.ldapAuthenticate("bkresge","COGbk1!!"),"LDAP Authentication on correct username");
     		assertFalse(objLogon.ldapAuthenticate("bkresge","password"),"LDAP Authentication on incorrect password");
 		</cfscript>
@@ -14,7 +14,7 @@
 	
 	<cffunction name="testGetAllProjects" access="public" returntype="void">
 		<cfscript>
-		objData = createObject("component","COGTestTracker.cfc.Data");
+		objData = createObject("component","CFTestTracker.cfc.Data");
 		assertTrue(isArray(objData.getAllProjects()));
 		</cfscript>
 	</cffunction>

@@ -1,6 +1,6 @@
 <cfcomponent>
 
-	<cfset this.Name = "COGTestTrack" />
+	<cfset this.Name = "CFTestTrack" />
 	<cfset this.sessionManagement = true />
 	<cfset this.ormEnabled = true />
 	<cfset this.datasource = "COGData" />

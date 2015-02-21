@@ -19,6 +19,25 @@
 	    <cfreturn qrytasks />
 	</cffunction>
 	
+	<cffunction access="remote" name="returnAutomationTasks" returntype="query">
+		<cfswitch expression="#getVersion()#">
+			<cfcase value="8,9">
+				<cfset local=structnew()>
+				<cfset objCF9 = createObject("component","cf9below")>
+				<cfset qryScheduledTasks = objCF9.getScheduleQuery()>
+			</cfcase>
+			<cfcase value="10,11">
+				<cfset objCF10 = createObject("component","cf10plus")>
+				<cfset qryScheduledTasks = objCF10.getScheduleQuery()>
+			</cfcase>
+		</cfswitch>
+		<cfquery dbtype="query" name="qrytasks">
+			SELECT * FROM qryScheduledTasks
+			WHERE task like 'AutomationStudio%'
+		</cfquery>
+		<cfreturn qrytasks />
+	</cffunction>
+	
 	<cffunction access="remote" name="getVersion" returntype="string">
 		<cfreturn ListGetAt(SERVER.ColdFusion.ProductVersion,1) />
 	</cffunction>
@@ -33,6 +52,12 @@
 					
 		<cfreturn returnTasks() />
 	</cffunction>
+	
+	<cffunction access="remote" name="createAutomationTask" returntype="query">
+		<cfargument name="testcaseid" required="true">
+		<cfargument name="interval" required="false" default="once">
+		<cfargument name="startDate" required="true">
+		<cfargument name="startTime" required="true">
 
 	<cffunction access="remote" name="deleteTask" returntype="void">
 		<cfargument name="testid" type="numeric" required="true">
@@ -137,7 +162,7 @@
 	    		});
     		});
     	</script>
-		<form enctype="multipart/form-data" id="uploadFile" method="post" action="http://localhost/COGTestTrack/uploadHandler.cfm">
+		<form enctype="multipart/form-data" id="uploadFile" method="post" action="uploadHandler.cfm">
 			
  			<input type="file" name="fileUpload" id="fileUpload" />
     		
