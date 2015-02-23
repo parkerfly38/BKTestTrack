@@ -58,6 +58,11 @@
 		<cfargument name="interval" required="false" default="once">
 		<cfargument name="startDate" required="true">
 		<cfargument name="startTime" required="true">
+		
+		<cfschedule action="update" task="TAS#arguments.reportid#" operation="HTTPRequest" url="automationhandler.cfm?id=#arguments.testcaseid#" startDate="#arguments.startDate#" startTime="#arguments.startTime#" interval="#arguments.interval#" resolveURL="no" publish="false" path="#GetDirectoryFromPath(ExpandPath("*.*"))#" requesttimeout="3500" />
+					
+		<cfreturn returnTasks() />
+	</cffunction>
 
 	<cffunction access="remote" name="deleteTask" returntype="void">
 		<cfargument name="testid" type="numeric" required="true">

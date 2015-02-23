@@ -212,7 +212,7 @@ component extends="cfselenium.CFSeleniumTestCase"
 		}
 	}
 	
-	remote any function saveCaseData(numeric testcaseid, string testURL, string browsers) {
+	remote any function saveCaseData(numeric testcaseid, string testURL, string browsers, string startDate, string startTime) {
 		for (i = 1; i <= ListLen(arguments.browsers); i++ ) 
 		{
 			//save or update record
@@ -222,6 +222,8 @@ component extends="cfselenium.CFSeleniumTestCase"
 			arrCase.setBrowser(ListGetAt(arguments.browsers,i));
 			arrCase.setURL(arguments.testURL);
 		}
+		objMaintenance = createObject("component","cfc.Maintenance");
+		objMaintenance.createAutomationTask(arguments.testcaseid,'once',arguments.startDate,arguments.startTime);
 	}
 	
 	remote any function saveRow(numeric automationid, numeric testid, string action, string valueone="", string valuetwo="", string valuethree="", string valuefour="", string assertionmessage="", numeric orderofoperation) {
@@ -242,6 +244,15 @@ component extends="cfselenium.CFSeleniumTestCase"
 	}
 	
 	remote string function skedAdd() output="true" {
+		writeOutput("<script type='text/javascript'>$(document).ready(function() { $('.datepicker').datepicker(); " & chr(13));
+		writeOutput(" $(document).off('click','##btnSave');" & chr(13));
+		writeOutput(" $(document).on('click','##btnSave', function(event) {"& chr(13));
+		writeOutput("	var multiBrowse = $('##ddlBrowser').val() || [];" & chr(13));
+		writeOutput(" 	$.ajax({url: 'cfc/AutomationStudio.cfc?method=saveCaseData', type: 'POST', data: { testcaseid : $('##ddlTestCases').val(), testURL : $('##txtTestURL').val(), browsers: multiBrowse.join(', '), startDate : $('##txtStartDate').val(), startTime : $('##txtStartTime').val()}}).done( function() { " & chr(13));
+		writeOutput("	$('##largeModal').modal('hide'); });" & chr(13));
+		writeOutput("});" & chr(13));
+		
+		writeOutput("</script>"&chr(13));
 		writeOutput("<div class='col-xs-4 col-sm-4 col-md-4 col-lg-4'><strong>Select Test Cases:</strong><br />");
 		//get our list of scriptable test cases - with steps
 		qryTestCases = new query();
@@ -266,11 +277,12 @@ component extends="cfselenium.CFSeleniumTestCase"
 		qryTCByBrowser.setName("getBrowsers");
 		qryTCByBrowser.setSQL("SELECT BrowserName, BrowserString FROM TASBrowserDef");
 		rsBrowser = qryTCByBrowser.execute().getResult();
-		writeOutput("<tbody><tr><td><input type='text' id='txtTestURL' class='form-control'></td><td><select id='ddlBrowser' class='form-control'>");
+		writeOutput("<tbody><tr><td><input type='text' id='txtTestURL' class='form-control'></td><td><select id='ddlBrowser' class='form-control' multiple size='5' style='height:150px;'>");
 		for(i=1;i <= rsBrowser.RecordCount; i++ ){
 			writeOutput("<option value='" & rsBrowser.BrowserString[i] & "'>" & rsBrowser.BrowserName[i] & "</option>");
 		}
-		writeOutput("</select></td></tr></tbody></table></div>");
+		writeOutput("</select></td></tr></tbody></table>");
+		writeOutput("<div class='form-group'><label for='txtStartDate'>Date/Time to Run Test:</label><br /><input type='text' class='datepicker' id='txtStartDate' />&nbsp;&nbsp;<input type='number' id='txtStartTime' min='0000' max='2300' step='100' value='2100' /></div></div>");
 	}
 	
 	remote string function GetListObj() output="true" {

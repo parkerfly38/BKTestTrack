@@ -74,8 +74,8 @@
 		        	<li><a id="lnkReturnAllProjects" href="#" style="display:none;"><i class="fa fa-long-arrow-left"></i> All Projects Dashboard</a></li>
 		        </ul>
 		        <ul class="nav navbar-nav">
-		          <li><a id="lnkReturnToProject" class="pjlink" style="display:none;" href="#"><i class="fa fa-home"></i> Project Home</a></li>
-		          <li class="dropdown ddmMilestones" style="display:none;"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><i class="fa fa-map-marker"> </i> Milestones</a>
+		          <li><a id="lnkReturnToProject" class="pjlink" style="display:none;" href="#"><!---<i class="fa fa-home"></i>---> Project Home</a></li>
+		          <li class="dropdown ddmMilestones" style="display:none;"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-map-marker"> </i> --->Milestones</a>
 		          	<ul class="dropdown-menu" role="menu">
 		          		<li><a class="lnkViewMilestones" href="#">View All</a></li>
 		          		<li><a class="lnkAddMilestone" href="##">Add</a></li>
@@ -83,13 +83,13 @@
 		          		<li class="dropdown-header">Reports</li>
 		          	</ul>
 		          </li>
-		          <li class="dropdown ddmScenarios" style="display:none;"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><i class="fa fa-suitcase"> </i> Test Scenarios</a>
+		          <li class="dropdown ddmScenarios" style="display:none;"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-suitcase"> </i>---> Test Scenarios</a>
 		          	<ul class="dropdown-menu" role="menu">
 		          		<li><a class="lnkViewScenarios" href="##">View All</a></li>
 		          		<li><a class="lnkAddScenario" href="##">Add</a></li>
 		          	</ul>
 		          </li>
-		          <li class="dropdown ddmTestCases" style="display:none;"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><i class="fa fa-tachometer"> </i>Test Cases</a>
+		          <li class="dropdown ddmTestCases" style="display:none;"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-tachometer"> </i>--->Test Cases</a>
 		          	<ul class="dropdown-menu" role="menu">
 		          		<li><a class="lnkViewTests" href="#">View All</a></li>
 		          		<li><a class="lnkAddTest" href="#">Add</a></li>
@@ -99,7 +99,7 @@
 		          		<li><a class="lnkUploadTestCases" href="#">Upload Via Excel</a></li>
 		          	</ul>
 		          </li>
-		          <li class="dropdown ddmAutomationStudio" style="display:none;"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><i class="fa fa-list-alt"> </i> Automation Studio</a>
+		          <li class="dropdown ddmAutomationStudio" style="display:none;"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-list-alt"> </i> --->Automation Studio</a>
 		          	<ul class="dropdown-menu" role="menu">
 		          		<li><a class="lnkBuildAutomatedTest" href="#">Build Test</a></li>
 		          		<li><a class="lnkScheduleTests" href="#">Schedule Tests</a></li>
@@ -108,9 +108,9 @@
 		          		<li><a class="" href="#">Automated Test Activity</a></li>
 		          	</ul>
 		          </li>
-		          <li><a class="lnkViewReports" href="#" style="display:none;"><i class="fa fa-bars"> </i> Reporting</a></li>
-		          <li><a href="settings.cfm"> <i class="fa fa-gear"></i> Settings</a></li>
-		          <li><a href="cfc/Logon.cfc?method=Logout"> <i class="fa fa-power-off"></i> Log out</a></li>
+		          <li><a class="lnkViewReports" href="#" style="display:none;"><!---<i class="fa fa-bars"> </i> --->Reporting</a></li>
+		          <li><a href="settings.cfm"> <!---<i class="fa fa-gear"></i>---> Settings</a></li>
+		          <li><a href="cfc/Logon.cfc?method=Logout"> <!---<i class="fa fa-power-off"></i>---> Log out</a></li>
 		        </ul>
 		      </div><!--/.nav-collapse -->
 		    </div>
