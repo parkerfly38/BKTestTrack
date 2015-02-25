@@ -91,7 +91,7 @@ $(document).ready(function() {
 	});
 	$(document).on("click","a.lnkBuildAutomatedTest",function(event){
 		event.preventDefault();
-		$("#largeModal .modal-title").text("Build Automated Test(s)");
+		$("#largeModal .modal-title").text("<i class='fa fa-list-alt'> </i>Build Automated Test(s)");
 		$("#largeModal .modal-body").load("cfc/AutomationStudio.cfc?method=getListObj");
 		$("#largeModal").modal("show");
 	})
@@ -274,6 +274,12 @@ $(document).ready(function() {
 		$("#lnkReturnToProject").attr("pjid",projectid);
 		$("#lnkReturnToProject").show();
 		$("#createreportpanel").remove();
+	});
+	$(document).on("click","a.lnkViewScheduledTests",function(event){
+		event.preventDefault();
+		$("#largeModal .modal-title").text("Scheduled Tests");
+		$("#largeModal .modal-body").load("cfc/AutomationStudio.cfc?method=viewAutomatedTasks");
+		$("#largeModal").modal("show");
 	});
 	$(document).on("click","a.lnkViewReports",function(event){
 		event.preventDefault();

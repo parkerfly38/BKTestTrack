@@ -216,14 +216,15 @@ component implements="CFTestTrack.cfc.IReports"
 			
 		}
 		reportoutput &= "<tr><td><h3>Activity for Date Range</h3><table border='0' cellspacing='0' cellpadding='3'><thead><tr><th>Action</th><th>Date</th><th>Test Title</th><th>Assigned To</th></tr></thead><tbody>";
-		for ( q in rs1 ) {
-			reportoutput &= "<tr><td>" & q.Action & "</td><td>" & q.DateOfAction & "</td><td>" & q.TestTitle & "</td><td>" & q.UserName & "</td></tr>";
+		//for ( q in rs1 ) {
+		for ( q = 1; q <= rs1.RecordCount; q++ ) {
+			reportoutput &= "<tr><td>" & rs1.Action[q] & "</td><td>" & rs1.DateOfAction[q] & "</td><td>" & rs1.TestTitle[q] & "</td><td>" & rs1.UserName[q] & "</td></tr>";
 		}
 		reportoutput &= "</tbody></table></td></tr></tbody></table>";
 		writeOutput(reportoutput); 
 		pdfvar = objFunctions.createPDFfromContent(reportoutput);
 		fileWrite(ExpandPath("/reportpdfs/") & variables.reportid & ".pdf",pdfvar);
-		objFunctions = createObject("component","cfc.Functions");
+		//objFunctions = createObject("component","cfc.Functions");
 		if ( variables.AccessAndScheduling.Email.NotifyMe gt 0) {
 			arruser = EntityLoadByPK("TTestTester",variables.AccessAndScheduling.Email.NotifyMe);
 			emailbody = "<h1>" & variables.ReportName & "</h1><p>Your report is available <a href='http://" & cgi.SERVER_NAME & "/" & Application.applicationname & "/reportpdfs/" & variables.reportid & ".pdf'>here</a>.</p>";

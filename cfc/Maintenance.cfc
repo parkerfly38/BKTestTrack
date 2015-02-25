@@ -33,7 +33,7 @@
 		</cfswitch>
 		<cfquery dbtype="query" name="qrytasks">
 			SELECT * FROM qryScheduledTasks
-			WHERE task like 'AutomationStudio%'
+			WHERE task like 'TAS%'
 		</cfquery>
 		<cfreturn qrytasks />
 	</cffunction>
@@ -59,7 +59,7 @@
 		<cfargument name="startDate" required="true">
 		<cfargument name="startTime" required="true">
 		
-		<cfschedule action="update" task="TAS#arguments.reportid#" operation="HTTPRequest" url="automationhandler.cfm?id=#arguments.testcaseid#" startDate="#arguments.startDate#" startTime="#arguments.startTime#" interval="#arguments.interval#" resolveURL="no" publish="false" path="#GetDirectoryFromPath(ExpandPath("*.*"))#" requesttimeout="3500" />
+		<cfschedule action="update" task="TAS#arguments.testcaseid#" operation="HTTPRequest" url="automationhandler.cfm?id=#arguments.testcaseid#" startDate="#arguments.startDate#" startTime="#arguments.startTime#" interval="#arguments.interval#" resolveURL="no" publish="false" path="#GetDirectoryFromPath(ExpandPath("*.*"))#" requesttimeout="3500" />
 					
 		<cfreturn returnTasks() />
 	</cffunction>
@@ -67,6 +67,14 @@
 	<cffunction access="remote" name="deleteTask" returntype="void">
 		<cfargument name="testid" type="numeric" required="true">
 		<cfschedule action="delete" task="TestTrack#arguments.testid#">
+	</cffunction>
+	
+	<cffunction access="remote" name="deleteAutomationTask" returntype="void">
+		<cfargument name="testcaseid" type="numeric" required="true">
+		<cfschedule action="delete" task="TAS#arguments.testcaseid#">
+		<cfscript>
+			ORMExecuteQuery("DELETE FROM TASCaseByBrowser WHERE testcaseid = :tcid", {tcid = arguments.testcaseid});
+		</cfscript>
 	</cffunction>
 
 	<cffunction name="createSpreadsheetTestCaseTemplate" returntype="void" output="true" access="remote">

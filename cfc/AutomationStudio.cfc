@@ -212,6 +212,43 @@ component extends="cfselenium.CFSeleniumTestCase"
 		}
 	}
 	
+	remote any function viewAutomatedTasks() output="true"
+	{
+		objMaintenance = createObject("component","Maintenance");
+		qryTasks = objMaintenance.returnAutomationTasks();
+		writeOutput("<script type='text/javascript'>"&chr(13));
+		writeOutput("	$(document).ready(function() { "&chr(13));
+		writeOutput("		$(document).on('click','a.btnDeleteTAS',function(event) { " & chr(13));
+		writeOutput("			event.preventDefault();" & chr(13));
+		writeOutput("			$.ajax({url: 'CFC/Maintenance.cfc?method=deleteAutomationTask',type:'POST',data: {testcaseid : $(this).attr('testcaseid')}}).done(function() { $('##largeModal .modal-body').load('cfc/AutomationStudio.cfc?method=viewAutomatedTasks'); });" & chr(13));
+		writeOutput("		});" & chr(13));
+		writeOutput("	});" & chr(13));
+		writeOutput("</script>" & chr(13));
+		writeOutput("<div class='well well-sm' style='font-weight:bold;'>Scheduled Tests</div>");
+		writeOutput("<table class='table table-striped table-condensed table-hover'>");
+		writeOutput("<thead><tr><th>Test</th><th>Run Date</th><th>Browsers</th><th></tr></thead><tbody>");
+		for (i=1;i <= qryTasks.RecordCount; i++)
+		{
+			arrTestCaseID = rematch("[\d]+",qryTasks.task[i]);
+			arrTestInfo = EntityLoadByPk("TTestCase",arrTestCaseID[1]);
+			writeOutput("<tr><td><span class='label label-info'>TC" & arrTestInfo.getId() & "</span> " & arrTestInfo.getTestTitle() & "</td>");
+			arrTestBrowser = EntityLoad("TASCaseByBrowser",{testcaseid=arrTestCaseID[1]});
+			if ( isDefined("qryTasks.start_date") ) {
+				writeOutput("<td>" & DateFormat(qryTasks.start_date[i], "mm/dd/yyyy") & "</td>");
+			} else {
+				writeOutput("<td>" & DateFormat(qryTasks.startdate[i], "mm/dd/yyyy") & "</td>");
+			}
+			writeOutput("<td>");
+			for (x=1;x <= ArrayLen(arrTestBrowser); x++) {
+				writeOutput(arrTestBrowser[x].getBrowser()&"<br />");
+				//writeDump(arrTestBrowser);
+			}
+			writeOutput("</td>");
+			writeOutput("<td><a class='btnRunNow btn btn-xs btn-primary' testcaseid='" & arrTestCaseID[1] & "'><i class='fa fa-play-circle-o'></i> Run Test</a>  <a class='btnDeleteTAS btn btn-xs btn-danger' testcaseid='" & arrTestCaseID[1] & "'><i class='fa fa-trash'></i> Delete</a></td></tr>");			
+		}
+		writeOutput("</tbody></table>");
+	}
+	
 	remote any function saveCaseData(numeric testcaseid, string testURL, string browsers, string startDate, string startTime) {
 		for (i = 1; i <= ListLen(arguments.browsers); i++ ) 
 		{
@@ -221,8 +258,9 @@ component extends="cfselenium.CFSeleniumTestCase"
 			arrCase.setTestcaseid(arguments.testcaseid);
 			arrCase.setBrowser(ListGetAt(arguments.browsers,i));
 			arrCase.setURL(arguments.testURL);
+			EntitySave(arrCase);
 		}
-		objMaintenance = createObject("component","cfc.Maintenance");
+		objMaintenance = createObject("component","Maintenance");
 		objMaintenance.createAutomationTask(arguments.testcaseid,'once',arguments.startDate,arguments.startTime);
 	}
 	
@@ -249,7 +287,7 @@ component extends="cfselenium.CFSeleniumTestCase"
 		writeOutput(" $(document).on('click','##btnSave', function(event) {"& chr(13));
 		writeOutput("	var multiBrowse = $('##ddlBrowser').val() || [];" & chr(13));
 		writeOutput(" 	$.ajax({url: 'cfc/AutomationStudio.cfc?method=saveCaseData', type: 'POST', data: { testcaseid : $('##ddlTestCases').val(), testURL : $('##txtTestURL').val(), browsers: multiBrowse.join(', '), startDate : $('##txtStartDate').val(), startTime : $('##txtStartTime').val()}}).done( function() { " & chr(13));
-		writeOutput("	$('##largeModal').modal('hide'); });" & chr(13));
+		writeOutput("	$('##largeModal').modal('hide'); }); });" & chr(13));
 		writeOutput("});" & chr(13));
 		
 		writeOutput("</script>"&chr(13));
@@ -407,24 +445,28 @@ component extends="cfselenium.CFSeleniumTestCase"
 		writeOutput("<div class='col-xs-4 col-sm-4 col-md-4 col-lg-4'>");
 		writeOutput("<select id='ddlTAction' class='form-control' size='8' style='height:150px;'>");
 		writeOutput("<optgroup label='MXUnit Assertions'><option value='assertTrue'>assertTrue</option><option value='assertFalse'>assertFalse</option><option value='assertEquals'>assertEquals</option><option value='failNotEquals'>failNotEquals</option><optgroup>");
-		for (func in mds.FUNCTIONS) {
-			if (func.ACCESS == "public" && StructKeyExists(func,"HINT") && Len(func.HINT) > 0) {
-				listOfNames = listAppend(listofNames,func.NAME);
+		//for (func in mds.FUNCTIONS) {
+		for (i = 1; i <= ArrayLen(mds.Functions); i++) {
+			if (mds.FUNCTIONS[i].ACCESS == "public" && StructKeyExists(mds.FUNCTIONS[i],"HINT") && Len(mds.FUNCTIONS[i].HINT) > 0) {
+				listOfNames = listAppend(listofNames,mds.FUNCTIONS[i].NAME);
 			}
 		}
 		writeOutput("<optgroup label='Selenium Options'>");
 		AlphaListOfNames = ListSort(listofNames,"text","asc");
 		for ( i=1; i <= ListLen(AlphaListOfNames); i++) {
-			for ( func in mds.FUNCTIONS) {
-				if (func.NAME == ListGetAt(AlphaListOfNames,i) ) {
+			//for ( func in mds.FUNCTIONS) {
+			for (x = 1; x <= ArrayLen(mds.Functions); x++) {
+				if (mds.FUNCTIONS[x].NAME == ListGetAt(AlphaListOfNames,i) ) {
 					writeOutput("<option data-toggle='popover' data-placement='bottom' data-trigger='hover' data-content='");
-					if (ArrayLen(func.PARAMETERS) > 0) {
+					if (ArrayLen(mds.FUNCTIONS[x].PARAMETERS) > 0) {
 						writeOutput("Parameters: ");
-						for (param in func.PARAMETERS ) {
-							writeOutput("  " & param.NAME & ", required=" & param.REQUIRED & ", type=" & param.TYPE & ";");
+						//for (param in mds.FUNCTIONS[x].PARAMETERS ) {
+						for (p = 1; p <= ArrayLen(mds.FUNCTIONS[x].PARAMETERS); p++) {
+							//writeOutput("  " & param.NAME & ", required=" & param.REQUIRED & ", type=" & param.TYPE & ";");
+							writeOutput("	" & mds.FUNCTIONS[x].PARAMETERS[p].NAME & ", required=" & mds.FUNCTIONS[x].PARAMETERS[p].REQUIRED & ", type=" & mds.FUNCTIONS[x].PARAMETERS[p].TYPE & ";");
 						}
 					}
-					writeOutput("'>"&func.NAME&"</option>");
+					writeOutput("'>"&mds.FUNCTIONS[x].NAME&"</option>");
 				}
 			}
 		}

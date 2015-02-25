@@ -1043,8 +1043,8 @@
 			<cfreturn>
 		</cfif>
 		<cfquery name="qryTestScenarios" dbtype="hql" ormoptions=#{maxresults=5}#>
-			FROM	TTestScenario
-			WHERE	ProjectID = <cfqueryparam value="#Session.ProjectID#">
+			FROM TTestScenario
+			WHERE ProjectID = <cfqueryparam value="#Session.ProjectID#">
 		</cfquery>
 		<div id="paneltestscenarios" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 			<div class="panel panel-default">

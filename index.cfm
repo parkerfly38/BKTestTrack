@@ -104,7 +104,7 @@
 		          		<li><a class="lnkBuildAutomatedTest" href="#">Build Test</a></li>
 		          		<li><a class="lnkScheduleTests" href="#">Schedule Tests</a></li>
 		          		<li class="divider"></li>
-		          		<li><a class="" href="#">View Scheduled Tests</a></li>
+		          		<li><a class="lnkViewScheduledTests" href="#">View Scheduled Tests</a></li>
 		          		<li><a class="" href="#">Automated Test Activity</a></li>
 		          	</ul>
 		          </li>
