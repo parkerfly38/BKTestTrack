@@ -1,6 +1,7 @@
 <cfscript>
 	objData = createObject("component","cfc.Data");
 	objDashboard = createObject("component","cfc.Dashboard");
+	objAdmin = createObject("component","cfc.Admin");
 	local.testsAssigned = objDashboard.assignedTestsCount(Session.UserIDInt);
 </cfscript>
 <!DOCTYPE html>
@@ -41,19 +42,13 @@
 		            <span class="icon-bar"></span>
 	            	<span class="icon-bar"></span>
 	          	</button>
-	          	<a class="navbar-brand" href="#" id="lnkHome">CFTestTrack</a>
+	          	<a class="navbar-brand" href="index.cfm" id="lnkHome">CFTestTrack</a>
 	          </div>
 		      <div id="navbar" class="navbar-collapse collapse">
-		        <ul id="uldashboard" class="nav navbar-nav navbar-right" <cfif !StructKeyExists(Session,"ProjectID")>style="display:none;"</cfif>>
-		        	<li><a id="lnkReturnAllProjects" href="#" style="display:none;"><i class="fa fa-long-arrow-left"></i> All Projects Dashboard</a></li>
-		        </ul>
+		      
 		        <ul class="nav navbar-nav">
-		          <li><a id="lnkReturnToProject" class="pjlink" style="display:none;" href="#"><i class="fa fa-home"></i> Project Home</a></li>
-		          <li><a class="lnkViewMilestones" href="#" style="display:none;"><i class="fa fa-map-marker"> </i> Milestones</a></li>
-		          <li><a class="lnkViewScenarios" href="#" style="display:none;"><i class="fa fa-suitcase"> </i> Test Scenarios</a></li>
-		          <li><a class="lnkViewTests" href="#" style="display:none;"><i class="fa fa-tachometer"> </i> Test Cases</a></li>
-		          <li><a class="lnkViewReports" href="#" style="display:none;"><i class="fa fa-bars"> </i> Reporting</a></li>
-		          <li><a href="settings.cfm"> <i class="fa fa-gear"></i> Settings</a></li>
+		          <li><a id="lnkReturnToProject" class="pjlink" style="display:none;" href="index.cfm"><i class="fa fa-home"></i> Home</a></li>
+		          <li><a href="settings.cfm?ac=users">Users</a></li>
 		          <li><a href="cfc/Logon.cfc?method=Logout"> <i class="fa fa-power-off"></i> Log out</a></li>
 		        </ul>
 		      </div><!--/.nav-collapse -->
@@ -63,13 +58,23 @@
 	  <div class="container-fluid" style="background:none;">
 		  <div class="row">
 		  	<div id="featurecontent" class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+		  		<cfif StructKeyExists(URL,"ac")>
+		  			<cfif url.ac eq "users">
+		  				<div class='panel panel-default'>
+		  					<div class="panel panel-heading"><h4>User Administration</h4></div>
+		  					<div class="panel panel-body">
+		  						<cfoutput>#objAdmin.viewAllUsers()#</cfoutput>
+		  					</div>
+		  				</div>
+		  			</cfif>
+		  		</cfif>
 		  		<div id="midrow" class="row"></div>
 		  	</div>
 		  	<div id="actioncontent" class="col-xs-3 col-sm-3 col-md-3 col-lg-3"></div>
 		  </div>
 	  </div>
 	  
-	  <div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
+	  <!---<div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
 		  <div class="modal-dialog modal-lg" style="background-color:#FFF;">
 		    <div class="modal-content" style="background-color:#FFF;">
 		      <div class="modal-header">
@@ -103,6 +108,6 @@
 		      </div>
 		    </div>
   	   	</div> 
-	 </div>
+	 </div>--->
 </body>
 </html>

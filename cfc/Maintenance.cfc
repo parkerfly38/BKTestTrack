@@ -155,20 +155,20 @@
 				        cache: false,
 				        contentType: false,
 				        processData: false,
-				        <cfif SERVER.OS.Name eq "Mac OS X">
+				        //<cfif SERVER.OS.Name eq "Mac OS X">
 				        url: "upload.php",
-				        <cfelse>
+				        //<cfelse>
 				        url: "cfc/Maintenance.cfc?method=saveTestCaseExcelFile",
-				        </cfif>
+				        //</cfif>
 				        success: function (datap) {
 				        	$("##smallModal").modal("hide");
 				        	$("##topcontent").load("cfc/Dashboard.cfc?method=AllTests");
-				        	<cfif SERVER.OS.Name eq "Mac OS X">
+				        	//<cfif SERVER.OS.Name eq "Mac OS X">
 				        	$.ajax({ url: "cfc/Maintenance.cfc?method=fileProcess",
 				        			 type: "POST",
 				        			 data: { filename : data }
 				       		});
-				       		</cfif>
+				       		//</cfif>
 				         },
 				        error: function () { alert("Because, screw you, apparently"); }
 				   });
