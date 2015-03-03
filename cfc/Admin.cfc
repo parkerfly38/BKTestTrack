@@ -1,6 +1,29 @@
 component 
 {
 	remote any function viewAllUsers() output="true" {
+		writeOutput("<script type='text/javascript'>" & chr(13));
+		writeOutput("	$(document).ready(function() { "&chr(13));
+		writeOutput("	  $(document).on('click','a.lnkSaveUserChanges',function() { "&chr(13));
+		writeOutput("		var row = $(this).closest('tr');" & chr(13));
+		writeOutput("		var useremail = row.find('##useremail').val(); " & chr(13) );
+		writeOutput("		var userid = row.find('##userid').val(); " & chr(13) );
+		writeOutput("		var password = row.find('##userpassword').val(); " & chr(13));
+		writeOutput("		var isapproved; " & chr(13) );
+		writeOutput("		if ( row.find('##isApproved').is(':checked') ) { " & chr(13));
+		writeOutput("			isapproved = true; " & chr(13));
+		writeOutput("		} else { " & chr(13));
+		writeOutput("			isapproved = false; " & chr(13));
+		writeOutput("		}");
+		writeOutput("		$.ajax({url:'cfc/Admin.cfc?method=saveUser',type:'POST',data : { userid : userid, email : useremail, password : password, isApproved : isapproved}}).done(function() { location.href = 'settings.cfm?ac=users'; });");
+		writeOutput("	  });" & chr(13));
+		writeOutput("	 $(document).on('click','a.lnkDeleteUser',function() { " & chr(13));
+		writeOutput("		var row = $(this).closest('tr');" & chr(13));
+		writeOutput("		var userid = row.find('##userid').val(); " & chr(13));
+		writeOutput("		$.ajax({url:'cfc/Admin.cfc?method=deleteUser',type:'POST',data: { userid : userid}");
+		writeOutput("	  }).done(function() { location.href = 'settings.cfm?ac=users'; });" & chr(13));
+		writeOutput("	 });" & chr(13));
+		writeOutput("	});" & chr(13));
+		writeOutput("</script>"&chr(13));
 		arrUsers = EntityLoad("TTestTester");
 		writeOutput("<table class='table table-condensed table-striped table-hover'><thead><tr><th>User Name</th><th>Email</th><th>Password</th><th>Is Approved</th><th></th></tr></thead><tbody>");
 		for (i = 1; i <= ArrayLen(arrUsers); i++)
@@ -28,5 +51,44 @@ component
 		arrUser.setIsApproved(arguments.isApproved);
 		EntitySave(arrUser);
 		location("settings.cfm?ac=users",false);
+	}
+	
+	remote any function deleteUser(required numeric userid) {
+		arrUser = EntityLoadByPK("TTestTester",arguments.userid);
+		EntityDelete(arrUser);
+	}
+	
+	remote any function viewSettings() output="true" {
+		writeOutput("<script type='text/javascript'>" & chr(13));
+		writeOutput("	$(document).ready(function() { "&chr(13));
+		writeOutput("	  $(document).on('click','a.lnkSaveUserChanges',function() { "&chr(13));
+		writeOutput("		var row = $(this).closest('tr');" & chr(13));
+		writeOutput("		var settingid = row.find('.settingid').val(); " & chr(13) );
+		writeOutput("		var settingvalue = row.find('.settingvalue').val();" & chr(13) );
+		writeOutput("		$.ajax({url:'cfc/Admin.cfc?method=saveSetting',type:'POST',data : { settingid : settingid, settingvalue : settingvalue }}).done(function() { location.href = 'settings.cfm?ac=settings'; });");
+		writeOutput("	  });" & chr(13));
+		writeOutput("	});" & chr(13));
+		writeOutput("</script>"&chr(13));
+		writeOutput("<table class='table table-condensed table-striped table-hover'><thead><tr><th>Setting</th><th>Value</th><th></th></tr></thead><tbody>");
+		arrTestSettings = EntityLoad("TTestSettings");
+		for ( i = 1; i <= ArrayLen(arrTestSettings); i++)
+		{
+			writeOutput("<tr><td><input type='hidden' class='settingid' value='" & arrTestSettings[i].getId() & "' /><input type='hidden' class='settingname' value='" & arrTestSettings[i].getSetting() & "' />" & arrTestSettings[i].getSetting() & "</td><td><input type='text' class='settingvalue form-control' value='" & arrTestSettings[i].getSettingValue() & "' /></td>");
+			writeOutput("<td><a href='##' class='lnkSaveSettingChanges btn btn-primary'>Save</a></td></tr>");
+		}
+		writeOutput("</tbody></table>");
+	}
+	
+	remote any function saveSetting(required numeric settingid, required string settingvalue) {
+		arrSetting = EntityLoadByPK("TTestSettings",arguments.settingid);
+		arrSetting.setSettingValue(arguments.settingvalue);
+		EntitySave(arrSetting);	
+	}
+	
+	remote any function viewAllScheduledTasks() output="true" {
+		objDash = createObject("component","Dashboard");
+		objDash.AllReports();
+		objAutomation = createObject("component","AutomationStudio");
+		objAutomation.viewAutomatedTasks();
 	}
 }

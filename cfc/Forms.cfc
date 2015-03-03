@@ -890,6 +890,7 @@
 		<cfargument name="comment">
 		<cfargument name="AttachmentList" default="">
 		<cfargument name="defects" default="">
+		<cfset objFunc = createObject("component","Functions") >
 		<cfloop index="ListElement" list="#arguments.caseidslist#">
 			<cfscript>
 				var testresult = EntityNew("TTestResult");
@@ -905,6 +906,9 @@
 				testresult.setDateTested(Now());
 				testresult.setTestCaseID(ListElement);
 				EntitySave(testresult);
+				arrTestDetail = EntityLoadByPK("TTestCase",ListElement);
+				mailbody = "You have been assigned test case <strong>TC" & arrTestDetail.getId() & " - " & arrTestDetail.getTestTitle() & ".</strong>  Click <a href='http://" & CGI.SERVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TC=" & arrTestDetail.getId() & "'>here</a> to view test case.";
+				objFunc.MailerFunction(TesterObj.getEmail(),"info@briankresge.com","Test Case Assigned - TC" & arrTestDetail.getid(), mailbody);
 			</cfscript>
 		</cfloop>
 		<cfreturn true />

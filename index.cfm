@@ -30,6 +30,15 @@
 		<script type="text/javascript" src="scripts/ChartNew.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap-datepicker.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap-select.min.js"></script>
+		<cfif StructKeyExists(URL,"TC")>
+		<script type="text/javascript">
+			$(document).ready(function() {
+			$("#largeModal .modal-title").text("Edit Test Case");
+			$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestCaseForm&testcaseid="+<cfoutput>#url.TC#</cfoutput>);
+			$("#largeModal").modal("show");
+			});
+		</script>
+		</cfif>
 		<style>
 			body { padding-top: 60px; background: url('images/bg.png'); }
 			.rowoffset { margin-bottom: 20px; }

@@ -49,6 +49,8 @@
 		        <ul class="nav navbar-nav">
 		          <li><a id="lnkReturnToProject" class="pjlink" style="display:none;" href="index.cfm"><i class="fa fa-home"></i> Home</a></li>
 		          <li><a href="settings.cfm?ac=users">Users</a></li>
+		          <li><a href="settings.cfm?ac=settings">System Settings</a></li>
+		          <li><a href="settings.cfm?ac=sked">Scheduled Tasks</a></li>
 		          <li><a href="cfc/Logon.cfc?method=Logout"> <i class="fa fa-power-off"></i> Log out</a></li>
 		        </ul>
 		      </div><!--/.nav-collapse -->
@@ -64,6 +66,22 @@
 		  					<div class="panel panel-heading"><h4>User Administration</h4></div>
 		  					<div class="panel panel-body">
 		  						<cfoutput>#objAdmin.viewAllUsers()#</cfoutput>
+		  					</div>
+		  				</div>
+		  			</cfif>
+		  			<cfif url.ac eq "settings">
+		  				<div class='panel panel-default'>
+		  					<div class='panel panel-heading'><h4>System Settings</h4></div>
+		  					<div class='panel panel-body'>
+		  						<cfoutput>#objAdmin.viewSettings()#</cfoutput>
+		  					</div>
+		  				</div>
+		  			</cfif>
+		  			<cfif url.ac eq "sked">
+		  				<div class="panel panel-default">
+		  					<div class="panel panel-heading"><h4>Scheduled Tasks</h4></div>
+		  					<div class="panel panel-body">
+		  						<cfoutput>#objAdmin.viewAllScheduledTasks()#</cfoutput>
 		  					</div>
 		  				</div>
 		  			</cfif>
