@@ -881,6 +881,27 @@
 		</cfscript>
 	</cffunction>
 	
+	<cffunction name="assignTester" access="remote" returntype="any">
+		<cfargument name="testcaseid" type="numeric" required="true">
+		<cfargument name="testerid" type="numeric" required="true">
+		<cfset objFunc = createObject("component","Functions")>
+		<cfset newTestResult = new CFTestTrack.cfc.db.TTestResult()>
+		<cfscript>
+			newTestResult.setTestCaseID(arguments.testcaseid);
+			newTestResult.setDateTested(Now());
+			newTestResult.setComment("Assigned");
+			teststatus = EntityLoadByPK("TTestStatus",5);
+			tester = EntitYLoadByPK("TTestTester",arguments.testerid);
+			newTestResult.setTTestStatus(teststatus);
+			newTestResult.setVersion(0);
+			newTestResult.setElapsedTime(0);
+			newTestResult.setTTestTester(tester);
+			EntitySave(newTestResult);
+			mailbody = "You have been assigned test case <strong>TC" & arguments.testcaseid & ".</strong>  Click <a href='http://" & CGI.SERVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TC=" & arguments.testcaseid & "'>here</a> to view test case.";
+			objFunc.MailerFunction(tester.getEmail(),"info@briankresge.com","Test Case TC" & arguments.testcaseid & " Assigned" ,mailbody);
+		</cfscript> 	
+	</cffunction>
+	
 	<cffunction name="saveTestResult" access="remote" returntype="any" returnformat="JSON">
 		<cfargument name="caseidslist" required="true">
 		<cfargument name="statusid" type="numeric" required="true">
@@ -907,8 +928,8 @@
 				testresult.setTestCaseID(ListElement);
 				EntitySave(testresult);
 				arrTestDetail = EntityLoadByPK("TTestCase",ListElement);
-				mailbody = "You have been assigned test case <strong>TC" & arrTestDetail.getId() & " - " & arrTestDetail.getTestTitle() & ".</strong>  Click <a href='http://" & CGI.SERVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TC=" & arrTestDetail.getId() & "'>here</a> to view test case.";
-				objFunc.MailerFunction(TesterObj.getEmail(),"info@briankresge.com","Test Case Assigned - TC" & arrTestDetail.getid(), mailbody);
+				mailbody = "There is an update on test case <strong>TC" & arrTestDetail.getId() & " - " & arrTestDetail.getTestTitle() & ".</strong>  Click <a href='http://" & CGI.SERVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TC=" & arrTestDetail.getId() & "'>here</a> to view test case.";
+				objFunc.MailerFunction(TesterObj.getEmail(),"info@briankresge.com","Test Case Update - TC" & arrTestDetail.getid(), mailbody);
 			</cfscript>
 		</cfloop>
 		<cfreturn true />

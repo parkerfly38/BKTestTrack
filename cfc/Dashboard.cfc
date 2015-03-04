@@ -790,6 +790,24 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 				$(".selectpicker").selectpicker();
+				$(document).off('change','##ddluser');
+				$(document).on('change','##ddluser',function() {
+					var testcaseid = $(this).attr("tcid");
+					var userid = $(this).val();
+					$.ajax({
+						url: 'cfc/Forms.cfc?method=assignTester',
+						type: 'POST',
+						data: { testcaseid : testcaseid, testerid : userid }
+					}).done(function() {
+						$("##topcontent").removeClass("panel").removeClass("panel-default");
+						$("##topcontent").load("cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+#arguments.scenarioid#);
+						$("##midrow").empty();
+						$("##activitypanel").remove();
+						$("##lnkReturnToProject").attr("pjid",#Session.ProjectID#);
+						$("##lnkReturnToProject").show();
+						$("##createreportpanel").remove();
+					});
+				});
 			});
 			function onRowSelect(objCheckbox) {
 				if ($(objCheckbox).is(":checked")) {
@@ -850,7 +868,11 @@
 							<td><input type="checkbox" id="cbxId" name="cbxId" class="cbxTestId" caseid="#testcaseid#" onclick="onRowSelect(this);"  /></td>
 							<td><span class="label label-info">TC#testcaseid#</span></td>
 							<td>#TestTitle#</td>
-							<td>#UserName#</td>
+							<td><select id='ddluser' class='selectpicker' data-style='btn-primary btn-xs' tcid='#testcaseid#'>
+									<cfset arrTesters = EntityLoad("TTestTester")>
+									<cfloop array="#arrTesters#" index="tester">
+										<option value="#tester.getId()#"<cfif tester.getUserName() eq UserName> selected="selected"</cfif>>#tester.getUserName()#</option>
+									</cfloop></select></td>
 							<td style="width:8%">
 								<cfset qryTestStatus = objData.qryGetCurrentTestStatus(testcaseid)>
 								<!---<select class="form-control selectpicker" caseid="#testcaseid#" data-style="#returnBSLabelStyle(qryTestStatus.Status[1],"btn")# btn-xs">
