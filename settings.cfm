@@ -51,6 +51,7 @@
 		          <li><a href="settings.cfm?ac=users">Users</a></li>
 		          <li><a href="settings.cfm?ac=settings">System Settings</a></li>
 		          <li><a href="settings.cfm?ac=sked">Scheduled Tasks</a></li>
+		          <li><a href="settings.cfm?ac=links">Links</a></li>
 		          <li><a href="cfc/Logon.cfc?method=Logout"> <i class="fa fa-power-off"></i> Log out</a></li>
 		        </ul>
 		      </div><!--/.nav-collapse -->
@@ -82,6 +83,14 @@
 		  					<div class="panel panel-heading"><h4>Scheduled Tasks</h4></div>
 		  					<div class="panel panel-body">
 		  						<cfoutput>#objAdmin.viewAllScheduledTasks()#</cfoutput>
+		  					</div>
+		  				</div>
+		  			</cfif>
+		  			<cfif url.ac eq "links">
+		  				<div class="panel panel-default">
+		  					<div class="panel panel-heading"><h4>Links</h4></div>
+		  					<div class="panel panel-body">
+		  						<cfoutput>#objAdmin.viewAllLinks()#</cfoutput>
 		  					</div>
 		  				</div>
 		  			</cfif>

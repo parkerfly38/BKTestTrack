@@ -992,7 +992,11 @@
 			{
 				return false;
 			}
-			FileDelete(ExpandPath("/reportpdfs/") & arguments.reportid & ".pdf");
+			try {
+				FileDelete(ExpandPath("/reportpdfs/") & arguments.reportid & ".pdf");
+			} catch (any e) {
+				return true;
+			}
 			return true;
 		</cfscript>
 	</cffunction>

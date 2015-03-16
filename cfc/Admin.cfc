@@ -1,5 +1,33 @@
 component 
 {
+	remote any function viewAllLinks() output="true" {
+		writeOutput("<script type='text/javascript'>" & chr(13));
+		writeOutput("	$(document).ready(function() { " & chr(13));
+		writeOutput("	  $(document).on('click','a.lnkSaveLink',function() { "&chr(13));
+		writeOutput("		var row = $(this).closest('tr');" & chr(13));
+		writeOutput("		var description = row.find('##linkdesc').val(); " & chr(13) );
+		writeOutput("		var linkid = row.find('##linkid').val(); " & chr(13) );
+		writeOutput("		var link = row.find('##linkhref').val(); " & chr(13));
+		writeOutput("		$.ajax({url:'cfc/Admin.cfc?method=saveLink',type:'POST',data : { id : linkid, linkhref : link, linkdesc : description}}).done(function() { location.href = 'settings.cfm?ac=links'; });");
+		writeOutput("	  });" & chr(13));
+		writeOutput("	 $(document).on('click','a.lnkDeleteLink',function() { " & chr(13));
+		writeOutput("		var row = $(this).closest('tr');" & chr(13));
+		writeOutput("		var id = row.find('##linkid').val(); " & chr(13));
+		writeOutput("		$.ajax({url:'cfc/Admin.cfc?method=deleteLink',type:'POST',data: { linkid : id}");
+		writeOutput("	  }).done(function() { location.href = 'settings.cfm?ac=links'; });" & chr(13));
+		writeOutput("	 });" & chr(13));
+		writeOutput("	});" & chr(13));
+		writeOutput("</script>"&chr(13));
+		arrLinks = EntityLoad("TTestLinks");
+		writeOutput("<table class='table table-condensed table-striped table-hover'><thead><tr><th>Link</th><th>Link Description</th><th></th></tr></thead><tbody>");
+		for (i = 1; i <= ArrayLen(arrLinks); i++)
+		{
+			writeOutput("<tr><td><input type='hidden' id='linkid' value='" & arrLinks[i].getId() & "' /><input type='text' class='form-control' id='linkhref' value='" & arrLinks[i].getLinkHref() & "' /></td><td><input type='text' id='linkdesc' class='form-control' value='" & arrLinks[i].getLinkDesc() & "' /></td><td><a href='##' class='lnkSaveLink btn btn-xs btn-primary'>Save</a> <a href='##' class='lnkDeleteLink btn btn-xs btn-danger'>Delete</a></td></tr>" & chr(13));
+		}
+		writeOutput("<tr><td><input type='hidden' id='linkid' value='0' /><input type='text' class='form-control' id='linkhref' class='form-control' placeholder='New Href' /></td><td><input type='text' id='linkdesc' class='form-control' placeHolder='Link Description' /></td><td><a href='##' class='lnkSaveLink btn btn-xs btn-primary'>Save</a> <a href='##' class='lnkDeleteLink btn btn-xs btn-danger'>Delete</a></td></tr>"&chr(13));
+		writeOutput("</tbody></table>");
+	}
+		
 	remote any function viewAllUsers() output="true" {
 		writeOutput("<script type='text/javascript'>" & chr(13));
 		writeOutput("	$(document).ready(function() { "&chr(13));
@@ -50,18 +78,38 @@ component
 		arrUser.setEmail(arguments.email);
 		arrUser.setIsApproved(arguments.isApproved);
 		EntitySave(arrUser);
-		location("settings.cfm?ac=users",false);
+		//location("settings.cfm?ac=users",false);
 	}
 	
 	remote any function deleteUser(required numeric userid) {
 		arrUser = EntityLoadByPK("TTestTester",arguments.userid);
 		EntityDelete(arrUser);
+		//location("settings.cfm?ac=users",false);
+	}
+	
+	remote any function saveLink(required numeric id, required string linkhref, required string linkdesc)
+	{
+		if (id == 0) {
+			arrLink = EntityNew("TTestLinks");
+		} else {
+			arrLink = EntityLoadByPK("TTestLinks",arguments.id);
+		}
+		arrLink.setLinkDesc(arguments.linkdesc);
+		arrLink.setLinkHref(arguments.linkhref);
+		EntitySave(arrLink);
+		//location("settings.cfm?ac=links",false);
+	}
+	
+	remote any function deleteLink(required numeric linkid) {
+		arrLink = EntityLoadByPK("TTestLinks",arguments.linkid);
+		EntityDelete(arrLink);
+		//location("settings.cfm?ac=links",false);
 	}
 	
 	remote any function viewSettings() output="true" {
 		writeOutput("<script type='text/javascript'>" & chr(13));
 		writeOutput("	$(document).ready(function() { "&chr(13));
-		writeOutput("	  $(document).on('click','a.lnkSaveUserChanges',function() { "&chr(13));
+		writeOutput("	  $(document).on('click','a.lnkSaveSettingChanges',function() { "&chr(13));
 		writeOutput("		var row = $(this).closest('tr');" & chr(13));
 		writeOutput("		var settingid = row.find('.settingid').val(); " & chr(13) );
 		writeOutput("		var settingvalue = row.find('.settingvalue').val();" & chr(13) );

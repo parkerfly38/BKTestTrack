@@ -37,6 +37,21 @@
 		
 	</cffunction>
 	
+	<cffunction name="onRequestEnd" returntype="void" output="true">
+		<cfscript>
+
+		pageContent = getPageContext().getOut().getString();
+		getPageContext().getOut().clearBuffer();
+		
+		ageContent = reReplace( pageContent, ">[[:space:]]+#chr( 13 )#<", "all" );
+		
+		writeOutput( pageContent );
+		getPageContext().getOut().flush();
+		
+		
+		</cfscript>
+	</cffunction>
+	
 	<cffunction name="onApplicationStart" returntype="void">
 		<cfset ORMReload() />
 		<cfset Application.charttype = "html" /><!--- options being flash, jpg, png, html --->
@@ -45,6 +60,8 @@
 		<cfset Application.useLDAP = qryAuthenticationType.getSettingValue() /><!--- set this to true if you want to use LDAP --->
 		<cfset Application.DOMAIN = "CORNEROPS" /><!--- set your domain name here, further adjustments may be necessary in Logon.cfc --->
 		<cfset Application.AllowCaseDelete = qryAllowCaseDelete.getSettingValue() />
+		<cfset qryMailerDaemon = EntityLoad("TTestSettings",{Setting="MAILERDAEMONADDRESS"},true)>
+		<cfset Application.MAILERDAEMONADDRESS = qryMailerDaemon.getSettingValue() />
 	</cffunction>
 
 </cfcomponent>

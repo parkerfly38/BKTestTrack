@@ -8,9 +8,10 @@
 				<head>
 					<script type="text/javascript" src="scripts/jquery-1.10.2.min.js"></script>
 					<script type="text/javascript" src="scripts/ChartNew.js"></script>
+					<script type="text/javascript" src="scripts/bootstrap-select.min.js"></script>
+					<style type="text/css" media="screen">@import "style/bootstrap.css";</style>
 				</head>
-				<body>
-					Test Test Test
+				<body style="font-family: Arial, Helvetica, sans-serif">
 				<cfoutput>#arguments.incomingcontent#</cfoutput>
 				</body>
 			</html>
@@ -61,19 +62,24 @@
 		<cfreturn result>
 	</cffunction>
 	
-	<cffunction name="piechart" access="public" returntype="string">
+	<cffunction name="piechart" access="public" returntype="any">
 		<cfargument name="dataquery" type="query">
 		<cfargument name="charttitle">
 		
-		<cfsavecontent variable="donutchart">
-			<cfchart title="#arguments.charttitle#" pieslicestyle="sliced" showborder="false" format="png" font="arialunicodeMS" fontsize="11" show3d="true" showlegend="false" chartwidth="600" chartheight="300">
+		<cfsavecontent variable="donutchart">--->
+		<cfsilent>
+			<cfchart title="#arguments.charttitle#" name="mychart" pieslicestyle="sliced" showborder="false" format="png" font="arialunicodeMS" fontsize="11" show3d="true" showlegend="false" chartwidth="600" chartheight="300">
 				<cfchartseries type="pie" query="dataquery" valueColumn="ItemCount"  itemColumn="Item" />
 			</cfchart>
+		</cfsilent>
+		
+		<cfset imgnew = ImageNew(mychart)>
+		<cfimage action="writeToBrowser" source="#imgnew#">
 		</cfsavecontent>
 		<cfreturn donutchart>
 	</cffunction>
 	
-	<cffunction name="linechartbydate" access="public" returntype="string">
+	<cffunction name="linechartbydate" access="public" returntype="any" output="true">
 		<cfargument name="groupingquery" type="query">
 		<cfargument name="dataquery" type="query">
 		<cfargument name="charttitle">
@@ -82,8 +88,8 @@
 			FROM arguments.dataquery
 			ORDER BY [DateOfAction]
 		</cfquery>
-		<cfsavecontent variable="linechart">
-			<cfchart title="#arguments.charttitle#" showborder="false" format="png" font="arialunicodeMS" fontsize="11" show3d="false" showlegend="true" chartwidth="600" chartheight="300"  scalefrom="0" scaleto="20" xaxistype="category" sortxaxis="true" >
+		<!---<cfsavecontent variable="linechart">---><cfsilent>
+			<cfchart title="#arguments.charttitle#" showborder="false" format="jpg" tipstyle="none" font="arialunicodeMS" fontsize="11" show3d="false" showlegend="true" chartwidth="600" chartheight="300" name="mychart" scalefrom="0" scaleto="20" xaxistype="category" sortxaxis="true" >
 				<cfloop query="groupingquery">
 					<cfquery dbtype="query" name="qrysub">
 						SELECT Count([Action]) as [ActionCount],[DateOfAction] FROM qryreorder
@@ -98,7 +104,9 @@
 				</cfchartseries>
 				</cfloop>
 			</cfchart>
-		</cfsavecontent>
-		<cfreturn linechart>
+			</cfsilent>
+		<!---</cfsavecontent>--->
+		<cfset imgnew = ImageNew(mychart)>
+		<cfimage action="writeToBrowser" source="#imgnew#">
 	</cffunction>
 </cfcomponent>

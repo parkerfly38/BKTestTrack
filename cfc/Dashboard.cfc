@@ -1152,9 +1152,9 @@
 					<tbody>
 						<tr><td><a href="##" class="lnkCreateReport" reporttype="Activity" data-toggle="tooltip" data-placement="left" title="Shows a summary of new and updated test cases."><i class="fa fa-plus-circle" style="color:green;"></i> Activity</a></td>
 						</tr>
-						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Coverage for References</td>
-						</tr>
-						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Property Distribution</td>
+						<!---<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Coverage for References</td>
+						</tr>--->
+						<tr><td><a href="##" class="lnkCreateReport" reporttype="ExecutionList" data-toggle="tooltip" data-placement="left" title="Displays Execution data for test scenarios."><i class="fa fa-plus-circle" style="color:green;"></i> Execution List</td>
 						</tr>
 						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Problem Test Cases</td>
 						</tr>
