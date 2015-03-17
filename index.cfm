@@ -61,6 +61,20 @@
 			    position: relative;
 			    overflow: hidden;
     		}
+    		.avatar {
+			    float: left;
+			    margin-top: 1em;
+			    margin-right: 1em;
+			    position: relative;
+			
+			    -webkit-border-radius: 50%;
+			    -moz-border-radius: 50%;
+			    border-radius: 50%;
+			
+			    -webkit-box-shadow: 0 0 0 3px #fff, 0 0 0 4px #999, 0 2px 5px 4px rgba(0,0,0,.2);
+			    -moz-box-shadow: 0 0 0 3px #fff, 0 0 0 4px #999, 0 2px 5px 4px rgba(0,0,0,.2);
+			    box-shadow: 0 0 0 3px #fff, 0 0 0 4px #999, 0 2px 5px 4px rgba(0,0,0,.2);
+			}
     		@media screen and (min-width: 768px) {
     			#largeModal .modal-dialog {width:95%;}
     		}
@@ -165,6 +179,25 @@
 		      <div class="modal-footer">
 		        <button id="btnClose" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 		        <button id="btnSave" type="button" class="btn btn-primary">Save changes</button>
+		      </div>
+		    </div>
+  	   	</div> 
+	 </div>
+	 <div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModal" aria-hidden="true">
+		  <div class="modal-dialog modal-sm" style="background-color:#FFF;">
+		    <div class="modal-content" style="background-color:#FFF;">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		        <h4 class="modal-title" id="myModalLabel">Chat</h4>
+		      </div>
+		      <div class="modal-body" style="overflow:scroll;height:300px;">
+		        <h3>Modal Body</h3>
+		      </div><div class="clearfix"></div>
+		      <div class="modal-footer">
+		        <div class="input-group">
+		        	<input type="text" id="chatmessage" class="form-control" placeholder="Type your chat message..." />
+		        	<span class="input-group-btn"><button class='sendchat btn btn-info' type='button' fromid='0' toid='0'>Send</button></span>
+		        </div>		        
 		      </div>
 		    </div>
   	   	</div> 

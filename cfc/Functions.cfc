@@ -79,6 +79,56 @@
 		<cfreturn donutchart>
 	</cffunction>
 	
+	<cffunction name="sendchat" access="remote" returntype="void">
+		<cfargument name="fromid" type="numeric" required="true">
+		<cfargument name="toid" type="numeric" required="true">
+		<cfargument name="timeofmessage" type="date">
+		<cfargument name="body" type="string">
+		<cfif !StructKeyExists(Application,"ChatLog")>
+			<cfset Application.ChatLog = ArrayNew(1)>
+		</cfif>
+		<cfset x = ArrayLen(Application.ChatLog) + 1>
+		<cfset Application.ChatLog[x] = { from = arguments.fromid, to = arguments.toid, mdate = arguments.timeofmessage, messagebody = arguments.body} >
+	</cffunction>
+	
+	<cffunction name="getchats" access="remote" output="true">
+		<cfargument name="fromid" type="numeric" required="true">
+		<cfargument name="toid" type="numeric" required="true">
+		<cfset arrToPerson = EntityLoadByPK("TTestTester",arguments.toid)>
+		<cfset arrFromPerson = EntityLoadByPK("TTestTester",arguments.fromid)>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(document).off('click','button.sendchat');
+				$(document).on('click','button.sendchat', function(event) {
+					event.preventDefault();
+					$.ajax({ type: 'POST',url: "CFC/Functions.cfc?method=sendchat",data: { fromid : #arguments.fromid#, toid : #arguments.toid#, timeofmessage : '#DateFormat(Now(),"MM/DD/YYYY")#', body : $("##chatmessage").val() }}).done( function() {
+						$("##chatModal .modal-body").load("cfc/Functions.cfc?method=getchats&fromid=#arguments.fromid#&toid=#arguments.toid#", 
+							function() {
+								$("##chatModal .modal-body").animate({ scrollTop: $("##chatModal .modal-body")[0].scrollHeight},1000);
+							});
+						$("##chatmessage").val("");	
+					});
+				});
+			});
+		</script>
+		<cfscript>
+		if ( StructKeyExists(Application,"ChatLog") ) {
+			for (i=1; i <= ArrayLen(Application.ChatLog); i++) {
+				if ( (Application.ChatLog[i].from == arguments.toid || Application.ChatLog[i].from == arguments.fromid) && (Application.ChatLog[i].to == arguments.toid || Application.ChatLog[i].to == arguments.fromid) ) {
+					writeOutput("<p>");
+					if ( Application.ChatLog[i].from == arguments.fromid ) {
+						writeOutput("<span class='label label-success'>" & arrFromPerson.getUserName());
+					} else if ( Application.ChatLog[i].from == arguments.toid ) {
+						writeOutput("<span class='label label-info'>" & arrToPerson.getUserName());
+					}
+					writeOutput(": " & Application.ChatLog[i].mdate & "</span> - " & Application.ChatLog[i].messagebody & "</p>");
+				}
+			}
+		}
+		</cfscript>
+		
+	</cffunction>
+	
 	<cffunction name="linechartbydate" access="public" returntype="any" output="true">
 		<cfargument name="groupingquery" type="query">
 		<cfargument name="dataquery" type="query">

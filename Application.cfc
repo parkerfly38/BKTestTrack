@@ -10,6 +10,7 @@
 	<cfset this.directory = getdirectoryfrompath(getcurrenttemplatepath()) >
 	<cfset this.mappings["/reportpdfs"] = "#this.directory#reportpdfs/">
 	<cfset this.mappings["/excel"] = "#this.directory#excel/">
+	<cfset this.mappings["/avatars"] = "#this.directory#images/avatars/">
 	
 	<cffunction name="onRequestStart" returntype="void" output="true">
 		<!--- debug only, remove otherwise --->
@@ -22,10 +23,16 @@
     		<cfset objLogon = createObject("component","cfc.Logon") />
     		<cfif Application.useLDAP>
     			<cfif objLogon.ldapAuthenticate(form.username,form.password)>
+    				<cfscript>
+    					StructInsert(application.SessionTracker,Session.UserIDInt,Now(),false);
+    				</cfscript> 
     				<cflocation url="index.cfm" addtoken="false" >
     			</cfif>
     		<cfelse>
     			<cfif objLogon.formAuthenticate(form.username,form.password)>
+    				<cfscript>
+    					StructInsert(application.SessionTracker,Session.UserIDInt,Now(),false);
+    				</cfscript> 
     				<cflocation url="index.cfm" addtoken="false" >
     			</cfif>
     		</cfif>
@@ -34,7 +41,6 @@
 			<cfset Session.OrigURL = CGI.SERVER_NAME & "/" & CGI.SCRIPT_NAME & "?" & CGI.QUERY_STRING>
 			<cflocation url="login.cfm" addtoken="false" />
 		</cfif>
-		
 	</cffunction>
 	
 	<cffunction name="onRequestEnd" returntype="void" output="true">
@@ -47,13 +53,27 @@
 		
 		writeOutput( pageContent );
 		getPageContext().getOut().flush();
-		
-		
+		if (!FindNoCase("login",CGI.SCRIPT_NAME)) {
+			StructUpdate(application.SessionTracker,Session.UserIDInt,Now());
+		}
 		</cfscript>
+	</cffunction>
+	
+	
+	<cffunction name="onSessionEnd">
+	    <cfargument name = "SessionScope" required=true/>
+	    <cfargument name = "AppScope" required=true/>
+	    <!---<cfset var sessionLength = TimeFormat(Now() - SessionScope.started,
+	        "H:mm:ss")>
+	    <cflock name="AppLock" timeout="5" type="Exclusive">
+	        <cfset Arguments.AppScope.sessions = Arguments.AppScope.sessions - 1>
+	    </cflock>--->
+		<cfset temp = StructDelete(application.SessionTracker, Arguments.SessionScope.UserIDInt) />
 	</cffunction>
 	
 	<cffunction name="onApplicationStart" returntype="void">
 		<cfset ORMReload() />
+		<cfset Application.SessionTracker = StructNew() />
 		<cfset Application.charttype = "html" /><!--- options being flash, jpg, png, html --->
 		<cfset qryAuthenticationType = EntityLoad("TTestSettings",{Setting="UseLDAP"},true)>
 		<cfset qryAllowCaseDelete = EntityLoad("TTestSettings",{Setting="AllowCaseDelete"},true)>
@@ -62,6 +82,8 @@
 		<cfset Application.AllowCaseDelete = qryAllowCaseDelete.getSettingValue() />
 		<cfset qryMailerDaemon = EntityLoad("TTestSettings",{Setting="MAILERDAEMONADDRESS"},true)>
 		<cfset Application.MAILERDAEMONADDRESS = qryMailerDaemon.getSettingValue() />
+		<cfset qryChat = EntityLoad("TTestSettings",{Setting="AllowChat"},true)>
+		<cfset Application.EnableChat = qryChat.getSettingValue() />
 	</cffunction>
 
 </cfcomponent>

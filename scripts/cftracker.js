@@ -14,10 +14,15 @@ var chartwidth = 840;
 var currentview = "allprojects";
 var allTests = [];
 var removeTests = [];
+var chatwindowtimervar;
 
 $(document).ready(function() {
 	
   	$('[data-toggle="tooltip"]').tooltip()
+	
+	$('#chatModal').on('hidden.bs.modal', function () {
+    	window.clearInterval(chatwindowtimervar);
+	});
 	
 	$.getJSON("cfc/Dashboard.cfc?method=chartList", function(data) {
 		jsonDashMenu = data;
@@ -311,6 +316,17 @@ $(document).ready(function() {
 		$("#smallModal .modal-body").load("cfc/Maintenance.cfc?method=TestCaseFileUpload");
 		$("#smallModal").modal("show");
 	});
+	$(document).on("click","a.chat", function(event){
+		event.preventDefault();
+		var fromid = $(this).attr("fromid");
+		var toid = $(this).attr("toid");
+		$("#chatModal .modal-title").text("Chat");
+		$("#chatModal .modal-body").load("cfc/Functions.cfc?method=getchats&fromid="+fromid+"&toid="+toid, function() {
+			$("#chatModal").modal("show");
+			$("#chatModal .modal-body").animate({ scrollTop: $("#chatModal .modal-body")[0].scrollHeight},1000);
+		});
+		chatwindowtimervar = setInterval(function() { insertNewChat(fromid,toid)},5000);
+	});
 	$(document).on("click","a.lnkScheduleTests",function(event) {
 		event.preventDefault();
 		$("#largeModal .modal-title").text("Schedule Automated Tests");
@@ -365,6 +381,14 @@ function projectIDCheck(){
 	}
 }
 
+function insertNewChat(fromid, toid)
+{
+	$("#chatModal .modal-body").load("cfc/Functions.cfc?method=getchats&fromid="+fromid+"&toid="+toid, 
+							function() {
+								$("#chatModal .modal-body").animate({ scrollTop: $("#chatModal .modal-body")[0].scrollHeight},1000);
+							});
+}
+
 function insertTodos() {
 	if ($("#todopanel").length == 0) {
 		$.ajax({
@@ -410,6 +434,8 @@ function checkLoggedIn() {
 	}).done(function(data) {
 		if (!data.LOGGEDIN) {
 			location.href = "login.cfm";
+		} else {
+			insertActions();
 		}
 	});
 }

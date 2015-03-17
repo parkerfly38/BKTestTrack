@@ -276,34 +276,33 @@
 		<cfif !StructKeyExists(Session,"ProjectID")>
 			<cfreturn>
 		</cfif>
-		<cfquery name="qryProject" dbtype="hql">
-			FROM TTestProject
-			WHERE id = <cfqueryparam value="#Session.ProjectID#">
-		</cfquery>
 		<div id="panel-actions" class="panel panel-default">
-			<div class="panel-heading"><i class="fa fa-rocket"></i> Actions</div>
+			<div class="panel-heading"><i class="fa fa-rocket"></i> Online Users</div>
 			<div class="panel-body">
-					<div class="row rowoffset">
-					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="fa fa-map-marker fa-fw"></i></span></h1></div>
-					<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight:bold;">Milestones</span><br /><a href="##" class="lnkViewMilestones">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddMilestone">Add</a></div>
-					</div>
-					<div class="row rowoffset">
-					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-tachometer fa-fw"></i></span></h1></div>
-					<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight: bold;">Test Cases</span><br /><a href="##" class="lnkViewTests">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddTest">Add</a></div>
-					</div>
-					<div class="row rowoffset">
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right:0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-th fa-fw"></i></span></h1></div>
-						<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight: bold;">Test Sections</span><br /><a href="##" class="lnkViewSections">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddSections">Add</a></div>
-					</div>
-					<div class="row rowoffset">
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right" style="padding-right: 0px;"><h1 style="margin:0px;"><span class="label label-primary" style="padding:5px;"><i class="tests fa fa-suitcase fa-fw"></i></span></h1></div>
-						<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><span style="font-weight: bold;">Test Scenarios</span><br /><a href="##" class="lnkViewScenarios">View All</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="##" class="lnkAddScenario">Add</a></i></div>
-					</div>
-				</div>
+			<cfscript>
+				arrKeys = StructKeyArray(application.SessionTracker);
+				for (i = 1; i <= ArrayLen(arrKeys); i++ )
+				{
+					arrUser = EntityLoadByPK("TTestTester",arrKeys[i]);
+					writeOutput("<div class='row rowoffset'>" & chr(13));
+					writeOutput("	<div class='col-xs-3 col-sm-3 col-md-3 col-lg-3 text-right;'>" & chr(13));
+					if ( FileExists(ExpandPath("/avatars/") & arrKeys[i] & ".png") ) {
+						writeOutput("		<img src='images/avatars/" & arrKeys[i] & ".png' style='max-width:100%;max-height:100%;' class='avatar' />" & chr(13));
+					} else {
+						writeOutput("		<img src='images/avatars/none.png' style='max-width:100%;max-height:100%;' class='avatar' />" & chr(13));
+					}
+					writeOutput("</div><div class='col-xs-9 col-sm-9 col-md-9 col-lg-9'><br /><span style='font-weight: bold;'>" & arrUser.getUserName() & "</span><br /><a href='##' class='btn btn-primary btn-xs'>Send File</a>&nbsp;&nbsp;");
+					if ( Application.EnableChat ) {
+						writeOutput("|&nbsp;&nbsp;<a href='##' class='chat btn btn-primary btn-xs' fromid='"&Session.UserIDInt&"' toid='" & arrUser.getId() & "' >Chat</a>");
+					}
+					writeOutput("</div>");
+					writeOutput("	</div>" & chr(13) & "</div>");
+				}
+			</cfscript>
 			</div>
 		</div>
 	</cffunction>
-	
+		
 	<cffunction name="AllReports" access="remote" output="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfreturn>
