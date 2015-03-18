@@ -293,7 +293,11 @@
 					}
 					writeOutput("</div><div class='col-xs-9 col-sm-9 col-md-9 col-lg-9'><br /><span style='font-weight: bold;'>" & arrUser.getUserName() & "</span><br /><a href='##' class='btn btn-primary btn-xs'>Send File</a>&nbsp;&nbsp;");
 					if ( Application.EnableChat ) {
-						writeOutput("|&nbsp;&nbsp;<a href='##' class='chat btn btn-primary btn-xs' fromid='"&Session.UserIDInt&"' toid='" & arrUser.getId() & "' >Chat</a>");
+						writeOutput("|&nbsp;&nbsp;<a href='##' class='chat btn btn-primary btn-xs' fromid='"&Session.UserIDInt&"' toid='" & arrUser.getId() & "' >Chat");
+						if ( Application.UserChatCount[Session.UserIDInt] > 0 && Application.UserChatCount[Session.UserIDInt] == arrUser.getID()) {
+							writeOutput("    <span class='badge' style='background-color:##f00;color:##fff;'>New</span>");
+						}
+						writeOutput("</a>");
 					}
 					writeOutput("</div>");
 					writeOutput("	</div>" & chr(13) & "</div>");

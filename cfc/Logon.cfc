@@ -107,6 +107,7 @@
 	</cffunction>
 	
 	<cffunction name="Logout" access="remote" returntype="void">
+		<cfset StructDelete(Application.SessionTracker,Session.UserIDInt,false) />
 		<cfset StructClear(SESSION) />
 		<cflocation url="/#application.applicationname#/" addtoken="false">
 	</cffunction>

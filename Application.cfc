@@ -84,6 +84,11 @@
 		<cfset Application.MAILERDAEMONADDRESS = qryMailerDaemon.getSettingValue() />
 		<cfset qryChat = EntityLoad("TTestSettings",{Setting="AllowChat"},true)>
 		<cfset Application.EnableChat = qryChat.getSettingValue() />
+		<!--- by user chat count --->
+		<cfset arrUsers = EntityLoad("TTestTester")>
+		<cfloop array="#arrUsers#" index="user">
+			<cfset Application.UserChatCount[user.getId()] = 0 />
+		</cfloop>
 	</cffunction>
 
 </cfcomponent>
