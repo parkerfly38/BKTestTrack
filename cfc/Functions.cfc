@@ -161,4 +161,5 @@
 		<cfset imgnew = ImageNew(mychart)>
 		<cfimage action="writeToBrowser" source="#imgnew#">
 	</cffunction>
+	
 </cfcomponent>

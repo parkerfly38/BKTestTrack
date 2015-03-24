@@ -8,6 +8,7 @@ component table="TTestTester" persistent="true"
 	property name="email";
 	property name="samaccountname";
 	property name="isApproved" getter="false";
+	property name="AxoSoftToken";
 	
 	public TTestTester function init() 
 	{

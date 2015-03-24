@@ -1045,7 +1045,7 @@
 							<tr>
 							</cfif>
 								<td>#milestone.getMilestone()#</td>
-								<td>#milestone.getDueOn()#</td>
+								<td>#DateFormat(milestone.getDueOn(),"MM/DD/YYYY")#</td>
 								<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
 							</tr>
 							</cfloop>

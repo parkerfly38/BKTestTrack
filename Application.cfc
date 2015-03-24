@@ -21,23 +21,32 @@
         <!--- end debug only --->
     	<cfif !FindNoCase(".cfc",CGI.SCRIPT_NAME) &&  StructKeyExists(FORM,"username") && StructKeyExists(FORM,"password")>
     		<cfset objLogon = createObject("component","cfc.Logon") />
+    		<cfset objAxoSoft = createObject("component","cfc.AxoSoft") />
     		<cfif Application.useLDAP>
     			<cfif objLogon.ldapAuthenticate(form.username,form.password)>
     				<cfscript>
     					StructInsert(application.SessionTracker,Session.UserIDInt,Now(),false);
-    				</cfscript> 
-    				<cflocation url="index.cfm" addtoken="false" >
+    				</cfscript>
+    				<cfif Application.AxoSoftIntegration and !StructKeyExists(SESSION,"AxoSoftToken")>
+    					<cfscript>objAxoSoft.getAxoSoftToken();</cfscript>
+    				<cfelse>
+    					<cflocation url="index.cfm" addtoken="false" >
+    				</cfif>
     			</cfif>
     		<cfelse>
     			<cfif objLogon.formAuthenticate(form.username,form.password)>
     				<cfscript>
     					StructInsert(application.SessionTracker,Session.UserIDInt,Now(),false);
-    				</cfscript> 
-    				<cflocation url="index.cfm" addtoken="false" >
+    				</cfscript>
+    				<cfif Application.AxoSoftIntegration and !StructKeyExists(SESSION,"AxoSoftToken")>
+    					<cfscript>objAxoSoft.getAxoSoftToken();</cfscript>
+    				<cfelse>
+    					<cflocation url="index.cfm" addtoken="false" >
+    				</cfif>
     			</cfif>
     		</cfif>
     	</cfif>
-		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin) && !FindNoCase("logon.cfc",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport.cfm",CGI.SCRIPT_NAME)>
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin) && !FindNoCase("logon.cfc",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport.cfm",CGI.SCRIPT_NAME) && !FindNoCase("AxoSoftRedirect.cfm",CGI.SCRIPT_NAME)>
 			<cfset Session.OrigURL = CGI.SERVER_NAME & "/" & CGI.SCRIPT_NAME & "?" & CGI.QUERY_STRING>
 			<cflocation url="login.cfm" addtoken="false" />
 		</cfif>
@@ -53,7 +62,7 @@
 		
 		writeOutput( pageContent );
 		getPageContext().getOut().flush();
-		if (!FindNoCase("login",CGI.SCRIPT_NAME)) {
+		if (!FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport",CGI.Script_NAME)) {
 			StructUpdate(application.SessionTracker,Session.UserIDInt,Now());
 		}
 		</cfscript>
@@ -89,6 +98,24 @@
 		<cfloop array="#arrUsers#" index="user">
 			<cfset Application.UserChatCount[user.getId()] = 0 />
 		</cfloop>
+		<!--- AxoSoft Integration --->
+		<!--- if public or private --->
+		<cfset qryAxoSoftIntegration = EntityLoad("TTestSettings",{Setting="AxoSoftIntegration"},true)>
+		<cfset Application.AxoSoftIntegration = qryAxoSoftIntegration.getSettingValue()>
+		<cfset qryAxoSoftAuthentication = EntityLoad("TTestSettings",{Setting="AxoSoftAuthentication"},true)>
+		<cfset Application.AxoSoftAuthentication = qryAxoSoftAuthentication.getSettingValue()> <!--- for public Authorization, for private Username is possible --->
+		<cfset qryAxoSoftClient_Id = EntityLoad("TTestSettings",{Setting="AxoSoftClient_Id"},true)>
+		<cfset Application.AxoSoftClient_Id = qryAxoSoftClient_Id.getSettingValue() >
+		<!--- client secret if Username --->
+		<cfset qryAxoSoftClient_Secret = EntityLoad("TTestSettings",{Setting="AxoSoftClient_Secret"},true)>
+		<cfset Application.AxoSoftClient_Secret = qryAxoSoftClient_Secret.getSettingValue()>
+		<cfset qryAxoSoftRedirectURI = EntityLoad("TTestSettings",{Setting="AxoSoftRedirectURI"},true)>
+		<!---<cfset Application.AxoSoftRedirectURI = qryAxoSoftRedirectURI.getSettingValue()>--->
+		<cfset Application.AxoSoftRedirectURI = "http://localhost/CFTestTrack/AxoSoftRedirect.cfm">
+		<cfset qryAxoSoftExpiration = EntityLoad("TTestSettings",{Setting="AxoSoftRedirectURI"},true)>
+		<cfset Application.AxoSoftExpiration = qryAxoSoftExpiration.getSettingValue()>  <!--- default is 30, a value of false will never expire --->
+		<cfset qryAxoSoftURL = EntityLoad("TTestSettings",{Setting="AxoSoftURL"},true)>
+		<cfset Application.AxoSoftURL = qryAxoSoftURL.getSettingValue()>
 	</cffunction>
 
 </cfcomponent>

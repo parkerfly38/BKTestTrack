@@ -31,6 +31,7 @@
     		<cfset Session.Email = results.mail[1] />
     		<cfset Session.Name = results.cn[1] />
     		<cfset Session.UserId = results.samaccountname[1] />
+    		<cfset Session.AxoSoftToken = arrUser.getAxoSoftToken() />
 			<cfcatch>
 				<cflog text="#cfcatch.message# #cfcatch.detail# #cfcatch.ExtendedInfo#"log="APPLICATION" type="Error" application="yes">
 				<cfset isAuthenticated = false />
@@ -62,6 +63,7 @@
 	  		<cfset Session.Email = qryLogin.getEmail()>
 	  		<cfset Session.Name = qryLogin.getUserName()>
 	  		<cfset Session.UserID = qryLogin.getADID()>
+	  		<cfset Session.AxoSoftToken = qryLogin.getAxoSoftToken()>
 			<cfreturn true />
 		<cfelse>
 			<cfreturn false />
