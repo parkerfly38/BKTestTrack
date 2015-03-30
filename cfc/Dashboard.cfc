@@ -300,8 +300,9 @@
 						writeOutput("</a>");
 					}
 					writeOutput("</div>");
-					writeOutput("	</div>" & chr(13) & "</div>");
+					writeOutput("	</div>" & chr(13));
 				}
+				writeOutput("</div>");
 			</cfscript>
 			</div>
 		</div>
@@ -475,19 +476,58 @@
 	</cffunction>						
 	
 	<cffunction name="AllScenarios" access="remote" output="true">
+		<cfargument name="start" default="1">
+		<cfargument name="searchstring" default="">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfreturn>
 		</cfif>
 		<cfif !StructKeyExists(SESSION,"ProjectID")>
 			<cfreturn>
 		</cfif>
-		<cfset arrTestScenarios = EntityLoad("TTestScenario",{ProjectID = Session.ProjectID})>
+		<cfset qryCount = "SELECT count(*) FROM TTestScenario WHERE ProjectID = #Session.ProjectID#">
+		<cfset countresults = ORMExecuteQuery(qryCount)[1]>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(document).off("click",".pagination li a");
+				$(document).on("click",".pagination li a",function() {
+					var pagenum = $(this).text();
+					<cfif Len(arguments.searchstring) gt 0>
+						$.ajax({url:"cfc/Dashboard.cfc?method=AllScenarios",type:"POST",data : { start: pagenum, searchstring : "#arguments.searchstring#"  } }).done(function(data) { $("##topcontent").html(data); });
+					<cfelse>
+					$("##topcontent").load("cfc/Dashboard.cfc?method=AllScenarios&start="+pagenum);
+					</cfif>
+				});
+				$(document).off("click","##btnsearch");
+				$(document).on("click","##btnsearch", function() {
+					$.ajax({url:"cfc/Dashboard.cfc?method=AllScenarios", type: "POST", data: {searchstring : $("##searchstring").val() 
+					}}).done(function(data) {
+						$("##topcontent").html(data);
+					});
+				});
+			});
+		</script>
+		<cfif Len(arguments.searchstring) gt 0>
+			<cfset stringsearch = URLDecode(arguments.searchstring)>
+			<cfset arrTestScenarios = ORMExecuteQuery("FROM TTestScenario WHERE (TestScenario LIKE '%#stringsearch#%' OR TestDescription LIKE '%#stringsearch#%' OR AxoSoftNumber LIKE '%#stringsearch#%') AND ProjectID = #Session.ProjectID#",false,{maxresults=20,offset=arguments.start-1}) />
+			<cfset qryCount = "SELECT count(*) FROM TTestScenario  WHERE (TestScenario LIKE '%#stringsearch#%' OR TestDescription LIKE '%#stringsearch#%' OR AxoSoftNumber LIKE '%#stringsearch#%') AND ProjectID = #Session.ProjectID#">
+			<cfset countresults = ORMExecuteQuery(qryCount)[1]>
+		<cfelse>
+			<cfset arrTestScenarios = EntityLoad("TTestScenario",{ProjectID = Session.ProjectID},{maxresults=20,offset=arguments.start-1})>
+		</cfif>
 		<cfset objData = createObject("component","Data")>
 		<div id="scenariospanel" class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-tachometer"></i> <strong>Test Scenarios</strong></div>
 			<div class="panel-body">
-				<div class="well well-sm" style="font-weight:bold;">Active</div>
+				<div class="well well-sm" style="font-weight:bold;">Active<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 input-group" style="float:right;margin-top:-7px;"><input type='text' class='form-control' id='searchstring' name='searchstring' placeholder="Search for..." /><span class="input-group-btn"><button id='btnsearch' class='btn btn-primary'><i class='fa fa-search'></i></button></span></div></div>
+				<cfset numPages = ceiling(countresults / 20)>
 				<cfif ArrayLen(arrTestScenarios) gt 0>
+				<cfif numPages gt 1>
+				<ul class="pagination">
+					<cfloop from="1" to="#numPages#" index="i">
+						<li<cfif i eq arguments.start> class="active"</cfif>><a href="##">#i#</a><li>
+					</cfloop>
+				</ul>
+				</cfif>
 				<table class="table table-striped">
 				<tbody>
 					<cfloop array="#arrTestScenarios#" index="scenario">
@@ -495,7 +535,7 @@
 					<!--- subcounts --->
 					<cfset qryTestCounts = objData.qryTestCaseHistoryForScenarios(scenario.getId())>
 						<tr>
-							<td><h5><a href="##" class="lnkOpenScenarioHub" scenarioid="#scenario.getId()#">#scenario.getTestScenario()#</a><h5>
+							<td><h5><a href="##" class="lnkOpenScenarioHub" scenarioid="#scenario.getId()#"><cfif len(scenario.getAxoSoftNumber()) gt 0>#scenario.getAxoSoftNumber()# - </cfif>#scenario.getTestScenario()#</a><h5>
 								<cfset untestedPercent = 0>
 								<cfset blockedPercent = 0>
 								<Cfset retestPercent = 0>
@@ -555,6 +595,13 @@
 					</cfloop>
 				</tbody>
 				</table>
+				<cfif numPages gt 1>
+				<ul class="pagination">
+					<cfloop from="1" to="#numPages#" index="i">
+						<li<cfif i eq arguments.start> class="active"</cfif>><a href="##">#i#</a><li>
+					</cfloop>
+				</ul>
+				</cfif>
 				<cfelse>
 				<div class="alert alert-warning"><h4>This project doesn't contain any test scenarios.</h4>Please add one from the actions link to the right.</div>
 				</cfif>				
@@ -1087,7 +1134,7 @@
 								<cfset objData = createObject("component","Data")>
 								<cfset qryTestCases = objData.qryTestCaseForScenarios(scenario.getId())>
 								<tr>
-									<td><a href="##" class="lnkOpenScenarioHub" scenarioid="#scenario.getId()#">#scenario.getTestScenario()#</a></td>
+									<td><a href="##" class="lnkOpenScenarioHub" scenarioid="#scenario.getId()#"><cfif Len(scenario.getAxoSoftNumber()) gt 0>#scenario.getAxoSoftNumber()# - </cfif>#scenario.getTestScenario()#</a></td>
 									<td>(#qryTestCases.RecordCount#)</td>
 									<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
 								</tr>

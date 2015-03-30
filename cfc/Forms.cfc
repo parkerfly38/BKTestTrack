@@ -482,7 +482,8 @@
 							MilestoneID : $("##txtMilestoneID").val(),
 							TestDescription : $("##txtTestDescription").val(),
 							ProjectID : '#Session.ProjectID#',
-							SectionID : $("##ddlSectionId").val()
+							SectionID : $("##ddlSectionId").val(),
+							AxoSoftNumber : $("##txtAxoSoftNumber").val()
 						}
 					}).done(function(data) {
 						if ( data == "true" )
@@ -551,6 +552,10 @@
 								</cfif>
 							</ul>	
 					
+				</div>
+				<div<cfif !Application.AxoSoftIntegration> style="display:none;"</cfif>>
+				<label>AxoSoft Number</label><Br />
+				<input type="text" name="txtAxoSoftID" id="txtAxoSoftNumber" class="form-control" value="#arrTestScenario.getAxoSoftNumber()#" />
 				</div>
 				</div>
 				<div class="form-group">
@@ -825,6 +830,7 @@
 		<cfargument name="TestDescription">
 		<cfargument name="ProjectID">
 		<cfargument name="SectionID" required="true">
+		<cfargument name="AxoSoftNumber">
 		<cfscript>
 			if ( arguments.id > 0 ) {
 				arrScenario = EntityLoadByPK("TTestScenario",arguments.id);
@@ -837,6 +843,7 @@
 			arrScenario.setProjectId(arguments.ProjectID);
 			arrScenario.setCreatorUserId(SESSION.UserIDInt);
 			arrScenario.setSectionId(isNumeric(arguments.SectionID) ? arguments.SectionID : 0);
+			arrScenario.setAxoSoftNumber(arguments.AxoSoftNumber);
 			try {
 				EntitySave(arrScenario);
 				return true;

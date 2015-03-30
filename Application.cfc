@@ -11,6 +11,7 @@
 	<cfset this.mappings["/reportpdfs"] = "#this.directory#reportpdfs/">
 	<cfset this.mappings["/excel"] = "#this.directory#excel/">
 	<cfset this.mappings["/avatars"] = "#this.directory#images/avatars/">
+	<cfset this.searchenabled = true />
 	
 	<cffunction name="onRequestStart" returntype="void" output="true">
 		<!--- debug only, remove otherwise --->
