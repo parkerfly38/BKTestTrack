@@ -11,7 +11,6 @@
 	<cfset this.mappings["/reportpdfs"] = "#this.directory#reportpdfs/">
 	<cfset this.mappings["/excel"] = "#this.directory#excel/">
 	<cfset this.mappings["/avatars"] = "#this.directory#images/avatars/">
-	<cfset this.searchenabled = true />
 	
 	<cffunction name="onRequestStart" returntype="void" output="true">
 		<!--- debug only, remove otherwise --->
@@ -37,7 +36,9 @@
     		<cfelse>
     			<cfif objLogon.formAuthenticate(form.username,form.password)>
     				<cfscript>
-    					StructInsert(application.SessionTracker,Session.UserIDInt,Now(),false);
+    					if (!StructKeyExists(APPLICATION.SessionTracker,Session.UserIDInt)) {
+    						StructInsert(application.SessionTracker,Session.UserIDInt,Now(),false);
+    					}
     				</cfscript>
     				<cfif Application.AxoSoftIntegration and !StructKeyExists(SESSION,"AxoSoftToken")>
     					<cfscript>objAxoSoft.getAxoSoftToken();</cfscript>
