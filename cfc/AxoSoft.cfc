@@ -98,5 +98,17 @@
 		<cfreturn DeserializeJSON(httpResult.fileContent) />
 	</cffunction>
 		
+	<cffunction name="updateIncident" access="public">
+		<cfargument name="axosoftid" required="true">
+		<cfargument name="statusupdate" required="true">
+		<cfargument name="access_token" required="true">
+		<cfset item = { "item" = { "custom_fields" = { "custom_1213" = "#arguments.statusupdate#" } } } >
+		<cfhttp method="POST" url="#Application.AxoSoftURL#api/v2/incidents/#RemoveChars(arguments.axosoftid,1,3)+1#" result="httpResult">
+			<cfhttpparam type="header" name="Content-Type" value="application/json" />
+			<cfhttpparam type="header" name="X-Authorization" value="Bearer #arguments.access_token#" />
+			<cfhttpparam type="body" value="#serializeJSON(item)#" />
+		</cfhttp>
+		<cfreturn (httpResult) />
+	</cffunction>
 
 </cfcomponent>
