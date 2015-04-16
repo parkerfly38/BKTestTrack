@@ -103,6 +103,7 @@
 		<cfargument name="statusupdate" required="true">
 		<cfargument name="access_token" required="true">
 		<cfset item = { "item" = { "custom_fields" = { "custom_1213" = "#arguments.statusupdate#" } } } >
+		<!--- some formatting below is required because for some reason, it goes with the actual id and not the Axosoft Number - only on update--->
 		<cfhttp method="POST" url="#Application.AxoSoftURL#api/v2/incidents/#RemoveChars(arguments.axosoftid,1,3)+1#" result="httpResult">
 			<cfhttpparam type="header" name="Content-Type" value="application/json" />
 			<cfhttpparam type="header" name="X-Authorization" value="Bearer #arguments.access_token#" />

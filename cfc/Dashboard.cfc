@@ -3,6 +3,19 @@
 	<!--- dashboard charting --->
 	<cfset objFunctions = createObject("component","Functions")>
 	
+	<cffunction name="getTestResult" access="remote" output="true" httpmethod="GET">
+		<cfargument name="testresultid" required="true">
+		<cfset arrTestResult = EntityLoadByPK("TTestResult",arguments.testresultid)>
+		<cfset arrTestCase = EntityLoadByPK("TTestCase",arrTestResult.getTestCaseID())>
+		<cfscript>
+			writeOutput("<h2>"&arrTestCase.getTestTitle()&"</h2>"&chr(13));
+			writeOutput("<h3><span class='label " & returnBSLabelStyle(arrTestResult.getTTestStatus().getStatus()) & "'>" & arrTestResult.getTTestStatus().getStatus() & "</span>" & DateFormat(arrTestResult.getDateTested(),"mm/dd/yyyy")&"</h3>");
+			writeOutput("<p><strong>Comments:</strong><br />" & arrTestResult.getComment() & "</p>");
+			writeOutput("<p><strong>Defects:</strong><br />" & arrTestResult.getDefects() & "</p>");
+			writeOutput("<p><strong>Elapsed Time:</strong> " & arrTestResult.getElapsedTime() & "</p>");			
+		</cfscript>
+	</cffunction>	
+		
 	<cffunction name="HubChart" access="remote" output="true" httpmethod="POST">
 		<cfargument name="projectid" required="false" default="0">
 		<cfquery name="qryName" dbtype="hql">

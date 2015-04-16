@@ -27,5 +27,15 @@ component table="TTestResult" persistent="true"
 		//}
 		newcasehistory.setCaseId(this.getTestCaseID());
 		EntitySave(newcasehistory);
+		//if axosoft
+		if ( Application.AxoSoftIntegration) {
+			objAxoSoft = new CFTestTrack.cfc.AxoSoft();
+			arrScenarioLink = EntityLoad("TTestScenarioCases",{CaseID = this.getTestCaseID()});
+			for (i = 1;i <= ArrayLen(arrScenarioLink); i++ )
+			{
+				arrScenario = EntityLoadByPK("TTestScenario",arrScenarioLink[i].getScenarioId());
+				objAxoSoft.updateIncident(arrScenario.getAxoSoftNumber(),"http://" & cgi.serVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TR="  & this.getId(),Session.AxoSoftToken);
+			}
+		}
 	}
 }

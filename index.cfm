@@ -27,6 +27,26 @@
 		</script>
 		</cfoutput>
 		<script type="text/javascript" src="scripts/cftracker.js"></script>
+		<cfif StructKeyExists(URL,"TC")>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var editid = <cfoutput>#URL.TC#</cfoutput>;
+				$("#largeModal .modal-title").text("Edit Test Case");
+				$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestCaseForm&testcaseid="+editid);
+				$("#largeModal").modal("show");
+			});
+		</script>
+		</cfif>
+		<cfif StructKeyExists(URL,"TR")>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var trid = <cfoutput>#URL.TR#</cfoutput>;
+				$("#largeModal .modal-title").text("Test Result");
+				$("#largeModal .modal-body").load("cfc/dashboard.cfc?method=getTestResult&testresultid="+trid);
+				$("#largeModal").modal("show");
+			});
+		</script>
+		</cfif>
 		<script type="text/javascript" src="scripts/ChartNew.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap-datepicker.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap-select.min.js"></script>
