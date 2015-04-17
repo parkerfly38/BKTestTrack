@@ -12,6 +12,33 @@ component table="TTestResult" persistent="true"
 	property name="TTestStatus" fieldtype="one-to-one" cfc="TTestStatus" fkcolumn="StatusID";
 	property name="TTestTester" fieldtype="one-to-one" cfc="TTestTester" fkcolumn="TesterID";
 	
+	public TTestResult function init() 
+	{
+		if (IsNull(variables.ElapsedTime)) 
+		{
+			variables.ElapsedTime = 0;
+		}
+		if (IsNull(variables.Version))
+		{
+			variables.Version = 0;
+		}
+		return this;
+	}
+	public any function getElapsedTime() {
+		if (IsNull(variables.ElapsedTime)) {
+			return 0;
+		} else {
+			return variables.ElapsedTime;
+		}
+	}
+	public any function getVersion() {
+		if (IsNull(variables.Version)) {
+			return 0;
+		} else {
+			return variables.Version;
+		}
+	}
+	
 	public void function postInsert() {
 		//update any old case history for caseid
 		updatequery = new Query();
@@ -28,14 +55,5 @@ component table="TTestResult" persistent="true"
 		newcasehistory.setCaseId(this.getTestCaseID());
 		EntitySave(newcasehistory);
 		//if axosoft
-		if ( Application.AxoSoftIntegration) {
-			objAxoSoft = new CFTestTrack.cfc.AxoSoft();
-			arrScenarioLink = EntityLoad("TTestScenarioCases",{CaseID = this.getTestCaseID()});
-			for (i = 1;i <= ArrayLen(arrScenarioLink); i++ )
-			{
-				arrScenario = EntityLoadByPK("TTestScenario",arrScenarioLink[i].getScenarioId());
-				objAxoSoft.updateIncident(arrScenario.getAxoSoftNumber(),"http://" & cgi.serVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TR="  & this.getId(),Session.AxoSoftToken);
-			}
-		}
 	}
 }

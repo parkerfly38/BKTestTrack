@@ -96,7 +96,7 @@ $(document).ready(function() {
 	});
 	$(document).on("click","a.lnkBuildAutomatedTest",function(event){
 		event.preventDefault();
-		$("#largeModal .modal-title").text("<i class='fa fa-list-alt'> </i>Build Automated Test(s)");
+		$("#largeModal .modal-title").text("Build Automated Test(s)");
 		$("#largeModal .modal-body").load("cfc/AutomationStudio.cfc?method=getListObj");
 		$("#largeModal").modal("show");
 	})
@@ -477,19 +477,22 @@ function insertDashMenu() {
 function insertProjectInfo() {
 	if (!($.isEmptyObject(jsonProjects))) {
 		$("#featurecontent").append("<div id='panelprojects' class='panel panel-default'><div class='panel-heading'><i class='fa fa-wrench'></i> Projects</span><a href='##' id='lnkAddProject' class='btn btn-info btn-sm' style='float:right;margin-top:-5px;'><i class='fa fa-plus-square'></i> Add Project</a></div><div id='pjpanelbody' class='panel-body' style='padding:10px;'></div></div>");
+		$("#pjpanelbody").append("<table id='pjtable' class='table table-condensed table-striped table-hover'><tbody></tbody></table>")
 		$.each(jsonProjects, function(index){
-			var pjcontent = "";
-			pjcontent += "<div class='col-xs-2 col-sm-2 col-md-2 col-lg-2 text-right' style='padding-left:0px;padding-right:0px;'>";
-			pjcontent += "<h1 style='margin:0px;'><span class='label label-primary' style='padding:5px;background-color: #"+jsonProjects[index].Color+";'>";
-			pjcontent += "<i class='projects fa fa-wrench fa-fw'></i></span></h1></div>";
-			pjcontent += "<div class='col-xs-10 col-sm-10 col-md-10 col-lg-10'><h5><span class='label label-info'>P"+jsonProjects[index].id+"</span> <a href='#' class='pjlink' pjid='" + jsonProjects[index].id + "'>"+jsonProjects[index].ProjectTitle+"</a>&nbsp;&nbsp;<a href='#' class='lnkEditProject btn btn-default btn-xs' projectid='"+jsonProjects[index].id+"'><i class='fa fa-pencil'></i> Edit</a></h5>";
-			pjcontent += "<a href='#'>Todos</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
+			var pjcontent = "<tr>";
+			pjcontent += "<td>";
+			//pjcontent += "<h1 style='margin:0px;'>";
+			pjcontent += "<span class='label label-primary' style='padding:5px;background-color: #"+jsonProjects[index].Color+";'>";
+			pjcontent += "<i class='projects fa fa-wrench fa-fw'></i></span></td>";
+			//pjcontent += "</h1></div>";
+			pjcontent += "<td><span class='label label-info'>P"+jsonProjects[index].id+"</span></td><td><a href='#' class='pjlink' pjid='" + jsonProjects[index].id + "'>"+jsonProjects[index].ProjectTitle+"</a></td><td><a href='#' class='lnkEditProject btn btn-default btn-xs' projectid='"+jsonProjects[index].id+"'><i class='fa fa-pencil'></i> Edit</a></td></tr>";
+			/*pjcontent += "<a href='#'>Todos</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
 			pjcontent += "<a href='#'>Milestones</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
 			pjcontent += "<a href='#'>Tests</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
 			if (jsonProjects[index].RepositoryType == 2)
 				pjcontent += "<a href='#'>Test Scenarios</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
-			pjcontent += "<a href='#'>Reporting</a></div><div class='clearfix' style='margin-bottom:20px;'></div>";
-			$("#pjpanelbody").prepend(pjcontent);
+			pjcontent += "<a href='#'>Reporting</a></div><div class='clearfix' style='margin-bottom:20px;'></div>";*/
+			$("#pjtable tbody").append(pjcontent);
 			
 		});
 	}
@@ -553,6 +556,7 @@ function homeLoad() {
 				insertScenarios();
 				insertActions();
 				$("#panelprojects").remove();
+				$("#createreportpanel").remove();
 			});
 		window.clearInterval(initialLoadTimer);
 		return; 
@@ -567,6 +571,16 @@ function homeLoad() {
 		} else {
 			$("#featurecontent").prepend("<div class='alert alert-danger' role='alert'><strong>Add your first project to CFTestTrack</strong><br />Welcome!  This dashboard displays an overview of available projects and recent activity, but there aren't any projects yet.<p><br /><a id='lnkAddProject' class='btn btn-info'><i class='fa fa-plus-square'></i> Add Project</a></p></div>");
 		}
+		$("#createreportpanel").remove();
+		$("#panelprojects").remove();
+			$("#panel-actions").remove();
+			$("#lnkReturnToProject").hide();
+			$(".ddmScenarios").hide();
+			$(".ddmTestCases").hide();
+			$(".ddmAutomationStudio").hide();
+			$(".ddmAutomationStudio").hide();
+			$(".lnkViewReports").hide();
+			$(".ddmMilestones").hide();
 		window.clearInterval(initialLoadTimer);
 	}
 }

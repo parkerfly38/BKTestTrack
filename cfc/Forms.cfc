@@ -937,6 +937,17 @@
 				arrTestDetail = EntityLoadByPK("TTestCase",ListElement);
 				mailbody = "There is an update on test case <strong>TC" & arrTestDetail.getId() & " - " & arrTestDetail.getTestTitle() & ".</strong>  Click <a href='http://" & CGI.SERVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TC=" & arrTestDetail.getId() & "'>here</a> to view test case.";
 				objFunc.MailerFunction(TesterObj.getEmail(),"info@briankresge.com","Test Case Update - TC" & arrTestDetail.getid(), mailbody);
+				if ( Application.AxoSoftIntegration && StructKeyExists(Session,"AxoSoftToken") ) {
+					objAxoSoft = new CFTestTrack.cfc.AxoSoft();
+					arrScenarioLink = EntityLoad("TTestScenarioCases",{CaseID = this.getTestCaseID()});
+					for (i = 1;i <= ArrayLen(arrScenarioLink); i++ )
+					{
+						arrScenario = EntityLoadByPK("TTestScenario",arrScenarioLink[i].getScenarioId());
+						if ( len(arrScenario.getAxoSoftNumber()) > 1) {
+							objAxoSoft.updateIncident(arrScenario.getAxoSoftNumber(),"http://" & cgi.serVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TR="  & this.getId(),Session.AxoSoftToken);
+						}
+					}
+				}
 			</cfscript>
 		</cfloop>
 		<cfreturn true />

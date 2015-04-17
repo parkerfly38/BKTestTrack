@@ -186,7 +186,7 @@
 			</div>
 	</cffunction>
 	
-	<cffunction name="AllProjectsChart" access="remote" output="true">
+	<cffunction name="AllProjectsChart" access="remote" output="false">
 		<cfstoredproc procedure="PGeneralActivityByProject">
 			<cfprocresult name="qryGeneralActivity">
 		</cfstoredproc>
@@ -1331,7 +1331,7 @@
 		<cfquery name="qryActiveProjects" dbtype="hql">
 			FROM TTestProject
 			<CFIF !includeInactiveProjects>WHERE Closed = false</CFIF>
-			ORDER BY ProjectStartDate
+			ORDER BY id
 		</cfquery>
 		<cfreturn serializeJSON(qryActiveProjects)>
 	</cffunction>
