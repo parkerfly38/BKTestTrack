@@ -114,8 +114,8 @@
 		<cfset qryAxoSoftClient_Secret = EntityLoad("TTestSettings",{Setting="AxoSoftClient_Secret"},true)>
 		<cfset Application.AxoSoftClient_Secret = qryAxoSoftClient_Secret.getSettingValue()>
 		<cfset qryAxoSoftRedirectURI = EntityLoad("TTestSettings",{Setting="AxoSoftRedirectURI"},true)>
-		<!---<cfset Application.AxoSoftRedirectURI = qryAxoSoftRedirectURI.getSettingValue()>--->
-		<cfset Application.AxoSoftRedirectURI = "http://localhost/CFTestTrack/AxoSoftRedirect.cfm">
+		<cfset Application.AxoSoftRedirectURI = qryAxoSoftRedirectURI.getSettingValue()>
+		<!---<cfset Application.AxoSoftRedirectURI = "http://localhost/CFTestTrack/AxoSoftRedirect.cfm">--->
 		<cfset qryAxoSoftExpiration = EntityLoad("TTestSettings",{Setting="AxoSoftRedirectURI"},true)>
 		<cfset Application.AxoSoftExpiration = qryAxoSoftExpiration.getSettingValue()>  <!--- default is 30, a value of false will never expire --->
 		<cfset qryAxoSoftURL = EntityLoad("TTestSettings",{Setting="AxoSoftURL"},true)>

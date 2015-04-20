@@ -9,9 +9,9 @@ component extends="cfselenium.CFSeleniumTestCase"
 		mds = GetMetaData(selenium);
 		SESSION.MDS = mds;
 		listOfNames = "";
-		for (func in mds.FUNCTIONS) {
-			if (func.ACCESS == "public" && StructKeyExists(func,"HINT") && Len(func.HINT) > 0) {
-				listOfNames = listAppend(listofNames,func.NAME);
+		for (i = 1; i <= ArrayLen(mds.FUNCTIONS); i++) {
+			if (mds.FUNCTIONS[i].ACCESS == "public" && StructKeyExists(mds.FUNCTIONS[i],"HINT") && Len(mds.FUNCTIONS[i].HINT) > 0) {
+				listOfNames = listAppend(listofNames,mds.FUNCTIONS[i].NAME);
 			}
 		}
 		AlphaListOfNames = ListSort(listofNames,"text","asc");
@@ -26,10 +26,10 @@ component extends="cfselenium.CFSeleniumTestCase"
 					evaluate("#step.getAction()#(#step.getValueOne()#,#step.getValueTwo()#)");
 				} else {
 					for ( i=1; i <= ListLen(AlphaListOfNames); i++) {
-						for ( func in mds.FUNCTIONS) {
-							if ( func.NAME == step.getAction() )
+						for ( x = 1; x <= ArrayLen(mds.FUNCTIONS); x++) {
+							if ( mds.FUNCTIONS[x].NAME == step.getAction() )
 							{
-								paramLength = ArrayLen(func.PARAMETERS);
+								paramLength = ArrayLen(mds.FUNCTIONS[x].PARAMETERS);
 							}		
 						}
 					}
@@ -134,14 +134,15 @@ component extends="cfselenium.CFSeleniumTestCase"
 				break;
 		}
 		if ( StructKeyExists(SESSION,"MDS") ) {
-			for ( func in SESSION.MDS.FUNCTIONS) {
-				if ( func.NAME == arguments.funcName ) {
-					if ( len(func.HINT) > 0 ) { 
-						structMetaData.Hint = func.HINT;
+			//for ( func in SESSION.MDS.FUNCTIONS) {
+			for ( i = 1; i <= ArrayLen(SESSION.MDS.FUNCTIONS); i++ ) {
+				if ( SESSION.MDS.FUNCTIONS[i].NAME == arguments.funcName ) {
+					if ( len(SESSION.MDS.FUNCTIONS[i].HINT) > 0 ) { 
+						structMetaData.Hint = SESSION.MDS.FUNCTIONS[i].HINT;
 					} else {
 						structMetaData.Hint = "";
 					}
-					structMetaData.params = func.PARAMETERS;
+					structMetaData.params = SESSION.MDS.FUNCTIONS[i].PARAMETERS;
 				}
 			}
 			return serializeJSON(structMetaData);
@@ -172,8 +173,9 @@ component extends="cfselenium.CFSeleniumTestCase"
 		Session.AutomationArray = [];
 		arrAutomationArray = EntityLoad("TASSteps",{TestID = arguments.testcaseid},"OrderOfOperation Asc");
 		if ( ArrayLen(arrAutomationArray) > 0 ) {
-			for (automate in arrAutomationArray) {
+			for (i=1;i <= arrayLen(arrAutomationArray); i++) { //automate in arrAutomationArray) {
 				tempStruct = StructNew();
+				automate = arrAutomationArray[i];
 				tempStruct.automationid = automate.getId();
 				tempStruct.testcaseid = automate.getTestID();
 				tempStruct.action = automate.getAction();

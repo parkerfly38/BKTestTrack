@@ -18,6 +18,7 @@ component table="TTestCase" persistent="true"
 		if ( isNull(variables.Estimate)) {
 			variables.Estimate = 0;
 		}
+		return this;
 	}
 	
 	public any function getEstimate() {
