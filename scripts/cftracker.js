@@ -286,10 +286,66 @@ $(document).ready(function() {
 		$("#largeModal .modal-body").load("cfc/AutomationStudio.cfc?method=viewAutomatedTasks");
 		$("#largeModal").modal("show");
 	});
+	$(document).on("click","a.lnkTestScriptLibrary",function(event) {
+		event.preventDefault();
+		$("#topcontent").removeClass("panel").removeClass("panel-default");
+		$("#topcontent").load("cfc/AutomationStudio.cfc?method=listScripts");
+		$("#midrow").empty();
+		$("#activitypanel").remove();
+		$("#lnkReturnToProject").attr("pjid",projectid);
+		$("#lnkReturnToProject").show();
+		$("#createreportpanel").remove();
+	});
 	$(document).on("click","a.lnkViewReports",function(event){
 		event.preventDefault();
 		$("#topcontent").removeClass("panel").removeClass("panel-default");
 		reportScreen();
+	});
+	$(document).on("click",".btnDeleteFile", function(event){
+		event.preventDefault();
+		var scriptid = $(this).attr("scriptid");
+		$.ajax({
+			url: "cfc/AutomationStudio.cfc?method=deleteScript",
+			type: "POST",
+			data: {scriptid : scriptid}
+		}).done(function(){
+			$("#topcontent").removeClass("panel").removeClass("panel-default");
+			$("#topcontent").load("cfc/AutomationStudio.cfc?method=listScripts");
+			$("#midrow").empty();
+			$("#activitypanel").remove();
+			$("#lnkReturnToProject").attr("pjid",projectid);
+			$("#lnkReturnToProject").show();
+			$("#createreportpanel").remove();
+		});
+	});
+	$(document).on("click","#addFile",function(event) {
+		event.preventDefault();
+		console.log("submit event");
+        var fd = new FormData(document.getElementById("fileinfo"));
+        $.ajax({
+          url: "uploadHandler.cfm",
+          type: "POST",
+          data: fd,
+          enctype: 'multipart/form-data',
+          processData: false,  // tell jQuery not to process the data
+          contentType: false   // tell jQuery not to set contentType
+        }).done(function( response ) {
+            // display response in DIV
+            //$("#output").html( response.toString());
+            $("#topcontent").removeClass("panel").removeClass("panel-default");
+			$("#topcontent").load("cfc/AutomationStudio.cfc?method=listScripts");
+			$("#midrow").empty();
+			$("#activitypanel").remove();
+			$("#lnkReturnToProject").attr("pjid",projectid);
+			$("#lnkReturnToProject").show();
+			$("#createreportpanel").remove();
+        })
+       .fail(function(jqXHR, textStatus, errorMessage) {
+            // display error in DIV
+            //$("#output").html(errorMessage);
+            alert(errorMessage);
+        })            
+        return false;
 	});
 	$(document).on("click","a.lnkReportDelete",function(event) {
 		event.preventDefault();
@@ -481,17 +537,9 @@ function insertProjectInfo() {
 		$.each(jsonProjects, function(index){
 			var pjcontent = "<tr>";
 			pjcontent += "<td>";
-			//pjcontent += "<h1 style='margin:0px;'>";
 			pjcontent += "<span class='label label-primary' style='padding:5px;background-color: #"+jsonProjects[index].Color+";'>";
 			pjcontent += "<i class='projects fa fa-wrench fa-fw'></i></span></td>";
-			//pjcontent += "</h1></div>";
 			pjcontent += "<td><span class='label label-info'>P"+jsonProjects[index].id+"</span></td><td><a href='#' class='pjlink' pjid='" + jsonProjects[index].id + "'>"+jsonProjects[index].ProjectTitle+"</a></td><td><a href='#' class='lnkEditProject btn btn-default btn-xs' projectid='"+jsonProjects[index].id+"'><i class='fa fa-pencil'></i> Edit</a></td></tr>";
-			/*pjcontent += "<a href='#'>Todos</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
-			pjcontent += "<a href='#'>Milestones</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
-			pjcontent += "<a href='#'>Tests</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
-			if (jsonProjects[index].RepositoryType == 2)
-				pjcontent += "<a href='#'>Test Scenarios</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
-			pjcontent += "<a href='#'>Reporting</a></div><div class='clearfix' style='margin-bottom:20px;'></div>";*/
 			$("#pjtable tbody").append(pjcontent);
 			
 		});

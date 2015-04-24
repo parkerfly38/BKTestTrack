@@ -521,11 +521,11 @@
 		</script>
 		<cfif Len(arguments.searchstring) gt 0>
 			<cfset stringsearch = URLDecode(arguments.searchstring)>
-			<cfset arrTestScenarios = ORMExecuteQuery("FROM TTestScenario WHERE (TestScenario LIKE '%#stringsearch#%' OR TestDescription LIKE '%#stringsearch#%' OR AxoSoftNumber LIKE '%#stringsearch#%') AND ProjectID = #Session.ProjectID#",false,{maxresults=20,offset=arguments.start-1}) />
+			<cfset arrTestScenarios = ORMExecuteQuery("FROM TTestScenario WHERE (TestScenario LIKE '%#stringsearch#%' OR TestDescription LIKE '%#stringsearch#%' OR AxoSoftNumber LIKE '%#stringsearch#%') AND ProjectID = #Session.ProjectID# ORDER BY AxoSoftNumber DESC, ProjectID Desc",false,{maxresults=20,offset=(arguments.start-1)*20}) />
 			<cfset qryCount = "SELECT count(*) FROM TTestScenario  WHERE (TestScenario LIKE '%#stringsearch#%' OR TestDescription LIKE '%#stringsearch#%' OR AxoSoftNumber LIKE '%#stringsearch#%') AND ProjectID = #Session.ProjectID#">
 			<cfset countresults = ORMExecuteQuery(qryCount)[1]>
 		<cfelse>
-			<cfset arrTestScenarios = EntityLoad("TTestScenario",{ProjectID = Session.ProjectID},{maxresults=20,offset=arguments.start-1})>
+			<cfset arrTestScenarios = EntityLoad("TTestScenario",{ProjectID = Session.ProjectID},"AxoSoftNumber Desc, ProjectID Desc",{maxresults=20,offset=(arguments.start-1)*20})>
 		</cfif>
 		<cfset objData = createObject("component","Data")>
 		<div id="scenariospanel" class="panel panel-default">

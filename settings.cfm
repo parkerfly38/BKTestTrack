@@ -13,6 +13,7 @@
 	    <meta name="description" content="">
 	    <meta name="author" content="">
 	    <title>CFTestTracker Settings</title>
+	    <link rel="icon" href="favicon.ico" type="image/x-icon" />
 		<link rel="stylesheet" href="style/bootstrap.css" />
 		<link href="font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" />
 		<script type="text/javascript" src="scripts/jquery-1.10.2.min.js"></script>

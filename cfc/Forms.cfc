@@ -28,6 +28,10 @@
 		</div>
 	</cffunction>
 	
+	<cffunction name="ScriptUploadForm" access="remote" output="true">
+		<cffileupload url="uploadFiles.cfm" progressbar="true" name="myupload" addButtonLabel="Add File" clearButtonlabel="Clear it" hideUploadButton="true"  width=600 height=400 title = "Test Script Upload" maxuploadsize="30" extensionfilter="*.cfc" BGCOLOR="##FFFFFF" MAXFILESELECT=10 UPLOADBUTTONLABEL="Upload now"/>
+	</cffunction>
+	
 	<cffunction name="TestResultForm" access="remote" output="true">
 		<cfargument name="testcaseids" required="true">
 		<cfargument name="scenarioid">

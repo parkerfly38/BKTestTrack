@@ -283,6 +283,41 @@ component extends="cfselenium.CFSeleniumTestCase"
 		EntitySave(arrNewRow);
 	}
 	
+	remote any function deleteScript(numeric required scriptid) httpmethod="POST" {
+		arrTestScript = EntityLoadByPK("TTestScript",arguments.scriptid);
+		FileDelete(ExpandPath('../tests/')&arrTestScript.getScriptFile());
+		EntityDelete(arrTestScript);
+	}
+	
+	remote string function listScripts() output="true" {
+		arrScripts = EntityLoad("TTestScript");
+		arrTestTypes = EntityLoad("TTestType");
+		writeOutput("<div class='panel panel-default'><div class='panel-heading'>Test Script Library</div><div class='panel-body'>"&chr(13));
+		writeOutput('<form method="post" id="fileinfo" name="fileinfo" onsubmit="return submitForm();">');	
+		writeOutput("<table class='table table-striped table-condensed table-hover'><thead><tr><th>Script Name</th><th>Script Description</th><th>Script File</th><th>Script Test Type</th><th></th></tr></thead><tbody>" & chr(13));
+		for ( i = 1; i <= ArrayLen(arrScripts); i++) {
+			writeOutput("<tr><td>" & arrScripts[i].getScriptName() & "</td>" & chr(13));
+			writeOutput("<td>" & arrScripts[i].getScriptDescription() & "</td>" & chr(13));
+			writeOutput("<td>" & arrScripts[i].getScriptFile() & "</td>" & chr(13)&"<td>");
+			for ( x = 1; x <= ArrayLen(arrTestTypes); x++) {
+				if ( arrTestTypes[x].getID() == arrScripts[i].getTypeID() ) {
+					writeOutput(arrTestTypes[x].getType());
+				}
+			}
+			writeOutput("</td>" & chr(13));
+			writeOutput("<td><button class='btnEditFile btn btn-xs btn-info' scriptid='" & arrScripts[i].getId() & "'>Edit</button>&nbsp;&nbsp;<button class='btnDeleteFile btn btn-xs btn-danger' scriptid='" & arrScripts[i].getId() & "'>Delete</button></td></tr>");
+		}
+		writeOutput("<tr><td><input id='newScriptName' name='newScriptName' type='text' placeholder='New script name' class='form-control' /></td>" & chr(13));
+		writeOutput("<td><input id='newScriptDescription' name='newScriptDescription' type='text' placeholder='New script description' class='form-control' />" & chr(13));
+		writeOutput("<td></td><td><select id='newTypeId' name='newTypeId' class='form-control'>" & chr(13));
+		for ( b = 1; b <= arrayLen(arrTestTypes); b++ ) {
+			writeOutput("<option value='" & arrTestTypes[b].getId() & "'>" & arrTestTypes[b].getType() & "</option>" & chr(13));
+		}
+		writeOutput("</select></td>");
+		writeOutput("<td><span class='btn btn-success btn-file'> Add File <input type='file' id='fileaddval' name='fileaddval'></span> <button class='btn btn-info' id='addFile'>Save</button></td></tr>");
+		writeOutput("</tbody></table></form></div></div>");
+	}
+	
 	remote string function skedAdd() output="true" {
 		writeOutput("<script type='text/javascript'>$(document).ready(function() { $('.datepicker').datepicker(); " & chr(13));
 		writeOutput(" $(document).off('click','##btnSave');" & chr(13));
@@ -477,4 +512,6 @@ component extends="cfselenium.CFSeleniumTestCase"
 		loadTempTable();
 		writeOutput("</div>");
 	}
+	
+	
 }

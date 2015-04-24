@@ -12,6 +12,7 @@
 	    <meta name="description" content="">
 	    <meta name="author" content="">
 	    <title>CFTestTracker</title>
+	    <link rel="icon" href="favicon.ico" type="image/x-icon" />
 		<link rel="stylesheet" href="style/bootstrap.css" />
 		<link href="font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" />
 		<link rel="stylesheet" href="style/datepicker3.css" />
@@ -81,6 +82,21 @@
 			    position: relative;
 			    overflow: hidden;
     		}
+    		.btn-file input[type=file] {
+			    position: absolute;
+			    top: 0;
+			    right: 0;
+			    min-width: 100%;
+			    min-height: 100%;
+			    font-size: 100px;
+			    text-align: right;
+			    filter: alpha(opacity=0);
+			    opacity: 0;
+			    outline: none;
+			    background: white;
+			    cursor: inherit;
+			    display: block;
+			}
     		.avatar {
 			    float: left;
 			    margin-top: 1em;
@@ -146,6 +162,7 @@
 		          	<ul class="dropdown-menu" role="menu">
 		          		<li><a class="lnkBuildAutomatedTest" href="#">Build Test</a></li>
 		          		<li><a class="lnkScheduleTests" href="#">Schedule Tests</a></li>
+		          		<li><a class="lnkTestScriptLibrary" href="#">Test Script Library</a></li>
 		          		<li class="divider"></li>
 		          		<li><a class="lnkViewScheduledTests" href="#">View Scheduled Tests</a></li>
 		          		<li><a class="" href="#">Automated Test Activity</a></li>
