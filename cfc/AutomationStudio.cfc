@@ -283,7 +283,7 @@ component extends="cfselenium.CFSeleniumTestCase"
 		EntitySave(arrNewRow);
 	}
 	
-	remote any function deleteScript(numeric required scriptid) httpmethod="POST" {
+	remote any function deleteScript(numeric scriptid) httpmethod="POST" {
 		arrTestScript = EntityLoadByPK("TTestScript",arguments.scriptid);
 		FileDelete(ExpandPath('../tests/')&arrTestScript.getScriptFile());
 		EntityDelete(arrTestScript);
