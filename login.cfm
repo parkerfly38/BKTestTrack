@@ -42,7 +42,12 @@
 		
 		<div class="header">
 		<h1>Login Form</h1>
-		<span>Enter your Windows login, the same you use to access your workstation.</span>
+		<cfif Application.useLDAP>
+			<span>Enter your Windows login, the same you use to access your workstation.</span>
+		</cfif>
+		<cfif Application.AxoSoftIntegration>
+			<span>If this is your first time logging in since registration, ensure you've logged into your AxoSoft instance prior to logging in here.</span>
+		</cfif>
 		</div>
 	
 		<div class="content">
