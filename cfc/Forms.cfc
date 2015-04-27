@@ -943,12 +943,12 @@
 				objFunc.MailerFunction(TesterObj.getEmail(),"info@briankresge.com","Test Case Update - TC" & arrTestDetail.getid(), mailbody);
 				if ( Application.AxoSoftIntegration && StructKeyExists(Session,"AxoSoftToken") ) {
 					objAxoSoft = new CFTestTrack.cfc.AxoSoft();
-					arrScenarioLink = EntityLoad("TTestScenarioCases",{CaseID = this.getTestCaseID()});
+					arrScenarioLink = EntityLoad("TTestScenarioCases",{CaseID = arrTestDetail.getID()});
 					for (i = 1;i <= ArrayLen(arrScenarioLink); i++ )
 					{
 						arrScenario = EntityLoadByPK("TTestScenario",arrScenarioLink[i].getScenarioId());
 						if ( len(arrScenario.getAxoSoftNumber()) > 1) {
-							objAxoSoft.updateIncident(arrScenario.getAxoSoftNumber(),"http://" & cgi.serVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TR="  & this.getId(),Session.AxoSoftToken);
+							objAxoSoft.updateIncident(arrScenario.getAxoSoftNumber(),"http://" & cgi.serVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TR="  & arrScenario.getId(),Session.AxoSoftToken);
 						}
 					}
 				}
