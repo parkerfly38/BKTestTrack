@@ -11,6 +11,13 @@
 		<cfquery name="qryTestCase" dbtype="hql">
 			FROM TTestCase where id = <cfqueryparam value="#arguments.testcaseid#">
 		</cfquery>
+		<!--- get list of all scenarios this is assigned to --->
+		<cfquery name="qryScenarios">
+			SELECT b.TestScenario, b.id as ScenarioID
+			FROM TTestScenarioCases a
+			INNER JOIN TTestScenario b ON a.ScenarioID = b.id
+			WHERE a.CaseID = <cfqueryparam value="#arguments.testcaseid#">
+		</cfquery>
 		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
 			<div class="form-group">
 				<label for="txtTestTitle">Title:</label><br />
@@ -122,15 +129,21 @@
 	
 	<cffunction name="TestCaseForm" access="remote" output="true">
 		<cfargument name="testcaseid" required="false" default="0" type="numeric">
-		<cfif !(StructKeyExists(Session,"ProjectID"))>
+		<!---<cfif !(StructKeyExists(Session,"ProjectID"))>
 			<cfexit>
-		</cfif>
+		</cfif>--->
 		<cfif !(StructKeyExists(Session,"LoggedIn")) || !Session.LoggedIn>
 			login
 			<cfexit>
 		</cfif>
 		<cfif arguments.testcaseid gt 0>
 			<cfset arrTestCase = EntityLoadByPK("TTestCase",arguments.testcaseid)>
+			<cfif !(StructKeyExists(Session,"ProjectID"))>
+				<cfset Session.ProjectID = arrTestCase.getProjectID()>
+				<script type="text/javascript">
+					projectid = #arrTestCase.getProjectId#;
+				</script>
+			</cfif>
 		<cfelse>
 			<cfset arrTestCase = EntityNew("TTestCase")>
 			<cfset arrTestCase.setId(0)>
@@ -145,6 +158,19 @@
 					todayHighlight: true,
 					autoclose:true
 				});
+				$("##largeModal").off("hidden.bs.modal");
+				$("##largeModal").on("hidden.bs.modal", function () {
+					projectid = #Session.ProjectID#;
+    				$.ajax({ url:"cfc/Dashboard.cfc?method=setSessionProject",type:"POST",data: {projectid : #Session.ProjectID#}}).done(function() {
+						$("##uldashboard").show();
+						$("##activitypanel").remove();
+						projectIDCheck();
+						projectLoad();
+						$("##panelprojects").remove();
+						$("##createreportpanel").remove();
+						$("##largeModal").off("hidden.bs.modal");
+					});
+				});
 				$(document).off("click","##btnSave");
 				$(document).on("click","##btnSave",function(event) {
 					event.preventDefault();
@@ -157,7 +183,7 @@
 							TestDetails : $("##txtTestDetails").val(),
 							PriorityId : $("##ddlPriorityId").val(),
 							TypeId : $("##ddlTypeId").val(),
-							ProjectID : "#Session.ProjectID#",
+							ProjectID : projectid,
 							Preconditions : $("##txtPreconditions").val(),
 							Steps : $("##txtSteps").val(),
 							ExpectedResult : $("##txtExpectedResult").val(),
@@ -220,6 +246,27 @@
 				<label for="txtTestDetails">References</label>
 				<input type="text" class="form-control" name="txtTestDetails" id="txtTestDetails" value="#arrTestCase.getTestDetails()#"  />
 				<p class="help-block">Insert related AxoSoft ids here, ex: <em>COG00050</em>.</p>
+				<cfif arguments.testcaseid gt 0>
+					<!--- get list of all scenarios this is assigned to --->
+					<cfquery name="qryScenarios">
+						SELECT b.TestScenario, b.id as ScenarioID
+						FROM TTestScenarioCases a
+						INNER JOIN TTestScenario b ON a.ScenarioID = b.id
+						WHERE a.CaseID = <cfqueryparam value="#arguments.testcaseid#">
+					</cfquery>
+					<cfif qryScenarios.RecordCount gt 0>
+						<p><strong>Scenarios assigned:</strong></p>
+						<table class="table table-condensed table-striped table-hover">
+						<tbody>
+							<cfloop query="qryScenarios">
+							<tr><td><a href="##" class="lnkOpenScenarioHub" scenarioid="#qryScenarios.ScenarioID#">#qryScenarios.TestScenario#</a></td></tr>
+							</cfloop>
+						</tbody>
+						</table>
+					<cfelse>
+						<div class="alert alert-warning small"><h4>No Test Scenarios Assigned</h4>This can be accomplished from individual scenario hubs.</div>
+					</cfif>
+				</cfif>
 			</div>
 		</div>
 			 

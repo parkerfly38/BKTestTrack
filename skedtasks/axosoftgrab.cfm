@@ -1,5 +1,6 @@
 <cfset objAxoSoft = new CFTestTrack.cfc.AxoSoft()> 
-<cfset datastruct = objAxoSoft.getIncidents("a51c400e-30eb-4dd7-8c7e-998efb16aa66") />
+<cfset datastruct = objAxoSoft.getIncidents("58dfb0e4-c727-4008-a03c-fe352bc747ce") />
+<cfdump var="#datastruct#">
 <cfloop array="#datastruct.data#" index="incident">
 	<cfquery name="qryIndTest">
 		SELECT id FROM TTestScenario WHERE AxoSoftNumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#incident.number#" />
@@ -17,7 +18,7 @@
 	</cfif>
 </cfloop>
 
-<cfset defectstruct = objAxoSoft.getDefects("a51c400e-30eb-4dd7-8c7e-998efb16aa66") />
+<cfset defectstruct = objAxoSoft.getDefects("58dfb0e4-c727-4008-a03c-fe352bc747ce") />
 <cfloop array="#defectstruct.data#" index="defect">
 	<cfquery name="qryDefTest">
 		SELECT id FROM TTestScenario WHERE AxoSoftNumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#defect.number#" />

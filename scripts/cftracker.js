@@ -272,6 +272,8 @@ $(document).ready(function() {
 	});
 	$(document).on("click","a.lnkOpenScenarioHub",function(event) {
 		event.preventDefault();
+		$("#largeModal").off("hidden.bs.modal");
+		$("#largeModal").modal('hide');
 		$("#topcontent").removeClass("panel").removeClass("panel-default");
 		$("#topcontent").load("cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+$(this).attr("scenarioid"));
 		$("#midrow").empty();
