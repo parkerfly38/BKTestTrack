@@ -259,7 +259,7 @@
 						<table class="table table-condensed table-striped table-hover">
 						<tbody>
 							<cfloop query="qryScenarios">
-							<tr><td><a href="##" class="lnkOpenScenarioHub" scenarioid="#qryScenarios.ScenarioID#">#qryScenarios.TestScenario#</a></td></tr>
+							<tr><td><a href="##" class="lnkOpenScenarioHub" scenarioid="#qryScenarios.ScenarioID#">#qryScenarios.TestScenario#</a></td><td><button class="btnAddResults btn btn-xs btn-success" scenarioid="#qryScenarios.ScenarioID#" caseid="#arguments.testcaseid#">Add Result</button></td></tr>
 							</cfloop>
 						</tbody>
 						</table>

@@ -220,6 +220,13 @@ $(document).ready(function() {
 		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestResultForm&testcaseids="+allTests.join()+"&scenarioid="+scenarioid);
 		$("#largeModal").modal("show");
 	});
+	$(document).on("click","button.btnAddResults",function(event){
+		event.preventDefault();
+		$("#largeModal .modal-title").text("Add Test Results");
+		var caseid = $(this).attr("caseid");
+		var scenarioid = $(this).attr("scenarioid");
+		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestResultForm&testcaseids="+caseid+"&scenarioid="+scenarioid);
+	});
 	$(document).on("click","a.lnkRemoveTestCases",function(event){
 		event.preventDefault();
 		removeTests = [];
