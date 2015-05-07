@@ -183,7 +183,7 @@
 		        <h4 class="modal-title" id="myModalLabel">Large Modal</h4>
 		      </div>
 		      <div class="modal-body">
-		        <h3>Modal Body</h3>
+		        <h3><i class="fa fa-cog fa-spin"></i></h3>
 		      </div><div class="clearfix"></div>
 		      <div class="modal-footer">
 		        <button id="btnClose" type="button" class="btn btn-default">Close</button>
@@ -201,7 +201,7 @@
 		        <h4 class="modal-title" id="myModalLabel">Small Modal</h4>
 		      </div>
 		      <div class="modal-body">
-		        <h3>Modal Body</h3>
+		        <h3><i class="fa fa-cog fa-spin"></i></h3>
 		      </div><div class="clearfix"></div>
 		      <div class="modal-footer">
 		        <button id="btnClose" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
