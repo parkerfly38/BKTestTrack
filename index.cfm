@@ -218,7 +218,7 @@
 		        <h4 class="modal-title" id="myModalLabel">Chat</h4>
 		      </div>
 		      <div class="modal-body" style="overflow:scroll;height:300px;">
-		        <h3>Modal Body</h3>
+		        <h3><i class="fa fa-cog fa-spin"></i></h3>
 		      </div><div class="clearfix"></div>
 		      <div class="modal-footer">
 		        <div class="input-group">

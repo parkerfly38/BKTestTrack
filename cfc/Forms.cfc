@@ -129,11 +129,7 @@
 	
 	<cffunction name="TestCaseForm" access="remote" output="true">
 		<cfargument name="testcaseid" required="false" default="0" type="numeric">
-		<!---<cfif !(StructKeyExists(Session,"ProjectID"))>
-			<cfexit>
-		</cfif>--->
 		<cfif !(StructKeyExists(Session,"LoggedIn")) || !Session.LoggedIn>
-			login
 			<cfexit>
 		</cfif>
 		<cfif arguments.testcaseid gt 0>
@@ -141,7 +137,7 @@
 			<cfif !(StructKeyExists(Session,"ProjectID"))>
 				<cfset Session.ProjectID = arrTestCase.getProjectID()>
 				<script type="text/javascript">
-					projectid = #arrTestCase.getProjectId#;
+					projectid = <cfoutput>#arrTestCase.getProjectId()#;</cfoutput>
 				</script>
 			</cfif>
 		<cfelse>
@@ -956,7 +952,7 @@
 			newTestResult.setTTestTester(tester);
 			EntitySave(newTestResult);
 			mailbody = "You have been assigned test case <strong>TC" & arguments.testcaseid & ".</strong>  Click <a href='http://" & CGI.SERVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TC=" & arguments.testcaseid & "'>here</a> to view test case.";
-			objFunc.MailerFunction(tester.getEmail(),"info@briankresge.com","Test Case TC" & arguments.testcaseid & " Assigned" ,mailbody);
+			objFunc.MailerFunction(tester.getEmail(),Application.MAILERDAEMONADDRESS,"Test Case TC" & arguments.testcaseid & " Assigned" ,mailbody);
 		</cfscript> 	
 	</cffunction>
 	
@@ -987,7 +983,7 @@
 				EntitySave(testresult);
 				arrTestDetail = EntityLoadByPK("TTestCase",ListElement);
 				mailbody = "There is an update on test case <strong>TC" & arrTestDetail.getId() & " - " & arrTestDetail.getTestTitle() & ".</strong>  Click <a href='http://" & CGI.SERVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TC=" & arrTestDetail.getId() & "'>here</a> to view test case.";
-				objFunc.MailerFunction(TesterObj.getEmail(),"info@briankresge.com","Test Case Update - TC" & arrTestDetail.getid(), mailbody);
+				objFunc.MailerFunction(TesterObj.getEmail(),Application.MAILERDAEMONADDRESS,"Test Case Update - TC" & arrTestDetail.getid(), mailbody);
 				if ( Application.AxoSoftIntegration && StructKeyExists(Session,"AxoSoftToken") ) {
 					objAxoSoft = new CFTestTrack.cfc.AxoSoft();
 					arrScenarioLink = EntityLoad("TTestScenarioCases",{CaseID = arrTestDetail.getID()});
@@ -1021,6 +1017,15 @@
 				newreport.runReport();
 		</cfscript>
 		
+	</cffunction>
+	
+	<cffunction name="deleteProject" access="remote" returntype="void">
+		<cfargument name="pjid" type="numeric" required="true">
+		<cfif (!StructKeyExists(SESSION, "Loggedin") || !Session.Loggedin)>
+			<cfexit>
+		</cfif>
+		<cfset objData = CreateObject("component","Data") >
+		<cfset objData.deleteProject(arguments.pjid)>
 	</cffunction>
 	
 	<cffunction name="deleteTestCase" access="remote" returntype="void">

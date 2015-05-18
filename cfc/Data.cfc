@@ -11,6 +11,11 @@ component
 		return project;
 	}
 	
+	public void function deleteProject(id) {
+		project = getProject(id);
+		EntityDelete(project);
+	}
+	
 	public void function saveProject(db.TTestProject tp)
 	{
 		entitySave(arguments.tp);

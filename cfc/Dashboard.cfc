@@ -1074,6 +1074,10 @@
 		</div>
 		</div>
 	</cffunction>
+	
+	<cffunction name="getDeletedProjectData" access="remote" output="true">
+		
+	</cffunction>
 
 	<cffunction name="getMilestones" access="remote" output="true" httpmethod="post">
 		<cfargument name="projectid" required="true">

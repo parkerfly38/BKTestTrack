@@ -87,6 +87,21 @@ $(document).ready(function() {
 			homeLoad();
 		});
 	});
+	
+	$(document).on("click","a.lnkDeleteProject", function(event) {
+		event.preventDefault();
+		var pid = $(this).attr("projectid");
+		$.ajax({
+			url:"cfc/Forms.cfc?method=deleteProject&pjid="+pid,
+			type:"GET"
+		}).done(function(){
+			$.getJSON("cfc/Dashboard.cfc?method=allProjectsJSON",function(data){
+				jsonProjects = data;
+				insertProjectInfo();
+			});			
+		});
+	});
+	
 	$(document).on("click",".testcaseeditlink",function(event){
 		event.preventDefault();
 		var editid = $(this).attr("editid");
@@ -548,7 +563,7 @@ function insertProjectInfo() {
 			pjcontent += "<td>";
 			pjcontent += "<span class='label label-primary' style='padding:5px;background-color: #"+jsonProjects[index].Color+";'>";
 			pjcontent += "<i class='projects fa fa-wrench fa-fw'></i></span></td>";
-			pjcontent += "<td><span class='label label-info'>P"+jsonProjects[index].id+"</span></td><td><a href='#' class='pjlink' pjid='" + jsonProjects[index].id + "'>"+jsonProjects[index].ProjectTitle+"</a></td><td><a href='#' class='lnkEditProject btn btn-default btn-xs' projectid='"+jsonProjects[index].id+"'><i class='fa fa-pencil'></i> Edit</a></td></tr>";
+			pjcontent += "<td><span class='label label-info'>P"+jsonProjects[index].id+"</span></td><td><a href='#' class='pjlink' pjid='" + jsonProjects[index].id + "'>"+jsonProjects[index].ProjectTitle+"</a></td><td><a href='#' class='lnkEditProject btn btn-default btn-xs' projectid='"+jsonProjects[index].id+"'><i class='fa fa-pencil'></i> Edit</a>&nbsp;<a href='#' class='lnkDeleteProject btn btn-danger btn-xs' projectid='"+jsonProjects[index].id+"'><i class='fa fa-trash'></i> Delete</a></td></tr>";
 			$("#pjtable tbody").append(pjcontent);
 			
 		});
