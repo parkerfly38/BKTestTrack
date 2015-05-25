@@ -556,6 +556,7 @@ function insertDashMenu() {
 
 function insertProjectInfo() {
 	if (!($.isEmptyObject(jsonProjects))) {
+		$("#featurecontent").empty();
 		$("#featurecontent").append("<div id='panelprojects' class='panel panel-default'><div class='panel-heading'><i class='fa fa-wrench'></i> Projects</span><a href='##' id='lnkAddProject' class='btn btn-info btn-sm' style='float:right;margin-top:-5px;'><i class='fa fa-plus-square'></i> Add Project</a></div><div id='pjpanelbody' class='panel-body' style='padding:10px;'></div></div>");
 		$("#pjpanelbody").append("<table id='pjtable' class='table table-condensed table-striped table-hover'><tbody></tbody></table>")
 		$.each(jsonProjects, function(index){
