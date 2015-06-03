@@ -606,12 +606,13 @@
 				</div>
 				</div>
 				<div class="form-group">
+				<cfif arrTestScenario.getId() gt 0>
 				<label>Assigned Test Cases</label>
 				<cfset objData = CreateObject("component","Data")>
 				<cfset qryTestCases = objData.qryTestCasesAssignedScenario(arrTestScenario.getId())>
 				
 				<cfif qryTestCases.RecordCount eq 0>
-					<div class="alert alert-warning small"><h4>No Test Cases Assigned</h4>Click below to assign a test case.</div>
+					<div class="alert alert-warning small"><h4>No Test Cases Assigned</h4><a href="##" class="lnkAddTestCaseToScenario btn btn-info btn-xs" scenarioid="#arrTestScenario.getID()#">Click here to assign a test case.</a></div>
 				<cfelse>
 					<table class="table table-condensed table-striped table-hover small">
 						<thead>
@@ -631,6 +632,7 @@
 						</cfloop>
 						</tbody>
 					</table>								
+				</cfif>
 				</cfif>
 			</div>
 	</cffunction>
@@ -1017,6 +1019,24 @@
 				newreport.runReport();
 		</cfscript>
 		
+	</cffunction>
+	
+	<cffunction name="deleteMilestone" access="remote" returntype="void">
+		<cfargument name="mid" type="numeric" required="true">
+		<cfif (!StructKeyExists(SESSION, "Loggedin") || !Session.Loggedin)>
+			<cfexit>
+		</cfif>
+		<cfset objData = CreateObject("component","Data")>
+		<cfset objData.deleteMilestone(arguments.mid) >
+	</cffunction>
+	
+	<cffunction name="deleteScenario" access="remote" returntype="void">
+		<cfargument name="scid" type="numeric" required="true">
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+			<cfexit>
+		</cfif>
+		<cfset objData = CreateObject("component","Data")>
+		<cfset objData.deleteScenario(arguments.scid) >
 	</cffunction>
 	
 	<cffunction name="deleteProject" access="remote" returntype="void">

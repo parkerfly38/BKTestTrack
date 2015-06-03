@@ -209,6 +209,34 @@ $(document).ready(function() {
 		$("#largeModal .modal-body").load("cfc/forms.cfc?method=MilestoneForm&milestoneid="+pjid);
 		$("#largeModal").modal({show:"true"});
 	});
+	$(document).on("click","a.lnkDeleteMilestone",function(event) {
+		event.preventDefault();
+		var mid = $(this).attr("milestoneid");
+		$.ajax({ url: "cfc/forms.cfc?method=deleteMilestone",data: {mid : mid},type:"POST"}).done(function() {
+			if ($("#allmilestonespanel").length > 0 ) {
+				$("#topcontent").removeClass("panel").removeClass("panel-default");
+				$("#topcontent").load("cfc/Dashboard.cfc?method=AllMilestones");
+			}
+			if ($("#panelmilestones").length > 0) {
+				$("#panelmilestones").remove();
+				insertMilestones();
+			}
+		});
+	});
+	$(document).on("click","a.lnkDeleteScenario",function(event) {
+		event.preventDefault();
+		var scenarioid = $(this).attr("scenarioid");
+		$.ajax({ url: "cfc/forms.cfc?method=deleteScenario", data: { scid : scenarioid},type:"POST"}).done(function() {
+			if ($("#scenariospanel").length > 0 ) {
+				$("#topcontent").removeClass("panel").removeClass("panel-default");
+				$("#topcontent").load("cfc/Dashboard.cfc?method=AllScenarios");
+			}
+			if ($("#paneltestscenarios").length > 0) {
+				$("#paneltestscenarios").remove();
+				insertScenarios();
+			}
+		});
+	});
 	$(document).on("click","a.lnkAddTest",function(event) {
 		event.preventDefault();
 		$("#largeModal .modal-title").text("Add Test Case");
@@ -528,10 +556,14 @@ function insertAdditional() {
 }
 
 function insertActions() {
-	$("#panel-actions").remove();
-	$.ajax({url:"cfc/dashboard.cfc?method=Actions"}).done( function(data){
-		$("#actioncontent").prepend(data);
-	})
+	if ($("#createreportpanel").length > 0) {
+		//do nothing
+	} else {
+		$("#panel-actions").remove();
+		$.ajax({url:"cfc/dashboard.cfc?method=Actions"}).done( function(data){
+			$("#actioncontent").prepend(data);
+		});
+	}
 }
 
 function insertDashMenu() {
@@ -594,6 +626,7 @@ function projectLoad() {
 }
 
 function insertMilestones() {
+	$("#panelmilestones").remove();
 	$.ajax({
 		url: "cfc/dashboard.cfc?method=getMilestones",
 		type: "post",
@@ -604,6 +637,7 @@ function insertMilestones() {
 }
 
 function insertScenarios() {
+	$("#paneltestscenarios").remove();
 	$.ajax({
 		url: "cfc/dashboard.cfc?method=getTestScenarios",
 		type: "post",

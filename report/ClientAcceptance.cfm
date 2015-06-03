@@ -1,4 +1,4 @@
-<cfhttp url="https://cornerops.axosoft.com/api/v2/incidents/?access_token=58dfb0e4-c727-4008-a03c-fe352bc747ce" method="get" result="httpResult" />
+<cfhttp url="https://cornerops.axosoft.com/api/v2/incidents/?access_token=6c314674-a9b5-49f0-94c5-cc5051e4ea16" method="get" result="httpResult" />
 <!---<cfdump var="#DeserializeJSON(httpResult.fileContent)#" />--->'
 <cfset qryClientAcceptance = QueryNew("ID,Title,ReportedDate,CustomerContact,CustomerContactEmail,Client,Status,WorkflowStep,OriginalEstimate,HoursToDate,HoursLeft","varchar,varchar,varchar,varchar,varchar,varchar,varchar,varchar,decimal,decimal,decimal") >
 <cfset objData = DeserializeJSON(httpResult.fileContent) />

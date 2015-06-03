@@ -16,9 +16,28 @@ component
 		EntityDelete(project);
 	}
 	
+	public void function deleteMilestone(id) {
+		milestone = getMilestone(id);
+		EntityDelete(milestone);
+	}
+	
+	public db.TTestScenario function getScenario(id) {
+		scenario = EntityLoad("TTestScenario",id, true);
+		return scenario;
+	}
+	public void function deleteScenario(id) {
+		scenario = getScenario(id);
+		EntityDelete(scenario);
+	}
+	
 	public void function saveProject(db.TTestProject tp)
 	{
 		entitySave(arguments.tp);
+	}
+	
+	public db.TTestMilestones function getMilestone(id) {
+		milestone = entityLoad("TTestMilestones",id,true);
+		return milestone;
 	}
 	
 	public array function getAllTestCases()
@@ -31,6 +50,11 @@ component
 	{
 		arrTestCases = EntityLoad("TTestCase",{ProjectID=arguments.projectid});
 		return arrTestCases;
+	}
+	
+	public void function deleteTestCase(id) {
+		testcase = getTestCase(id);
+		EntityDelete(testcase);
 	}
 	
 	public db.TTestCase function getTestCase(id) {

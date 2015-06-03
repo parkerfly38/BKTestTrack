@@ -414,7 +414,7 @@
 						<td>
 							<h5>#milestone.getMilestone()#</h5>Due on #DateFormat(milestone.getDueon(),"m/d/yyyy")#
 						</td>
-						<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a>
+						<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteMilestone btn btn-danger btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-trash"></i> Delete</a>
 							<cfif overdueCount eq 1>
 								<script type="text/javascript">
 									$(document).ready(function() {
@@ -440,7 +440,7 @@
 						<td>
 							<h5>#milestone.getMilestone()#</h5>Due on #DateFormat(milestone.getDueOn(),"m/d/yyyy")#
 						</td>
-						<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a>
+						<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteMilestone btn btn-danger btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-trash"></i> Delete</a>
 							<cfif openCount eq 1>
 								<script type="text/javascript">
 									$(document).ready(function() {
@@ -574,7 +574,7 @@
 									<strong>#StatusCount#</strong> #Status#<cfif currentRow lt qryTestCounts.RecordCount>,</cfif>
 								</cfloop>
 							</td>
-							<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
+							<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteScenario btn btn-danger btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-trash"></i> Delete</a></td>
 							<td style="width:33%"><div class="progress">
 									<cfif passedPercent gt 0>
 									<div class="progress-bar progress-bar-success progress-bar-striped" style="width:#passedPercent#%;">
@@ -1110,7 +1110,7 @@
 							</cfif>
 								<td>#milestone.getMilestone()#</td>
 								<td>#DateFormat(milestone.getDueOn(),"MM/DD/YYYY")#</td>
-								<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
+								<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteMilestone btn btn-danger btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-trash"></i> Delete</a></td>
 							</tr>
 							</cfloop>
 						</tbody>
@@ -1153,7 +1153,7 @@
 								<tr>
 									<td><a href="##" class="lnkOpenScenarioHub" scenarioid="#scenario.getId()#"><cfif Len(scenario.getAxoSoftNumber()) gt 0>#scenario.getAxoSoftNumber()# - </cfif>#scenario.getTestScenario()#</a></td>
 									<td>(#qryTestCases.RecordCount#)</td>
-									<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
+									<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteScenario btn btn-danger btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-trash"></i> Delete</a></td>
 								</tr>
 							</cfloop>
 						</tbody>
