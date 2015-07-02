@@ -9,6 +9,8 @@
 		<cfhttpparam type="url" name="client_secret" value="#Application.AxoSoftClient_Secret#">
 	</cfhttp>
 	<cfset filecontent = DeserializeJSON(tokenResult.filecontent)>
+	<cfdump var="#Session#">
+	<cfdump var="#filecontent#">
 	<cfscript>
 		user = EntityLoadByPK("TTestTester",Session.UserIDInt);
 		user.setAxoSoftToken(filecontent.access_token);

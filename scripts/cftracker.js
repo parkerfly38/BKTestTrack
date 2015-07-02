@@ -51,7 +51,7 @@ $(document).ready(function() {
 	linkstimervar = setInterval(function() {insertLinks()},10);
 	todotimervar = setInterval(function() {insertTodos()},10);
 	timervar = setInterval(function() {insertAdditional()},10);
-	logincheck = setInterval(function() {checkLoggedIn()},10000);
+	logincheck = setInterval(function() {checkLoggedIn()}, 30*60*1000);
 		
 	$("a#lnkAssignedTests").click(function(event) {
 		event.preventDefault();

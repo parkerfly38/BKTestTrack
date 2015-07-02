@@ -2,6 +2,8 @@
 
 	<cfset this.Name = "CFTestTrack" />
 	<cfset this.sessionManagement = true />
+	<cfset this.applicationTimeout = createTimeSpan(1,0,0,0)>
+	<cfset this.sessionTimeout = createTimeSpan(0,0,30,0)>
 	<cfset this.ormEnabled = true />
 	<cfset this.datasource = "COGData" />
 	<cfset this.ormSettings.cflocation = "CFC.db" />
