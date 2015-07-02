@@ -1,4 +1,7 @@
-<cfhttp url="https://cornerops.axosoft.com/api/v2/incidents/?access_token=6c314674-a9b5-49f0-94c5-cc5051e4ea16" method="get" result="httpResult" />
+<cfhttp url="https://cornerops.axosoft.com/api/oauth2/token?grant_type=password&username=bkresge&password=nugget38&client_id=84a344d7-9034-4ed7-8a01-ba35f9642648&client_secret=yUNiYAek30KibBtietQVo9UktJz8gv8GLdniTvzyv7rzWW4n2Xq0cSmedoJKMB_PUX5aWUyb2y5LXimFX-1wIJeCQocZSF6HTE7Q&scope=read" method="get" result="tokenResult" />
+<cfset accessToken = DeSerializeJSON(tokenResult.filecontent).access_token>
+
+<cfhttp url="https://cornerops.axosoft.com/api/v2/incidents/?access_token=#accessToken#" method="get" result="httpResult" />
 <!---<cfdump var="#DeserializeJSON(httpResult.fileContent)#" />--->'
 <cfset qryClientAcceptance = QueryNew("ID,Title,ReportedDate,CustomerContact,CustomerContactEmail,Client,Status,WorkflowStep,OriginalEstimate,HoursToDate,HoursLeft","varchar,varchar,varchar,varchar,varchar,varchar,varchar,varchar,decimal,decimal,decimal") >
 <cfset objData = DeserializeJSON(httpResult.fileContent) />
