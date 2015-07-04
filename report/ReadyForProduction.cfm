@@ -2,12 +2,13 @@
 <cfset accessToken = DeSerializeJSON(tokenResult.filecontent).access_token>
 
 <cfhttp url="https://cornerops.axosoft.com/api/v2/incidents/?access_token=#accessToken#" method="get" result="httpResult" />
-<!---<cfdump var="#DeserializeJSON(httpResult.fileContent)#" />--->'
+
 <cfset qryClientAcceptance = QueryNew("ID,Title,ReportedDate,CustomerContact,CustomerContactEmail,Client,Status,WorkflowStep,OriginalEstimate,HoursToDate,HoursLeft","varchar,varchar,varchar,varchar,varchar,varchar,varchar,varchar,decimal,decimal,decimal") >
+
 <cfset objData = DeserializeJSON(httpResult.fileContent) />
-<!---<cfdump var="#objData["data"]#">--->
+
 <cfloop array="#objData['data']#" index="i">
-	<!---<cfdump var="#i#">--->
+
 	<cfif i.workflow_step.name eq "Ready for Production" AND i.custom_fields.custom_1167 eq "AHIC">
 		<cfset temp = QueryAddRow(qryClientAcceptance)>
 		<cfset temp = QuerySetCell(qryClientAcceptance,"ID",i.number)>
