@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gantt>
+     <xAxis isMultiline="true">
+         <dateTimeStyle majorUnit="Day" minorUnit="Hour" />
+         <groupFormat style="DateTimePattern" pattern="{groupDatePattern}">
+                <locale lang="{language}" country="{country}" variant=""/>
+           </groupFormat>
+             <labelFormat style="DateTimePattern" pattern="{labelDatePattern}">
+                <locale lang="{language}" country="{country}" variant=""/>
+           </labelFormat>
+     </xAxis>
+
+     <dataLabels style="Value"/>
+     <popup background="#C8FFFFFF" foreground="#333333" isMultiline="true"/>
+     <paint palette="Dawn" paint="Plain" max="100"/>
+ <![CDATA[
+$(rowLabel)
+/ $(colLabel)
+$(prevValue;{tipDatePattern})
+$(nextValue;{tipDatePattern})
+ ]]>
+</gantt>
