@@ -47,7 +47,7 @@
 <!--- first get developer time --->
 <!--- group by dev first --->
 <cfquery name="qryDevelopers" dbtype="query">
-	SELECT Developer FROM qryClientAcceptance
+	SELECT DISTINCT Developer FROM qryClientAcceptance
 	WHERE Developer <> ''
 </cfquery>
 <cfloop query="qryDevelopers">
@@ -83,7 +83,6 @@
 		ganttChart.setWidth(600);
 		ganttChart.setScale('daily');
 		ganttChart.setrowLabel(Developer);
-		writeOutput(DateFormat(local.dtEndDate,"m/d/yy"));
 	</cfscript>
 	<cfloop query="qDevTasks">
 		<cfscript>

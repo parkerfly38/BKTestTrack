@@ -102,7 +102,18 @@ $(document).ready(function() {
 		});
 	});
 	
-	$(document).on("click",".testcaseeditlink",function(event){
+	$(document).on("click","a.testcasedeletelink", function(event) {
+		event.preventDefault();
+		var tcid = $(this).attr("editid");
+		$.ajax({
+			url:"cfc/Forms.cfc?method=deleteTestCase&tcid="+tcid,
+			type: "GET"
+		}).done(function(){
+			$("#topcontent").load("cfc/Dashboard.cfc?method=AllTests");
+		});
+	});
+	
+	$(document).on("click","a.testcaseeditlink",function(event){
 		event.preventDefault();
 		var editid = $(this).attr("editid");
 		$("#largeModal .modal-title").text("Edit Test Case");

@@ -659,7 +659,7 @@
 							<td><span class="label label-info">TC#case.getId()#</label></td>
 							<td>#case.getTestTitle()#</td>
 							<td><a href="##" class="testcaseeditlink btn btn-default btn-xs" editid="#case.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
-							<td><cfif Application.AllowCaseDelete eq "true"><a href="##" class="testcasedeletelink btn btn-default btn-xs" editid="#case.getId()#"><i class="fa fa-trash"></i> Delete</a></cfif></td>
+							<td><cfif Application.AllowCaseDelete eq "true"><a href="##" class="testcasedeletelink btn btn-danger btn-xs" editid="#case.getId()#"><i class="fa fa-trash"></i> Delete</a></cfif></td>
 						</tr>
 						</cfloop>
 					</tbody>
