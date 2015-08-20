@@ -1,3 +1,17 @@
+<cfif !StructKeyExists(FORM,"reporttype")>
+	<form method="post">
+		Select report type:<br />
+		<select name="reporttype" id="reportype">
+			<option>PDF</option>
+			<option>Excel</option>
+			<option>HTML</option>
+			<option>FlashPaper</option>
+			<option>RTF</option>
+			<option>XML</option>
+		</select><br />
+		<input type="submit" value="Create Report" />
+	</form>
+<cfelse>
 <cfhttp url="https://cornerops.axosoft.com/api/oauth2/token?grant_type=password&username=bkresge&password=nugget38&client_id=84a344d7-9034-4ed7-8a01-ba35f9642648&client_secret=yUNiYAek30KibBtietQVo9UktJz8gv8GLdniTvzyv7rzWW4n2Xq0cSmedoJKMB_PUX5aWUyb2y5LXimFX-1wIJeCQocZSF6HTE7Q&scope=read" method="get" result="tokenResult" />
 <cfset accessToken = DeSerializeJSON(tokenResult.filecontent).access_token>
 
@@ -37,5 +51,22 @@
 	SELECT * FROM qryClientAcceptance
 	ORDER BY ID
 </cfquery>
-<cfreport query="#qryClientAcceptance#" template="ClientAcceptance.cfr" format="PDF">
-
+<cfif form.reporttype neq "Excel"> 
+<cfreport query="#qryReport#" template="ClientAcceptance.cfr" format="#form.reporttype#">
+<cfelse>
+<cfscript> 
+	    ///We need an absolute path, so get the current directory path. 
+	    theFile=GetDirectoryFromPath(GetCurrentTemplatePath()) & "ClientAcceptance.xlsx"; 
+	    //Create a new Excel spreadsheet object. 
+	    s = SpreadsheetNew("Client Acceptance");
+	  	spreadsheetAddRow(s,"ID,Title,ReportedDate,CustomerContact,CustomerContactEmail,Client,Status,WorkflowStep,OriginalEstimate,HoursToDate,HoursLeft");
+	  	spreadsheetFormatRow(s,{bold=true,fgcolor="lemon_chiffon",fontsize=14},1);
+	  	spreadSheetAddRows(s,qryResult);
+	  	spreadSheetWrite(s,theFile,true);
+	</cfscript> 
+ 
+	<!--- Write the spreadsheet to a file, replacing any existing file. ---> 
+	<cfheader name="content-disposition" value="attachment; filename=ClientAcceptance.xls">
+	<cfcontent type="application/msexcel" variable="#spreadsheetReadBinary(s)#" reset="true">
+</cfif>	
+</cfif>

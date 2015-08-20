@@ -87,9 +87,26 @@
 	<cfloop query="qDevTasks">
 		<cfscript>
 			grow = createObject("component","GanttChartRow").constructor("#TaskName# - #Hours# hrs");
-			grow.addRange(DateFormat(qDevTasks.StartDate,"m/d/yy"),DateFormat(qDevTasks.EndDate,"m/d/yy"),"olive");
+			grow.addRange(DateFormat(qDevTasks.StartDate,"m/d/yy"),DateFormat(qDevTasks.EndDate,"m/d/yy"),returnRandomHEXColors(1));
 			ganttChart.addRow(grow);
 		</cfscript>
 	</cfloop>
 	<cfset ganttChart.draw()>
 </cfloop>
+<cfscript>
+    function returnRandomHEXColors(numToReturn){
+	    var returnList = ""; 
+        var colorTable = "A,B,C,D,E,F,0,1,2,3,4,5,6,7,8,9";
+
+        for (i=1; i LTE val(numToReturn); i=i+1)
+        {
+           	tRandomColor = "";
+           	for(c=1; c lte 6; c=c+1)
+           	{
+           		tRandomColor = tRandomColor & listGetAt(colorTable, randRange(1, listLen(colorTable)));
+           	}
+           	returnList = listAppend(returnList, tRandomColor);
+        }    
+        return returnList;
+    }
+</cfscript>

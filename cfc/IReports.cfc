@@ -21,4 +21,5 @@ interface hint="this shapes the expected output from any report - please use imp
 	public void function saveReport();
 	public any function runReport();
 	
+	public any function showReport();
 }

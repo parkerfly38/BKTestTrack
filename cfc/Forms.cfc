@@ -1021,6 +1021,7 @@
 		
 	</cffunction>
 	
+	
 	<cffunction name="deleteMilestone" access="remote" returntype="void">
 		<cfargument name="mid" type="numeric" required="true">
 		<cfif (!StructKeyExists(SESSION, "Loggedin") || !Session.Loggedin)>

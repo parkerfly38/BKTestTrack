@@ -1214,6 +1214,13 @@
 			</script>
 			<div class="panel-heading"><i class="fa fa-bars"></i> Create Reports</div>
 			<div class="panel-body">
+				<strong>AxoSoft</strong><br />
+				<table class="table table-condensed table-hover">
+					<tbody>
+						<tr><td><a href="##" class="lnkCreateReport" reporttype="AllOpenItems" data-toggle="tooltip" data-placement="left" title="Shows all open AxoSoft items."><i class="fa fa-plus-circle" style="color: green;"></i> All Open Items</a></td>
+						</tr>
+					</tbody>
+				</table><Br />
 				<strong>Projects</strong><br />
 				<table class="table table-condensed table-hover">
 					<tbody>

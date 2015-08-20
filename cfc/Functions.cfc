@@ -1,5 +1,27 @@
 <cfcomponent>
 	
+	<cffunction returntype="void" name="createCFROutputfromContent" access="public">
+		<cfargument name="incomingtype" type="string">
+		<cfargument name="incomingreport" type="string">
+		<cfargument name="incomingquery" type="query">
+		<cfargument name="incomingfilename" type="string">
+		
+		<cfset local.filetype = "">
+		<cfswitch expression = "#arguments.incomingtype#">
+			<cfcase value="PDF">
+				<cfset local.filetype = ".pdf">
+			</cfcase>
+			<cfcase value="HTML">
+				<cfset local.filetype = ".html">
+			</cfcase>
+			<cfcase value="Excel">
+				<cfset local.filetype = ".xls">
+			</cfcase>
+		</cfswitch>
+			
+		<cfreport filename="#ExpandPath("/reportpdfs/")##arguments.incomingfilename##local.filetype#" query="#arguments.incomingquery#" format="#arguments.incomingtype#" template="#ExpandPath("/reports/")##arguments.incomingreport#.cfr">
+	</cffunction> 
+	
 	<cffunction returntype="binary" name="createPDFfromContent" access="public">
 		<cfargument name="incomingcontent">
 		<cfsavecontent variable="presentedcontent">
