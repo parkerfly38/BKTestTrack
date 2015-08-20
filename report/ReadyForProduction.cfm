@@ -1,7 +1,7 @@
 <cfif !StructKeyExists(FORM,"reporttype")>
-	<form method="post">
+	<form method="post" action="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/report/ReadyForProduction.cfm" target="_blank">
 		Select report type:<br />
-		<select name="reporttype" id="reportype">
+		<select name="reporttype" id="reportype" class="form-control">
 			<option>PDF</option>
 			<option>Excel</option>
 			<option>HTML</option>
@@ -9,7 +9,7 @@
 			<option>RTF</option>
 			<option>XML</option>
 		</select><br />
-		<input type="submit" value="Create Report" />
+		<input type="submit" value="Create Report" class="btn btn-success" />
 	</form>
 <cfelse>
 <cfhttp url="https://cornerops.axosoft.com/api/oauth2/token?grant_type=password&username=bkresge&password=nugget38&client_id=84a344d7-9034-4ed7-8a01-ba35f9642648&client_secret=yUNiYAek30KibBtietQVo9UktJz8gv8GLdniTvzyv7rzWW4n2Xq0cSmedoJKMB_PUX5aWUyb2y5LXimFX-1wIJeCQocZSF6HTE7Q&scope=read" method="get" result="tokenResult" />
@@ -68,4 +68,4 @@
 	<cfheader name="content-disposition" value="attachment; filename=ReadyForProduction.xls">
 	<cfcontent type="application/msexcel" variable="#spreadsheetReadBinary(s)#" reset="true">
 </cfif>	
-
+</cfif>

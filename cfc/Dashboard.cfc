@@ -1219,6 +1219,11 @@
 					<tbody>
 						<tr><td><a href="##" class="lnkCreateReport" reporttype="AllOpenItems" data-toggle="tooltip" data-placement="left" title="Shows all open AxoSoft items."><i class="fa fa-plus-circle" style="color: green;"></i> All Open Items</a></td>
 						</tr>
+						<tr><td><a href="##" class="lnkCreateReport" reporttype="ReadyForProduction" data-toggle="tooltip" data-placement="left" title="Shows all AxoSoft items ready for production."><i class="fa fa-plus-circle" style="color: green;"></i> Ready For Production</a></td>
+						</tr>
+						<tr>
+							<td><a href="##" class="lnkCreateReport" reporttype="ClientAcceptance" data-toggle="tooltip" data-placement="left" title="Client acceptance items report."><i class="fa fa-plus-circle" style="color: green;"></i> Client Acceptance</a></td>
+						</tr>
 					</tbody>
 				</table><Br />
 				<strong>Projects</strong><br />
