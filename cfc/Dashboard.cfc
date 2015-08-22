@@ -1,7 +1,34 @@
 <cfcomponent>
 	
-	<!--- dashboard charting --->
 	<cfset objFunctions = createObject("component","Functions")>
+	
+	<cffunction name="listAxoSoftProjects" access="public" output="true">
+		<cfargument name="axosoftprojects" type="struct">
+		<div id="panelaxosoftprojects" class="panel panel-default">
+			<div class="panel-heading"><i class="fa fa-wrench"></i> Projects</div>
+			<div class="panel-body">
+				<cfif StructKeyExists(arguments.axosoftprojects,"error")>
+					<div class="alert alert-warning"><h3>Temporarily unavailable</h3></div>
+				<cfelse>
+				<table class="table table-condensed table-striped">
+				<cfloop array="#arguments.axosoftprojects["data"]#" index="i">
+					<tr>
+						<td colspan="2"><a href="project/#i.id#/">#i.name#</a></td>
+					</tr>
+					<cfif StructKeyExists(i,"children")>
+					<cfloop array="#i.children#" index="c">
+					<tr>
+						<td>&nbsp;</td>
+						<td><a href="project/#c.id#/">#c.name#</td>
+					</tr>
+					</cfloop>
+					</cfif>
+				</cfloop>
+				</table>
+				</cfif>
+			</div>
+		</div>
+	</cffunction>
 	
 	<cffunction name="getTestResult" access="remote" output="true" httpmethod="GET">
 		<cfargument name="testresultid" required="true">

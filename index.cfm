@@ -1,6 +1,7 @@
 <cfscript>
 	objData = createObject("component","cfc.Data");
 	objDashboard = createObject("component","cfc.Dashboard");
+	objAxoSoft = createObject("component","cfc.AxoSoft");
 	local.testsAssigned = objDashboard.assignedTestsCount(Session.UserIDInt);
 </cfscript>
 <!DOCTYPE html>
@@ -12,13 +13,13 @@
 	    <meta name="description" content="">
 	    <meta name="author" content="">
 	    <title>CFTestTracker</title>
-	    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-		<link rel="stylesheet" href="style/bootstrap.css" />
-		<link href="font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" />
-		<link rel="stylesheet" href="style/datepicker3.css" />
-		<link rel="stylesheet" href="style/bootstrap-select.min.css" />
-		<script type="text/javascript" src="scripts/jquery-1.10.2.min.js"></script>
-		<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+	    <link rel="icon" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/favicon.ico" type="image/x-icon" />
+		<link rel="stylesheet" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/style/bootstrap.css" />
+		<link href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/style/datepicker3.css" />
+		<link rel="stylesheet" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/style/bootstrap-select.min.css" />
+		<script type="text/javascript" src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/scripts/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/scripts/bootstrap.min.js"></script>
 		<cfoutput>
 		<script type="text/javascript">
 			
@@ -27,20 +28,20 @@
 			
 		</script>
 		</cfoutput>
-		<script type="text/javascript" src="scripts/cftracker.js"></script>
+		<script type="text/javascript" src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/scripts/cftracker.js"></script>
 		<cfif StructKeyExists(URL,"TR")>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				var trid = <cfoutput>#URL.TR#</cfoutput>;
 				$("#largeModal .modal-title").text("Test Result");
-				$("#largeModal .modal-body").load("cfc/dashboard.cfc?method=getTestResult&testresultid="+trid);
+				$("#largeModal .modal-body").load("http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/cfc/dashboard.cfc?method=getTestResult&testresultid="+trid);
 				$("#largeModal").modal("show");
 			});
 		</script>
 		</cfif>
-		<script type="text/javascript" src="scripts/ChartNew.js"></script>
-		<script type="text/javascript" src="scripts/bootstrap-datepicker.js"></script>
-		<script type="text/javascript" src="scripts/bootstrap-select.min.js"></script>
+		<script type="text/javascript" src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/scripts/ChartNew.js"></script>
+		<script type="text/javascript" src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/scripts/bootstrap-datepicker.js"></script>
+		<script type="text/javascript" src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/scripts/bootstrap-select.min.js"></script>
 		<cfif StructKeyExists(URL,"TC")>
 		<script type="text/javascript">
 			$(document).ready(function() {
@@ -168,7 +169,10 @@
 	    
 	  <div class="container-fluid" style="background:none;">
 		  <div class="row">
-		  	<div id="featurecontent" class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+		  	<div id="projectcontent" class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+		  		<cfoutput>#objDashboard.listAxoSoftProjects(objAxoSoft.getProjects(Session.AxoSoftToken))#</cfoutput>
+		  	</div>
+		  	<div id="featurecontent" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 		  		<div id="midrow" class="row"></div>
 		  	</div>
 		  	<div id="actioncontent" class="col-xs-3 col-sm-3 col-md-3 col-lg-3"></div>

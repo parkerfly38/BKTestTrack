@@ -123,5 +123,10 @@
 		<cfset qryAxoSoftURL = EntityLoad("TTestSettings",{Setting="AxoSoftURL"},true)>
 		<cfset Application.AxoSoftURL = qryAxoSoftURL.getSettingValue()>
 	</cffunction>
+	
+	<cffunction name="onMissingTemplate" output="true">
+		<cfargument name="template" required="true" type="string">
+		#arguments.template#
+	</cffunction>
 
 </cfcomponent>
