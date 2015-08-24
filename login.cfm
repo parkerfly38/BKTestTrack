@@ -12,7 +12,7 @@
 				$("#btnSave").click(function(event){
 					event.preventDefault();
 					$.ajax({
-						url: "CFC/Logon.cfc?method=createFormAccount",
+						url: "/CFTestTrack/CFC/Logon.cfc?method=createFormAccount",
 						type: "POST",
 						data: {
 							ADID : $("#txtADID").val(),

@@ -46,13 +46,13 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 			$("#largeModal .modal-title").text("Edit Test Case");
-			$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestCaseForm&testcaseid="+<cfoutput>#url.TC#</cfoutput>);
+			$("#largeModal .modal-body").load("/CFTestTrack/cfc/forms.cfc?method=TestCaseForm&testcaseid="+<cfoutput>#url.TC#</cfoutput>);
 			$("#largeModal").modal("show");
 			});
 		</script>
 		</cfif>
 		<style>
-			body { padding-top: 60px; background: url('images/bg.png'); }
+			body { padding-top: 60px; background: url('/CFTestTrack/images/bg.png'); }
 			.rowoffset { margin-bottom: 20px; }
 			.form-group.required .control-label:after {
 				content:"*";
@@ -161,7 +161,7 @@
 		          </li>
 		          <li><a class="lnkViewReports" href="#" style="display:none;"><!---<i class="fa fa-bars"> </i> --->Reporting</a></li>
 		          <li><a href="settings.cfm"> <!---<i class="fa fa-gear"></i>---> Settings</a></li>
-		          <li><a href="cfc/Logon.cfc?method=Logout"> <!---<i class="fa fa-power-off"></i>---> Log out</a></li>
+		          <li><a href="/CFTestTrack/cfc/Logon.cfc?method=Logout"> <!---<i class="fa fa-power-off"></i>---> Log out</a></li>
 		        </ul>
 		      </div><!--/.nav-collapse -->
 		    </div>
@@ -173,6 +173,9 @@
 		  		<cfoutput>#objDashboard.listAxoSoftProjects(objAxoSoft.getProjects(Session.AxoSoftToken))#</cfoutput>
 		  	</div>
 		  	<div id="featurecontent" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+		  		<cfif StructKeyExists(url,"projectid")>
+		  			<cfoutput>#objDashboard.listAxoSoftItems(objAxoSoft.getItems(url.projectid,Session.AxoSoftToken))#</cfoutput>
+		  		</cfif>
 		  		<div id="midrow" class="row"></div>
 		  	</div>
 		  	<div id="actioncontent" class="col-xs-3 col-sm-3 col-md-3 col-lg-3"></div>

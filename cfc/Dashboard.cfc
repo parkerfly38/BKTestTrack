@@ -2,24 +2,92 @@
 	
 	<cfset objFunctions = createObject("component","Functions")>
 	
+	<cffunction name="listAxoSoftItems" access="public" output="true">
+		<cfargument name="axosoftItems" type="struct">
+		<div id="panelaxosoftitems" class="panel panel-default">
+			<div class="panel-heading"><i class="fa fa-tasks"></i> Items</div>
+			<div class="panel-body">
+			<cfif StructKeyExists(arguments.axosoftitems,"error")>
+			<cfelse>
+				<table class="table table-condensed table-striped">
+				<cfloop array="#arguments.axosoftItems["data"]#" index="i">
+					<tr>
+						<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#i.id#/">#i.number#</a></td>
+						<td>#i.name#</td>
+					</tr>
+				</cfloop>
+				</table>
+			</cfif>
+			</div>
+		</div>
+	</cffunction>
+	
 	<cffunction name="listAxoSoftProjects" access="public" output="true">
 		<cfargument name="axosoftprojects" type="struct">
 		<div id="panelaxosoftprojects" class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-wrench"></i> Projects</div>
 			<div class="panel-body">
 				<cfif StructKeyExists(arguments.axosoftprojects,"error")>
-					<div class="alert alert-warning"><h3>Temporarily unavailable</h3></div>
+					<!--- pull from database record instead --->
+					<cfquery name="qryProjects">
+						SELECT AxoSoftPId, Name, ParentId
+						FROM TTestAxoSoftProject
+					</cfquery>
+					<table class="table table-condensed table-striped">
+						<cfloop query="qryProjects">
+						<tr>
+							<td colspan="2"><a href="project/#AxoSoftPid#/">#Name#</a></td>
+						</tr>
+						<cfquery name="qryChildren" dbtype="query">
+							SELECT AxoSoftPId, Name, ParentId
+							FROM qryProjects
+							WHERE ParentId = #AxoSoftPId#
+						</cfquery>
+						<cfif qryChildren.RecordCount gt 0>
+						<cfloop query="qryChildren">
+							<tr>
+								<td>&nbsp;</td>
+								<td><a href="http://#cgi.server_name#/CFTestTrack/project/#qryChildren.AxoSoftPId#/">#qryChildren.Name#</a></td>
+							</tr>
+						</cfloop>
+						</cfif>
+						</cfloop>
+					</table>					
 				<cfelse>
 				<table class="table table-condensed table-striped">
 				<cfloop array="#arguments.axosoftprojects["data"]#" index="i">
+					<!--- check and see if it's not new and in the table --->
+					<cfscript>
+						if ( ArrayLen(EntityLoad("TTestAxoSoftProject",{AxoSoftPId = i.id})) lte 0 ) {
+							newAxoSoftProject = new CFTestTrack.cfc.db.TTestAxoSoftProject();
+						 	newAxoSoftProject.setAxoSoftPId(i.id);
+						 	newAxoSoftProject.setName(i.name);
+						 	EntitySave(newAxoSoftProject);
+						 }							
+					</cfscript>
 					<tr>
-						<td colspan="2"><a href="project/#i.id#/">#i.name#</a></td>
+						<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/project/#i.id#/">#i.name#</a></td>
 					</tr>
 					<cfif StructKeyExists(i,"children")>
 					<cfloop array="#i.children#" index="c">
+						<cfscript>
+						if ( ArrayLen(EntityLoad("TTestAxoSoftProject",{AxoSoftPId = c.id})) lte 0) {
+							newAxoSoftProject = new CFTestTrack.cfc.db.TTestAxoSoftProject();
+						 	newAxoSoftProject.setAxoSoftPId(c.id);
+						 	newAxoSoftProject.setName(c.name);
+						 	newAxoSoftProject.setParentId(i.id);
+						 	EntitySave(newAxoSoftProject);
+						 }	else {
+						 	arrChild = EntityLoad("TTestAxoSoftProject", {AxoSoftPId = c.id }, true);
+						 	if ( arrChild.getParentId() != i.id ) {
+						 		arrChild.setParentId(i.id);
+						 		EntitySave(arrChild);
+						 	}
+						 }
+						</cfscript>
 					<tr>
 						<td>&nbsp;</td>
-						<td><a href="project/#c.id#/">#c.name#</td>
+						<td><a href="http://#cgi.server_name#/CFTestTrack/project/#c.id#/">#c.name#</td>
 					</tr>
 					</cfloop>
 					</cfif>
@@ -532,14 +600,14 @@
 				$(document).on("click",".pagination li a",function() {
 					var pagenum = $(this).text();
 					<cfif Len(arguments.searchstring) gt 0>
-						$.ajax({url:"cfc/Dashboard.cfc?method=AllScenarios",type:"POST",data : { start: pagenum, searchstring : "#arguments.searchstring#"  } }).done(function(data) { $("##topcontent").html(data); });
+						$.ajax({url:"/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios",type:"POST",data : { start: pagenum, searchstring : "#arguments.searchstring#"  } }).done(function(data) { $("##topcontent").html(data); });
 					<cfelse>
-					$("##topcontent").load("cfc/Dashboard.cfc?method=AllScenarios&start="+pagenum);
+					$("##topcontent").load("/CFTestTrack/ccfc/Dashboard.cfc?method=AllScenarios&start="+pagenum);
 					</cfif>
 				});
 				$(document).off("click","##btnsearch");
 				$(document).on("click","##btnsearch", function() {
-					$.ajax({url:"cfc/Dashboard.cfc?method=AllScenarios", type: "POST", data: {searchstring : $("##searchstring").val() 
+					$.ajax({url:"/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios", type: "POST", data: {searchstring : $("##searchstring").val() 
 					}}).done(function(data) {
 						$("##topcontent").html(data);
 					});
@@ -890,7 +958,7 @@
 						data: { testcaseid : testcaseid, testerid : userid }
 					}).done(function() {
 						$("##topcontent").removeClass("panel").removeClass("panel-default");
-						$("##topcontent").load("cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+#arguments.scenarioid#);
+						$("##topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+#arguments.scenarioid#);
 						$("##midrow").empty();
 						$("##activitypanel").remove();
 						$("##lnkReturnToProject").attr("pjid",#Session.ProjectID#);

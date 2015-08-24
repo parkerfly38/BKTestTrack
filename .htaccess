@@ -1,0 +1,4 @@
+RewriteEngine on 
+RewriteRule ^project/(.*)/$ index.cfm?projectid=$1
+#RewriteRule ^.*$ testreport.cfm
+

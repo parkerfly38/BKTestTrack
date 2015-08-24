@@ -24,13 +24,13 @@ $(document).ready(function() {
     	window.clearInterval(chatwindowtimervar);
 	});
 	
-	$.getJSON("cfc/Dashboard.cfc?method=chartList", function(data) {
+	$.getJSON("/CFTestTrack/cfc/Dashboard.cfc?method=chartList", function(data) {
 		jsonDashMenu = data;
 	});
-	$.getJSON("cfc/Dashboard.cfc?method=allProjectsCount", function(data){
+	$.getJSON("/CFTestTrack/cfc/Dashboard.cfc?method=allProjectsCount", function(data){
 		jsonProjectCounts = data;
 	});
-	$.getJSON("cfc/Dashboard.cfc?method=TodosBySection", function(data) {
+	$.getJSON("/CFTestTrack/cfc/Dashboard.cfc?method=TodosBySection", function(data) {
 		jsonTodos = data.DATA;
 		if (jsonTodos.length == 0) {
 			jsonTodos = [
@@ -38,10 +38,10 @@ $(document).ready(function() {
 			];
 		}
 	});
-	$.getJSON("cfc/Dashboard.cfc?method=MilestonesJSON", function(data) {
+	$.getJSON("/CFTestTrack/cfc/Dashboard.cfc?method=MilestonesJSON", function(data) {
 		jsonMilestones = data;
 	});
-	$.getJSON("cfc/Dashboard.cfc?method=allProjectsJSON",function(data){
+	$.getJSON("/CFTestTrack/cfc/Dashboard.cfc?method=allProjectsJSON",function(data){
 		jsonProjects = data;
 	});
 		
@@ -56,11 +56,11 @@ $(document).ready(function() {
 	$("a#lnkAssignedTests").click(function(event) {
 		event.preventDefault();
 		var userid = $("a#lnkAssignedTests").attr("userid");
-		$("#featurecontent").load("cfc/dashboard.cfc?method=assignedTestsGrid&userid="+userid+"&page=1&pageSize=10");
+		$("#featurecontent").load("/CFTestTrack/cfc/dashboard.cfc?method=assignedTestsGrid&userid="+userid+"&page=1&pageSize=10");
 	});
 	$("a#lnkHome").click(function(event) {
 		event.preventDefault();
-		$.ajax({ url:"cfc/Dashboard.cfc?method=removeSessionProject",type:"POST"}).done(function()
+		$.ajax({ url:"/CFTestTrack/cfc/Dashboard.cfc?method=removeSessionProject",type:"POST"}).done(function()
 		{
 			projectid = null;
 			$("#panelprojects").remove();
@@ -71,7 +71,7 @@ $(document).ready(function() {
 	
 	$("a#lnkReturnAllProjects").click(function(event) {
 		event.preventDefault();
-		$.ajax({ url:"cfc/Dashboard.cfc?method=removeSessionProject",type:"POST"}).done(function()
+		$.ajax({ url:"/CFTestTrack/cfc/Dashboard.cfc?method=removeSessionProject",type:"POST"}).done(function()
 		{
 			projectid = null;
 			$("#panelprojects").remove();
@@ -92,10 +92,10 @@ $(document).ready(function() {
 		event.preventDefault();
 		var pid = $(this).attr("projectid");
 		$.ajax({
-			url:"cfc/Forms.cfc?method=deleteProject&pjid="+pid,
+			url:"/CFTestTrack/cfc/Forms.cfc?method=deleteProject&pjid="+pid,
 			type:"GET"
 		}).done(function(){
-			$.getJSON("cfc/Dashboard.cfc?method=allProjectsJSON",function(data){
+			$.getJSON("/CFTestTrack/cfc/Dashboard.cfc?method=allProjectsJSON",function(data){
 				jsonProjects = data;
 				insertProjectInfo();
 			});			
@@ -106,10 +106,10 @@ $(document).ready(function() {
 		event.preventDefault();
 		var tcid = $(this).attr("editid");
 		$.ajax({
-			url:"cfc/Forms.cfc?method=deleteTestCase&tcid="+tcid,
+			url:"/CFTestTrack/cfc/Forms.cfc?method=deleteTestCase&tcid="+tcid,
 			type: "GET"
 		}).done(function(){
-			$("#topcontent").load("cfc/Dashboard.cfc?method=AllTests");
+			$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllTests");
 		});
 	});
 	
@@ -117,24 +117,24 @@ $(document).ready(function() {
 		event.preventDefault();
 		var editid = $(this).attr("editid");
 		$("#largeModal .modal-title").text("Edit Test Case");
-		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestCaseForm&testcaseid="+editid);
+		$("#largeModal .modal-body").load("/CFTestTrack/cfc/forms.cfc?method=TestCaseForm&testcaseid="+editid);
 		$("#largeModal").modal("show");
 	});
 	$(document).on("click","a.lnkBuildAutomatedTest",function(event){
 		event.preventDefault();
 		$("#largeModal .modal-title").text("Build Automated Test(s)");
-		$("#largeModal .modal-body").load("cfc/AutomationStudio.cfc?method=getListObj");
+		$("#largeModal .modal-body").load("/CFTestTrack/cfc/AutomationStudio.cfc?method=getListObj");
 		$("#largeModal").modal("show");
 	})
 	$(document).on("click","a.lnkAddSections",function(event) {
 		$("#smallModal .modal-title").text("Add Section");
-		$("#smallModal .modal-body").load("cfc/forms.cfc?method=TestSectionForm");
+		$("#smallModal .modal-body").load("/CFTestTrack/cfc/forms.cfc?method=TestSectionForm");
 		$("#smallModal").modal("show");
 	});
 	$(document).on("click","a.lnkAddTestCaseToScenario",function(event) {
 		$("#smallModal .modal-title").text("Add Test Cases to Scenario");
 		$.ajax({
-			url: "cfc/forms.cfc?method=AddTestCasesForm",
+			url: "/CFTestTrack/cfc/forms.cfc?method=AddTestCasesForm",
 			type: "POST",
 			data: { scenarioid : $(this).attr("scenarioid")	}
 		}).done(function(data){
@@ -145,7 +145,7 @@ $(document).ready(function() {
 	$(document).on("click","a#lnkAddProject",function(event) {
 		event.preventDefault();
 		$("#largeModal .modal-title").text("Add Project");
-		$("#largeModal .modal-body").load("cfc/forms.cfc?method=ProjectForm");
+		$("#largeModal .modal-body").load("/CFTestTrack/cfc/forms.cfc?method=ProjectForm");
 		$("#largeModal").modal("show");
 		$(document).trigger("eventLoadForm");
 	});
@@ -153,7 +153,7 @@ $(document).ready(function() {
 		event.preventDefault();
 		var pjid = $(this).attr("projectid");
 		$("#largeModal .modal-title").text("Edit Project");
-		$("#largeModal .modal-body").load("cfc/forms.cfc?method=ProjectForm&projectid="+pjid);
+		$("#largeModal .modal-body").load("/CFTestTrack/cfc/forms.cfc?method=ProjectForm&projectid="+pjid);
 		$("#largeModal").modal({show:"true"});
 		$(document).trigger("eventLoadForm");
 	});
@@ -162,7 +162,7 @@ $(document).ready(function() {
 		event.preventDefault();
 		projectid = $(this).attr("pjid");
 		currentview = "project";
-		$.ajax({ url:"cfc/Dashboard.cfc?method=setSessionProject",type:"POST",data: {projectid : projectid}}).done(function() {
+		$.ajax({ url:"/CFTestTrack/cfc/Dashboard.cfc?method=setSessionProject",type:"POST",data: {projectid : projectid}}).done(function() {
 			$("#uldashboard").show();
 			$("#activitypanel").remove();
 			projectIDCheck();
@@ -184,14 +184,14 @@ $(document).ready(function() {
 	$(document).on("click","a.lnkAddScenario", function(event) {
 		event.preventDefault();
 		$("#largeModal .modal-title").text("Add Test Scenario");
-		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestScenarioForm");
+		$("#largeModal .modal-body").load("/CFTestTrack/cfc/forms.cfc?method=TestScenarioForm");
 		$("#largeModal").modal("show");
 	});
 	$(document).on("click","a.lnkEditScenario",function(event) {
 		event.preventDefault();
 		var pjid = $(this).attr("scenarioid");
 		$("#largeModal .modal-title").text("Edit Test Scenario");
-		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestScenarioForm&testscenarioid="+pjid);
+		$("#largeModal .modal-body").load("/CFTestTrack/cfc/forms.cfc?method=TestScenarioForm&testscenarioid="+pjid);
 		$("#largeModal").modal({show:"true"});
 	});
 	$(document).on("click","a.lnkEditScenarioBig",function(event){
@@ -201,7 +201,7 @@ $(document).ready(function() {
 		$("#topcontent").removeClass("panel").removeClass("panel-default");
 		$("#topcontent").prepend("<div id='panelTestScenario' class='panel panel-default'><div class='panel-heading'>Edit Test Scenario</div><div id='panelTestScenarioBody' class='panel-body'>");
 		$("#topcontent").append("</div></div>");
-		$("#panelTestScenarioBody").load("cfc/forms.cfc?method=TestScenarioForm&testscenarioid="+scenarioid);
+		$("#panelTestScenarioBody").load("/CFTestTrack/cfc/forms.cfc?method=TestScenarioForm&testscenarioid="+scenarioid);
 		$("#midrow").empty();
 		$("#activitypanel").remove();	
 		$("#lnkReturnToProject").attr("pjid",projectid);
@@ -210,23 +210,23 @@ $(document).ready(function() {
 	$(document).on("click","a.lnkAddMilestone",function(event){
 		event.preventDefault();
 		$("#largeModal .modal-title").text("Add Milestone");
-		$("#largeModal .modal-body").load("cfc/forms.cfc?method=MilestoneForm");
+		$("#largeModal .modal-body").load("/CFTestTrack/cfc/forms.cfc?method=MilestoneForm");
 		$("#largeModal").modal("show");
 	});
 	$(document).on("click","a.lnkEditMilestone",function(event) {
 		event.preventDefault();
 		var pjid = $(this).attr("milestoneid");
 		$("#largeModal .modal-title").text("Edit Milestone");
-		$("#largeModal .modal-body").load("cfc/forms.cfc?method=MilestoneForm&milestoneid="+pjid);
+		$("#largeModal .modal-body").load("/CFTestTrack/cfc/forms.cfc?method=MilestoneForm&milestoneid="+pjid);
 		$("#largeModal").modal({show:"true"});
 	});
 	$(document).on("click","a.lnkDeleteMilestone",function(event) {
 		event.preventDefault();
 		var mid = $(this).attr("milestoneid");
-		$.ajax({ url: "cfc/forms.cfc?method=deleteMilestone",data: {mid : mid},type:"POST"}).done(function() {
+		$.ajax({ url: "/CFTestTrack/cfc/forms.cfc?method=deleteMilestone",data: {mid : mid},type:"POST"}).done(function() {
 			if ($("#allmilestonespanel").length > 0 ) {
 				$("#topcontent").removeClass("panel").removeClass("panel-default");
-				$("#topcontent").load("cfc/Dashboard.cfc?method=AllMilestones");
+				$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllMilestones");
 			}
 			if ($("#panelmilestones").length > 0) {
 				$("#panelmilestones").remove();
@@ -237,10 +237,10 @@ $(document).ready(function() {
 	$(document).on("click","a.lnkDeleteScenario",function(event) {
 		event.preventDefault();
 		var scenarioid = $(this).attr("scenarioid");
-		$.ajax({ url: "cfc/forms.cfc?method=deleteScenario", data: { scid : scenarioid},type:"POST"}).done(function() {
+		$.ajax({ url: "/CFTestTrack/cfc/forms.cfc?method=deleteScenario", data: { scid : scenarioid},type:"POST"}).done(function() {
 			if ($("#scenariospanel").length > 0 ) {
 				$("#topcontent").removeClass("panel").removeClass("panel-default");
-				$("#topcontent").load("cfc/Dashboard.cfc?method=AllScenarios");
+				$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios");
 			}
 			if ($("#paneltestscenarios").length > 0) {
 				$("#paneltestscenarios").remove();
@@ -251,7 +251,7 @@ $(document).ready(function() {
 	$(document).on("click","a.lnkAddTest",function(event) {
 		event.preventDefault();
 		$("#largeModal .modal-title").text("Add Test Case");
-		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestCaseForm");
+		$("#largeModal .modal-body").load("/CFTestTrack/cfc/forms.cfc?method=TestCaseForm");
 		$("#largeModal").modal("show");		
 		
 	});
@@ -259,7 +259,7 @@ $(document).ready(function() {
 		event.preventDefault();
 		$("#largeModal .modal-title").text("Add New Report");
 		var reporttype = $(this).attr("reporttype");
-		$("#largeModal .modal-body").load("cfc/forms.cfc?method=ReportForm&reporttype="+reporttype);
+		$("#largeModal .modal-body").load("/CFTestTrack/cfc/forms.cfc?method=ReportForm&reporttype="+reporttype);
 		$("#largeModal").modal("show");
 		
 	});
@@ -271,7 +271,7 @@ $(document).ready(function() {
 			allTests.push($(this).attr("caseid"));
 		});
 		var scenarioid = $(this).attr("scenarioid");
-		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestResultForm&testcaseids="+allTests.join()+"&scenarioid="+scenarioid);
+		$("#largeModal .modal-body").load("/CFTestTrack/cfc/forms.cfc?method=TestResultForm&testcaseids="+allTests.join()+"&scenarioid="+scenarioid);
 		$("#largeModal").modal("show");
 	});
 	$(document).on("click","button.btnAddResults",function(event){
@@ -279,7 +279,7 @@ $(document).ready(function() {
 		$("#largeModal .modal-title").text("Add Test Results");
 		var caseid = $(this).attr("caseid");
 		var scenarioid = $(this).attr("scenarioid");
-		$("#largeModal .modal-body").load("cfc/forms.cfc?method=TestResultForm&testcaseids="+caseid+"&scenarioid="+scenarioid);
+		$("#largeModal .modal-body").load("/CFTestTrack/cfc/forms.cfc?method=TestResultForm&testcaseids="+caseid+"&scenarioid="+scenarioid);
 	});
 	$(document).on("click","a.lnkRemoveTestCases",function(event){
 		event.preventDefault();
@@ -289,10 +289,10 @@ $(document).ready(function() {
 		});
 		var scenarioid = $(this).attr("scenarioid");
 		$.ajax({
-			url: "cfc/forms.cfc?method=removeTestCases&testcases="+removeTests.join()+"&scenarioid="+scenarioid
+			url: "/CFTestTrack/cfc/forms.cfc?method=removeTestCases&testcases="+removeTests.join()+"&scenarioid="+scenarioid
 		}).done(function(){
 			$("#topcontent").removeClass("panel").removeClass("panel-default");
-			$("#topcontent").load("cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+scenarioid);
+			$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+scenarioid);
 			$("#midrow").empty();
 			$("#activitypanel").remove();
 			$("#lnkReturnToProject").attr("pjid",projectid);
@@ -303,7 +303,7 @@ $(document).ready(function() {
 	$(document).on("click","a.lnkViewTests",function(event){
 		event.preventDefault();
 		$("#topcontent").removeClass("panel").removeClass("panel-default");
-		$("#topcontent").load("cfc/Dashboard.cfc?method=AllTests");
+		$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllTests");
 		$("#midrow").empty();
 		$("#activitypanel").remove();
 		$("#lnkReturnToProject").attr("pjid",projectid);
@@ -313,7 +313,7 @@ $(document).ready(function() {
 	$(document).on("click","a.lnkViewMilestones",function(event) {
 		event.preventDefault();
 		$("#topcontent").removeClass("panel").removeClass("panel-default");
-		$("#topcontent").load("cfc/Dashboard.cfc?method=AllMilestones");
+		$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllMilestones");
 		$("#midrow").empty();
 		$("#activitypanel").remove();	
 		$("#lnkReturnToProject").attr("pjid",projectid);
@@ -324,7 +324,7 @@ $(document).ready(function() {
 	$(document).on("click","a.lnkViewScenarios",function(event) {
 		event.preventDefault();
 		$("#topcontent").removeClass("panel").removeClass("panel-default");
-		$("#topcontent").load("cfc/Dashboard.cfc?method=AllScenarios");
+		$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios");
 		$("#midrow").empty();
 		$("#activitypanel").remove();
 		$("#lnkReturnToProject").attr("pjid",projectid);
@@ -336,7 +336,7 @@ $(document).ready(function() {
 		$("#largeModal").off("hidden.bs.modal");
 		$("#largeModal").modal('hide');
 		$("#topcontent").removeClass("panel").removeClass("panel-default");
-		$("#topcontent").load("cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+$(this).attr("scenarioid"));
+		$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+$(this).attr("scenarioid"));
 		$("#midrow").empty();
 		$("#activitypanel").remove();
 		$("#lnkReturnToProject").attr("pjid",projectid);
@@ -346,13 +346,13 @@ $(document).ready(function() {
 	$(document).on("click","a.lnkViewScheduledTests",function(event){
 		event.preventDefault();
 		$("#largeModal .modal-title").text("Scheduled Tests");
-		$("#largeModal .modal-body").load("cfc/AutomationStudio.cfc?method=viewAutomatedTasks");
+		$("#largeModal .modal-body").load("/CFTestTrack/cfc/AutomationStudio.cfc?method=viewAutomatedTasks");
 		$("#largeModal").modal("show");
 	});
 	$(document).on("click","a.lnkTestScriptLibrary",function(event) {
 		event.preventDefault();
 		$("#topcontent").removeClass("panel").removeClass("panel-default");
-		$("#topcontent").load("cfc/AutomationStudio.cfc?method=listScripts");
+		$("#topcontent").load("/CFTestTrack/cfc/AutomationStudio.cfc?method=listScripts");
 		$("#midrow").empty();
 		$("#activitypanel").remove();
 		$("#lnkReturnToProject").attr("pjid",projectid);
@@ -368,12 +368,12 @@ $(document).ready(function() {
 		event.preventDefault();
 		var scriptid = $(this).attr("scriptid");
 		$.ajax({
-			url: "cfc/AutomationStudio.cfc?method=deleteScript",
+			url: "/CFTestTrack/cfc/AutomationStudio.cfc?method=deleteScript",
 			type: "POST",
 			data: {scriptid : scriptid}
 		}).done(function(){
 			$("#topcontent").removeClass("panel").removeClass("panel-default");
-			$("#topcontent").load("cfc/AutomationStudio.cfc?method=listScripts");
+			$("#topcontent").load("/CFTestTrack/cfc/AutomationStudio.cfc?method=listScripts");
 			$("#midrow").empty();
 			$("#activitypanel").remove();
 			$("#lnkReturnToProject").attr("pjid",projectid);
@@ -396,7 +396,7 @@ $(document).ready(function() {
             // display response in DIV
             //$("#output").html( response.toString());
             $("#topcontent").removeClass("panel").removeClass("panel-default");
-			$("#topcontent").load("cfc/AutomationStudio.cfc?method=listScripts");
+			$("#topcontent").load("/CFTestTrack/cfc/AutomationStudio.cfc?method=listScripts");
 			$("#midrow").empty();
 			$("#activitypanel").remove();
 			$("#lnkReturnToProject").attr("pjid",projectid);
@@ -413,7 +413,7 @@ $(document).ready(function() {
 	$(document).on("click","a.lnkReportDelete",function(event) {
 		event.preventDefault();
 		$.ajax({
-			url: "CFC/forms.cfc?method=deleteReport",
+			url: "/CFTestTrack/CFC/forms.cfc?method=deleteReport",
 			type: "POST",
 			data: {reportid : $(this).attr("reportid") }
 		}).done(function(data){
@@ -424,7 +424,7 @@ $(document).ready(function() {
 	$(document).on("click","a.lnkDownloadTestCaseTemplate", function(event) {
 		event.preventDefault();
 		$.ajax({
-			url: "CFC/Maintenance.cfc?method=createSpreadsheetTestCaseTemplate"
+			url: "/CFTestTrack/CFC/Maintenance.cfc?method=createSpreadsheetTestCaseTemplate"
 		}).done(function()
 		{
 			window.open("excel/fordownload.xls");
@@ -432,7 +432,7 @@ $(document).ready(function() {
 	});
 	$(document).on("click","a.lnkUploadTestCases",function(event){
 		$("#smallModal .modal-title").text("Upload Excel File with Test Cases");
-		$("#smallModal .modal-body").load("cfc/Maintenance.cfc?method=TestCaseFileUpload");
+		$("#smallModal .modal-body").load("/CFTestTrack/cfc/Maintenance.cfc?method=TestCaseFileUpload");
 		$("#smallModal").modal("show");
 	});
 	$(document).on("click","a.chat", function(event){
@@ -440,7 +440,7 @@ $(document).ready(function() {
 		var fromid = $(this).attr("fromid");
 		var toid = $(this).attr("toid");
 		$("#chatModal .modal-title").text("Chat");
-		$("#chatModal .modal-body").load("cfc/Functions.cfc?method=getchats&fromid="+fromid+"&toid="+toid, function() {
+		$("#chatModal .modal-body").load("/CFTestTrack/cfc/Functions.cfc?method=getchats&fromid="+fromid+"&toid="+toid, function() {
 			$("#chatModal").modal("show");
 			$("#chatModal .modal-body").animate({ scrollTop: $("#chatModal .modal-body")[0].scrollHeight},1000);
 		});
@@ -449,13 +449,13 @@ $(document).ready(function() {
 	$(document).on("click","a.lnkScheduleTests",function(event) {
 		event.preventDefault();
 		$("#largeModal .modal-title").text("Schedule Automated Tests");
-		$("#largeModal .modal-body").load("cfc/AutomationStudio.cfc?method=skedAdd");
+		$("#largeModal .modal-body").load("/CFTestTrack/cfc/AutomationStudio.cfc?method=skedAdd");
 		$("#largeModal").modal("show");
 	});
 	$(document).on("click","a.lnkQuickTSReport",function(event) {
 		if ($(this).attr("reportvalue") != "") {
 			$.ajax({
-				url: "cfc/Dashboard.cfc?method="+$(this).attr("reportvalue"),
+				url: "/CFTestTrack/cfc/Dashboard.cfc?method="+$(this).attr("reportvalue"),
 				type: "POST",
 				data: {
 					scenarioid : $(this).attr("scenarioid")
@@ -485,7 +485,7 @@ function projectIDCheck(){
 	if ( isNumber(projectid) && $("#activitypanel").length <= 0)
 	{
 		$.ajax({
-			url: "cfc/Dashboard.cfc?method=mostRecentTests",
+			url: "/CFTestTrack/cfc/Dashboard.cfc?method=mostRecentTests",
 			type: "GET"
 		}).done(function(data) {
 				recentresultscontent = data;
@@ -502,7 +502,7 @@ function projectIDCheck(){
 
 function insertNewChat(fromid, toid)
 {
-	$("#chatModal .modal-body").load("cfc/Functions.cfc?method=getchats&fromid="+fromid+"&toid="+toid, 
+	$("#chatModal .modal-body").load("/CFTestTrack/cfc/Functions.cfc?method=getchats&fromid="+fromid+"&toid="+toid, 
 							function() {
 								$("#chatModal .modal-body").animate({ scrollTop: $("#chatModal .modal-body")[0].scrollHeight},1000);
 							});
@@ -511,7 +511,7 @@ function insertNewChat(fromid, toid)
 function insertTodos() {
 	if ($("#todopanel").length == 0) {
 		$.ajax({
-			url: "cfc/Dashboard.cfc?method=getTodos"
+			url: "/CFTestTrack/cfc/Dashboard.cfc?method=getTodos"
 		}).done(function(data){
 			$("#actioncontent").append(data);
 		});
@@ -520,11 +520,11 @@ function insertTodos() {
 }
 
 function reportScreen() {
-	$("#topcontent").load("cfc/Dashboard.cfc?method=AllReports");
-	//$("#actioncontent").load("cfc/Dashboard.cfc?method=getCreateReports");
+	$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllReports");
+	//$("#actioncontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=getCreateReports");
 	if ($("#createreportpanel").length == 0) {
 		$.ajax({
-			url: "cfc/Dashboard.cfc?method=getCreateReports"
+			url: "/CFTestTrack/cfc/Dashboard.cfc?method=getCreateReports"
 		}).done(function(data){
 			$("#actioncontent").prepend(data);
 		});
@@ -537,7 +537,7 @@ function insertLinks() {
 	if ($("#linkspanel").length == 0)
 	{
 		$.ajax({
-			url: "cfc/Dashboard.cfc?method=getLinks"
+			url: "/CFTestTrack/cfc/Dashboard.cfc?method=getLinks"
 		}).done(function(data){
 			$("#actioncontent").append(data);
 		});
@@ -547,7 +547,7 @@ function insertLinks() {
 
 function checkLoggedIn() {
 	$.ajax({
-		url: "cfc/Dashboard.cfc?method=checkLoggedIn",
+		url: "/CFTestTrack/cfc/Dashboard.cfc?method=checkLoggedIn",
 		type: "POST",
 		dataType: "json"
 	}).done(function(data) {
@@ -571,7 +571,7 @@ function insertActions() {
 		//do nothing
 	} else {
 		$("#panel-actions").remove();
-		$.ajax({url:"cfc/dashboard.cfc?method=Actions"}).done( function(data){
+		$.ajax({url:"/CFTestTrack/cfc/dashboard.cfc?method=Actions"}).done( function(data){
 			$("#actioncontent").prepend(data);
 		});
 	}
@@ -586,7 +586,7 @@ function insertDashMenu() {
 		event.preventDefault();
 		if ($(this).attr("reportvalue") != "") {
 			$.ajax({
-				url: "cfc/Dashboard.cfc?method="+$(this).attr("reportvalue"),
+				url: "/CFTestTrack/cfc/Dashboard.cfc?method="+$(this).attr("reportvalue"),
 				type: "POST",
 				data: { projectid : projectid }
 			}).done(function(data) {
@@ -620,7 +620,7 @@ function casesLoad(projectid) {
 
 function projectLoad() {
 	$.ajax({
-		url: "cfc/Dashboard.cfc?method=HubChart",
+		url: "/CFTestTrack/cfc/Dashboard.cfc?method=HubChart",
 		type: "POST",
 		data: {
 			projectid : projectid
@@ -639,7 +639,7 @@ function projectLoad() {
 function insertMilestones() {
 	$("#panelmilestones").remove();
 	$.ajax({
-		url: "cfc/dashboard.cfc?method=getMilestones",
+		url: "/CFTestTrack/cfc/dashboard.cfc?method=getMilestones",
 		type: "post",
 		data: { projectid : projectid }
 	}).done(function(data){
@@ -650,7 +650,7 @@ function insertMilestones() {
 function insertScenarios() {
 	$("#paneltestscenarios").remove();
 	$.ajax({
-		url: "cfc/dashboard.cfc?method=getTestScenarios",
+		url: "/CFTestTrack/cfc/dashboard.cfc?method=getTestScenarios",
 		type: "post",
 		data: { projectid : projectid }
 	}).done(function(data) {
@@ -662,7 +662,7 @@ function homeLoad() {
 	if ( isNumber(projectid)  )
 	{
 		$.ajax({
-				url: "cfc/Dashboard.cfc?method=HubChart",
+				url: "/CFTestTrack/cfc/Dashboard.cfc?method=HubChart",
 				type: "POST",
 				data: { projectid : projectid }
 			}).done(function(data) {
@@ -681,7 +681,7 @@ function homeLoad() {
 	}
 	if ( !($.isEmptyObject(jsonProjectCounts))) {
 		if (jsonProjectCounts.TotalProjects > 0) {
-			$("#featurecontent").load("cfc/Dashboard.cfc?method=AllProjectsChart",function() {
+			$("#featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllProjectsChart",function() {
 				insertProjectInfo();
 				$("#uldashboard").hide();
 				$("#featurecontent").append('<div id="midrow" class="row"></div>');

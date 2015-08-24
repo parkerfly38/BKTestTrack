@@ -158,13 +158,13 @@
 				        //<cfif SERVER.OS.Name eq "Mac OS X">
 				        url: "upload.php",
 				        //<cfelse>
-				        url: "cfc/Maintenance.cfc?method=saveTestCaseExcelFile",
+				        url: "/CFTestTrack/cfc/Maintenance.cfc?method=saveTestCaseExcelFile",
 				        //</cfif>
 				        success: function (datap) {
 				        	$("##smallModal").modal("hide");
-				        	$("##topcontent").load("cfc/Dashboard.cfc?method=AllTests");
+				        	$("##topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllTests");
 				        	//<cfif SERVER.OS.Name eq "Mac OS X">
-				        	$.ajax({ url: "cfc/Maintenance.cfc?method=fileProcess",
+				        	$.ajax({ url: "/CFTestTrack/cfc/Maintenance.cfc?method=fileProcess",
 				        			 type: "POST",
 				        			 data: { filename : data }
 				       		});
@@ -175,7 +175,7 @@
 	    		});
     		});
     	</script>
-		<form enctype="multipart/form-data" id="uploadFile" method="post" action="uploadHandler.cfm">
+		<form enctype="multipart/form-data" id="uploadFile" method="post" action="/CFTestTrack/uploadHandler.cfm">
 			
  			<input type="file" name="fileUpload" id="fileUpload" />
     		

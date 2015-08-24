@@ -19,7 +19,7 @@
 		<script type="text/javascript" src="scripts/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
 		<style>
-			body { padding-top: 60px; background: url('images/bg.png'); }
+			body { padding-top: 60px; background: url('/CFTestTrack/images/bg.png'); }
 			.rowoffset { margin-bottom: 20px; }
 			.form-group.required .control-label:after {
 				content:"*";
@@ -49,11 +49,11 @@
 		      
 		        <ul class="nav navbar-nav">
 		          <li><a id="lnkReturnToProject" class="pjlink" style="display:none;" href="index.cfm"><i class="fa fa-home"></i> Home</a></li>
-		          <li><a href="settings.cfm?ac=users">Users</a></li>
-		          <li><a href="settings.cfm?ac=settings">System Settings</a></li>
-		          <li><a href="settings.cfm?ac=sked">Scheduled Tasks</a></li>
-		          <li><a href="settings.cfm?ac=links">Links</a></li>
-		          <li><a href="cfc/Logon.cfc?method=Logout"> <i class="fa fa-power-off"></i> Log out</a></li>
+		          <li><a href="/CFTestTrack/settings.cfm?ac=users">Users</a></li>
+		          <li><a href="/CFTestTrack/settings.cfm?ac=settings">System Settings</a></li>
+		          <li><a href="/CFTestTrack/settings.cfm?ac=sked">Scheduled Tasks</a></li>
+		          <li><a href="/CFTestTrack/settings.cfm?ac=links">Links</a></li>
+		          <li><a href="/CFTestTrack/cfc/Logon.cfc?method=Logout"> <i class="fa fa-power-off"></i> Log out</a></li>
 		        </ul>
 		      </div><!--/.nav-collapse -->
 		    </div>

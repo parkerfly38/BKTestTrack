@@ -54,7 +54,7 @@
     	</cfif>
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin) && !FindNoCase("logon.cfc",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport.cfm",CGI.SCRIPT_NAME) && !FindNoCase("AxoSoftRedirect.cfm",CGI.SCRIPT_NAME) && !FindNoCase(".cfr",CGI.SCRIPT_NAME) && !FindNoCase("report",CGI.SCRIPT_NAME)>
 			<cfset Session.OrigURL = CGI.SERVER_NAME & "/" & CGI.SCRIPT_NAME & "?" & CGI.QUERY_STRING>
-			<cflocation url="login.cfm" addtoken="false" />
+			<cflocation url="/CFTestTrack/login.cfm" addtoken="false" />
 		</cfif>
 	</cffunction>
 	
