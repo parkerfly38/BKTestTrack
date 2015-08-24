@@ -9,12 +9,18 @@
 	<cffunction name="getItems" access="public">
 		<cfargument name="project_id" type="numeric" default="0">
 		<cfargument name="access_token" required="true">
+		<cfif !Application.AxoSoftUseAPI>
+			<cfreturn structNew()>
+		</cfif>
 		<cfhttp url="#Application.AxoSoftURL#api/v5/items/?access_token=#arguments.access_token#&project_id=#arguments.project_id#" method="get" result="httpResult">
 		<cfreturn DeSerializeJSON(httpResult.fileContent) />
 	</cffunction>
 	
 	<cffunction name="getIncidents" access="public">
 		<cfargument name="access_token" required="true">
+		<cfif !Application.AxoSoftUseAPI>
+			<cfreturn structNew()>
+		</cfif>
 		<cfhttp url="#Application.AxoSoftURL#api/v2/incidents/?access_token=#arguments.access_token#" method="get" result="httpResult" />
 		<cfreturn DeSerializeJSON(httpResult.fileContent) />
 	</cffunction>

@@ -174,7 +174,17 @@
 		  	</div>
 		  	<div id="featurecontent" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 		  		<cfif StructKeyExists(url,"projectid")>
-		  			<cfoutput>#objDashboard.listAxoSoftItems(objAxoSoft.getItems(url.projectid,Session.AxoSoftToken))#</cfoutput>
+		  			<cfif StructKeyExists(url,"ppage")>
+		  				<cfset local.ppaging = url.ppage>
+		  			<cfelse>
+		  				<cfset local.ppaging = 1>
+		  			</cfif>
+		  			<cfif StructKeyExists(url,"bpage")>
+		  				<cfset local.bpaging = url.bpage>
+		  			<cfelse>
+		  				<cfset local.bpaging = 1>
+		  			</cfif>
+		  			<cfoutput>#objDashboard.listAxoSoftItems(objAxoSoft.getItems(url.projectid,Session.AxoSoftToken),url.projectid,local.ppaging,local.bpaging)#</cfoutput>
 		  		</cfif>
 		  		<div id="midrow" class="row"></div>
 		  	</div>

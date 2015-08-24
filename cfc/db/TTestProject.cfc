@@ -11,6 +11,7 @@ component table="TTestProject" persistent="true"
 	property name="RepositoryType";
 	property name="Closed";
 	property name="Color" getter="false";
+	property name="AxoSoftProjectID";
 	
 	public TTestProject function init()
 	{

@@ -4,19 +4,135 @@
 	
 	<cffunction name="listAxoSoftItems" access="public" output="true">
 		<cfargument name="axosoftItems" type="struct">
+		<cfargument name="projectid" type="numeric" default="0">
+		<cfargument name="ppaging" type="numeric" default="1">
+		<cfargument name="bpaging" type="numeric" default="1">
 		<div id="panelaxosoftitems" class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-tasks"></i> Items</div>
 			<div class="panel-body">
-			<cfif StructKeyExists(arguments.axosoftitems,"error")>
+			<cfif StructKeyExists(arguments.axosoftitems,"error") || !Application.AxoSoftUseAPI>
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="##incidents" data-toggle="tab">Incidents</a></li>
+					<li><a href="##bugs" data-toggle="tab">Bugs</a><li>
+				</ul>
+				<div class="tab-content">
+					<div id="incidents" class="tab-pane fade in active">
+						<cfquery name="qryIncidents">
+							SELECT id, ProjectTitle, AxoSoftID FROM TTestProject
+							WHERE AxoSoftID LIKE 'COG%'
+							<cfif arguments.projectid neq 0>
+							AND AxoSoftProjectID = arguments.projectid
+							</cfif>
+							ORDER BY AxoSoftID
+						</cfquery>
+						<cfif qryIncidents.RecordCount gt 0>
+							<cfset totalPages = ceiling(qryIncidents.RecordCount/20)>
+							<cfset thisPage = ceiling(arguments.ppaging/20)>
+							<nav>
+								<ul class="pagination pagination-sm">
+									
+									<li<cfif arguments.ppaging eq 1> class="disabled"</cfif>><a href="?ppage=#arguments.ppaging - 1#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+									<cfloop from="1" to="#totalPages#" index="page">
+										<li<cfif page eq arguments.ppaging> class="active"</cfif>><a href="?ppage=#page#">#page#</a></li>
+									</cfloop>
+									
+									<li<cfif arguments.ppaging gte totalPages> class="disabled"</cfif>><a href="?ppage=#arguments.ppaging + 1#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+								</ul>
+							</nav>
+							<table class="table table-condensed table-striped">
+								<cfloop query="qryIncidents" startrow="#((arguments.ppaging-1)*20)+1#" endrow="#((arguments.ppaging)*20)#">
+									<tr>
+										<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#id#/">#AxoSoftID#</a></td>
+										<td>#ProjectTitle#</td>
+									</tr>
+								</cfloop>
+							</table>
+						<cfelse>
+							<div class="alert alert-warning"><h2>There are no AxoSoft incidents for this project.</h2></div>
+						</cfif>
+					</div>
+					<div id="bugs" class="tab-pane fade">
+						<cfquery name="qryBugs">
+							SELECT id, ProjectTitle,AxoSoftID FROM TTestProject
+							WHERE AxoSoftID NOT LIKE 'COG%' and AxoSoftID IS NOT NULL
+							<cfif arguments.projectid neq 0>
+							AND AxoSoftProjectID = arguments.projectid
+							</cfif>
+							ORDER BY AxoSoftID
+						</cfquery>
+						<cfif qryBugs.RecordCount gt 0>
+							<table class="table table-condensed table-striped">
+								<cfloop query="qryBugs">
+									<tr>
+										<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#id#/">#AxoSoftID#</a></td>
+										<td>#ProjectTitle#</td>
+									</tr>
+								</cfloop>
+							</table>
+						<cfelse>
+							<div class="alert alert-warning"><h2>There are no AxoSoft bugs for this project.</h2></div>
+						</cfif>
+					</div>
+				</div>
 			<cfelse>
-				<table class="table table-condensed table-striped">
-				<cfloop array="#arguments.axosoftItems["data"]#" index="i">
-					<tr>
-						<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#i.id#/">#i.number#</a></td>
-						<td>#i.name#</td>
-					</tr>
-				</cfloop>
-				</table>
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="##incidents" data-toggle="tab">Incidents</a></li>
+					<li><a href="##bugs" data-toggle="tab">Bugs</a><li>
+				</ul>
+				<div class="tab-content">
+					<div id="incidents" class="tab-pane fade in active">
+						<table class="table table-condensed table-striped">
+						<cfloop array="#arguments.axosoftItems["data"]#" index="i">
+							<cfif i.number CONTAINS "COG">
+							<cfscript>
+								if ( ArrayLen(EntityLoad("TTestProject",{AxoSoftID = i.number})) lte 0 ) {
+									newTestProject = new CFTestTrack.cfc.db.TTestProject();
+								 	newTestProject.setProjectTitle(i.name);
+								 	newTestProject.setAxoSoftID(i.number);
+								 	newTestProject.setProjectDescription(i.description);
+								 	newTestProject.setProjectStartDate(isnull(i.start_date) || i.start_date == "null" ? DateFormat(ParseDateTime(left(i.created_date_time,10),"yyyy-MM-dd"),"mm/dd/yyyy")  : DateFormat(ParseDateTime(left(i.start_date,10),"yyyy-MM-dd"),"mm/dd/yyyy"));
+								 	newTestProject.setIncludeAnnouncement(false);
+								 	newTestProject.setRepositoryType(1);
+								 	newTestProject.setClosed(0);
+								 	newTestProject.setAxoSoftProjectID(i.project.id);
+								 	EntitySave(newTestProject);
+								 }							
+							</cfscript>
+							<tr>
+								<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#i.id#/">#i.number#</a></td>
+								<td>#i.name#</td>
+							</tr>
+							</cfif>
+						</cfloop>
+						</table></div>
+					<div id="bugs" class="tab-pane fade">
+					<table class="table table-condensed table-striped">
+						<cfloop array="#arguments.axosoftItems["data"]#" index="i">
+							<cfif i.number DOES NOT CONTAIN "COG">
+							<cfscript>
+								if ( ArrayLen(EntityLoad("TTestProject",{AxoSoftID = i.number})) lte 0 ) {
+									newTestProject = new CFTestTrack.cfc.db.TTestProject();
+								 	newTestProject.setProjectTitle(i.name);
+								 	newTestProject.setAxoSoftID(i.number);
+								 	newTestProject.setProjectDescription(i.description);
+								 	newTestProject.setProjectStartDate(
+								 		isnull(i.start_date) || i.start_date == "null" ? DateFormat(ParseDateTime(left(i.created_date_time,10),"yyyy-MM-dd"),"mm/dd/yyyy")  :
+								 		DateFormat(ParseDateTime(left(i.start_date,10),"yyyy-MM-dd"),"mm/dd/yyyy"));
+								 	newTestProject.setIncludeAnnouncement(false);
+								 	newTestProject.setRepositoryType(1);
+								 	newTestProject.setClosed(0);
+								 	newTestProject.setAxoSoftProjectID(i.project.id);
+								 	EntitySave(newTestProject);
+								 }							
+							</cfscript>
+							<tr>
+								<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#i.id#/">#i.number#</a></td>
+								<td>#i.name#</td>
+							</tr>
+							</cfif>
+						</cfloop>
+						</table></div>
+					</div>
 			</cfif>
 			</div>
 		</div>
@@ -27,7 +143,7 @@
 		<div id="panelaxosoftprojects" class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-wrench"></i> Projects</div>
 			<div class="panel-body">
-				<cfif StructKeyExists(arguments.axosoftprojects,"error")>
+				<cfif StructKeyExists(arguments.axosoftprojects,"error") or !Application.AxoSoftUseAPI>
 					<!--- pull from database record instead --->
 					<cfquery name="qryProjects">
 						SELECT AxoSoftPId, Name, ParentId

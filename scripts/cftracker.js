@@ -95,10 +95,10 @@ $(document).ready(function() {
 			url:"/CFTestTrack/cfc/Forms.cfc?method=deleteProject&pjid="+pid,
 			type:"GET"
 		}).done(function(){
-			$.getJSON("/CFTestTrack/cfc/Dashboard.cfc?method=allProjectsJSON",function(data){
-				jsonProjects = data;
-				insertProjectInfo();
-			});			
+			//$.getJSON("/CFTestTrack/cfc/Dashboard.cfc?method=allProjectsJSON",function(data){
+			//	jsonProjects = data;
+				//insertProjectInfo();
+			//});			
 		});
 	});
 	
@@ -681,11 +681,11 @@ function homeLoad() {
 	}
 	if ( !($.isEmptyObject(jsonProjectCounts))) {
 		if (jsonProjectCounts.TotalProjects > 0) {
-			$("#featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllProjectsChart",function() {
-				insertProjectInfo();
-				$("#uldashboard").hide();
-				$("#featurecontent").append('<div id="midrow" class="row"></div>');
-			});
+			//$("#featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllProjectsChart",function() {
+				//insertProjectInfo();
+			//	$("#uldashboard").hide();
+			//	$("#featurecontent").append('<div id="midrow" class="row"></div>');
+			//});
 		} else {
 			$("#featurecontent").prepend("<div class='alert alert-danger' role='alert'><strong>Add your first project to CFTestTrack</strong><br />Welcome!  This dashboard displays an overview of available projects and recent activity, but there aren't any projects yet.<p><br /><a id='lnkAddProject' class='btn btn-info'><i class='fa fa-plus-square'></i> Add Project</a></p></div>");
 		}

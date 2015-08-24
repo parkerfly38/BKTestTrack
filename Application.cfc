@@ -122,6 +122,9 @@
 		<cfset Application.AxoSoftExpiration = qryAxoSoftExpiration.getSettingValue()>  <!--- default is 30, a value of false will never expire --->
 		<cfset qryAxoSoftURL = EntityLoad("TTestSettings",{Setting="AxoSoftURL"},true)>
 		<cfset Application.AxoSoftURL = qryAxoSoftURL.getSettingValue()>
+		<!---bk if we pull from a nightly/hourly job from axosoft instead of real time API reference --->
+		<cfset qryAxoSoftUseAPI = EntityLoad("TTestSettings",{Setting="AxoSoftUseAPI"},true)>
+		<cfset Application.AxoSoftUseAPI = qryAxoSoftUseAPI.getSettingValue()>
 	</cffunction>
 	
 	<cffunction name="onMissingTemplate" output="true">
