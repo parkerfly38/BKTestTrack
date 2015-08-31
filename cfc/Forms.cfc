@@ -127,20 +127,20 @@
 		</div>
 	</cffunction>
 	
-	<cffunction name="TestCaseForm" access="remote" output="true">
+	<cffunction name="TestCaseForm" access="public" output="true">
 		<cfargument name="testcaseid" required="false" default="0" type="numeric">
-		<cfif !(StructKeyExists(Session,"LoggedIn")) || !Session.LoggedIn>
-			<cfexit>
-		</cfif>
+		<cfargument name="projectid" required="false" default="0" type="numeric">
+		
 		<cfif arguments.testcaseid gt 0>
 			<cfset arrTestCase = EntityLoadByPK("TTestCase",arguments.testcaseid)>
 			<cfif !(StructKeyExists(Session,"ProjectID"))>
-				<cfset Session.ProjectID = arrTestCase.getProjectID()>
+				<cfset local.ProjectID = arrTestCase.getProjectID()>
 				<script type="text/javascript">
 					projectid = <cfoutput>#arrTestCase.getProjectId()#;</cfoutput>
 				</script>
 			</cfif>
 		<cfelse>
+			<cfset local.ProjectID = arguments.projectid>
 			<cfset arrTestCase = EntityNew("TTestCase")>
 			<cfset arrTestCase.setId(0)>
 			<cfset arrTestCase.setPriorityId(0)>
@@ -156,8 +156,8 @@
 				});
 				$("##largeModal").off("hidden.bs.modal");
 				$("##largeModal").on("hidden.bs.modal", function () {
-					projectid = #Session.ProjectID#;
-    				$.ajax({ url:"cfc/Dashboard.cfc?method=setSessionProject",type:"POST",data: {projectid : #Session.ProjectID#}}).done(function() {
+					projectid = #local.ProjectID#;
+    				/*$.ajax({ url:"cfc/Dashboard.cfc?method=setSessionProject",type:"POST",data: {projectid : #local.ProjectID#}}).done(function() {
 						$("##uldashboard").show();
 						$("##activitypanel").remove();
 						projectIDCheck();
@@ -165,49 +165,30 @@
 						$("##panelprojects").remove();
 						$("##createreportpanel").remove();
 						$("##largeModal").off("hidden.bs.modal");
-					});
+					});*/
 				});
 				$(document).off("click","##btnSave");
 				$(document).on("click","##btnSave",function(event) {
 					event.preventDefault();
-					$.ajax({
-						url: "CFC/forms.cfc?method=saveTestCase",
-						type: "POST",
-						data: {
-							id : "#arguments.testcaseid#",
-							TestTitle : $("##txtTestTitle").val(),
-							TestDetails : $("##txtTestDetails").val(),
-							PriorityId : $("##ddlPriorityId").val(),
-							TypeId : $("##ddlTypeId").val(),
-							ProjectID : projectid,
-							Preconditions : $("##txtPreconditions").val(),
-							Steps : $("##txtSteps").val(),
-							ExpectedResult : $("##txtExpectedResult").val(),
-							MilestoneId : "0",
-							Estimate : $("##txtEstimate").val()
-						}
-					}).done(function(data) {
-						if ( data == "true" )
-						{
-							$("##largeModal").modal('hide');
-							if ($("##panelalltestcases").length == 0) 
-							{
-								/* do nothing */
-							} else {
-								$("##panelalltestcases").remove();
-								$("##topcontent").load("cfc/Dashboard.cfc?method=AllTests");	
-							}
-						} else {
-							alert("There was an error with your save.  Please contact system administrator.");
-						}
-					});
+					$("##frmAddCase").submit();
+					
 				});
 			});
 		</script>
 		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
 		<div class="form-group">
+			<cfscript>
+				frmAction = "";
+				if ( arguments.testcaseid gt 0 ) {
+					frmAction = "saveCase";
+				} else {
+					frmAction = "addCase";
+				}
+			</cfscript>
+			<form method="post" action="http://#cgi.server_name#/CFTestTrack/item/#local.projectid#/" id="frmAddCase">
+			<input type="hidden" value="#arguments.testcaseid#" id="#frmAction#" name="#frmAction#" />
 			<label for="txtTestTitle">Title</label>
-			<input type="text" name="txtTestTitle" id="txtTestTitle" value="#arrTestCase.getTestTitle()#" class="form-control" />
+			<input type="text" name="txtTestTitle" id="txtTestTitle" name="txtTestTitle" value="#arrTestCase.getTestTitle()#" class="form-control" />
 			<label for="txtPreconditions">Preconditions and Assumptions</label>
 			<textarea class="form-control" rows="5" id="txtPreconditions" name="txtPreconditions">#arrTestCase.getPreconditions()#</textarea>
 			<p class="help-block">Anything that must be done prior to executing this test.  You can reference other test cases using TC + Number, like TC1 for test case 1.</p>
@@ -259,10 +240,12 @@
 							</cfloop>
 						</tbody>
 						</table>
+					
 					<cfelse>
 						<div class="alert alert-warning small"><h4>No Test Scenarios Assigned</h4>This can be accomplished from individual scenario hubs.</div>
 					</cfif>
 				</cfif>
+				</form>
 			</div>
 		</div>
 			 

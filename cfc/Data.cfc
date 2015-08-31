@@ -120,6 +120,16 @@ component
 				" WHERE d.ScenarioId = :scenarioid and b.DateActionClosed IS NULL");
 		return qryResult.getResult();
 	}
+	public query function qryTestCasesForProject(projectid)
+	{
+		qryNew = new query();
+		qryNew.setName("getTestCases");
+		qryNew.addParam(name="projectid",value=arguments.projectid,cfsqltype="cf_sql_int");
+		qryResult = qryNew.execute(sql="SELECT a.id as id, a.TestTitle, b.DateOfAction, c.UserName, b.DateActionClosed" &
+				" FROM TTestCaseHistory b INNER JOIN TTestCase a ON a.id = b.CaseId INNER JOIN TTestTester c on b.TesterID = c.id " &
+				" WHERE a.ProjectId = :projectid and b.DateActionClosed IS NULL");
+		return qryResult.getResult();
+	}
 	public query function qryTestCaseHistoryForScenarios(scenarioid) {
 		QueryHistory = new query();
 		QueryHistory.setName("getTestCaseHistory");
@@ -127,6 +137,18 @@ component
 		qryResult = QueryHistory.execute(sql="SELECT id,Status,Sum(StatusCount) as StatusCount FROM ( Select TTestStatus.id, Status, ISNULL(Count(a.id),0) as StatusCount FROM TTestStatus LEFT JOIN ( SELECT b.id, b.[Action] FROM TTestCaseHistory b INNER JOIN TTestScenarioCases c on b.CaseId = c.CaseId WHERE c.ScenarioId = :scenarioid and b.DateActionClosed is null ) a ON a.Action = TTestStatus.Status GROUP BY TTestStatus.id, Status  UNION ALL SELECT 1 as id,(CASE WHEN [Action] IN ('Created','Assigned') THEN 'Untested' END) as Status, ISNULL(Count(TTestCaseHistory.id),0) as StatusCount FROM TTestCaseHistory INNER JOIN TTestScenarioCases on TTestScenarioCases.CaseID = TTestCaseHistory.CaseID WHERE ScenarioId = :scenarioid AND [Action] IN ('Created','Assigned') AND DateActionClosed IS NULL GROUP BY [Action] ) DERIVED GROUP BY id, Status");
 		return qryResult.getResult();
 	}
+	public query function qryTestCaseHistoryDataByProject(projectid) {
+		qryNew = new query();
+		qryNew.setName("getTestCaseHistory");
+		qryNew.addParam(name="projectid",value=arguments.projectid,cfsqltype="cf_sql_int");
+		qryResult = qryNew.execute(sql="SELECT DISTINCT a.TestTitle, b.TestCaseId, b.DateTested, d.Status, c.UserName FROM TTestResult b " &
+										"INNER JOIN TTestCase a on b.TestCaseId = a.id " &
+										"INNER JOIN TTestTester c on c.id = b.TesterID " &
+										"INNER JOIN TTestStatus d on d.id = b.StatusID " &
+										"WHERE a.ProjectId = :projectid");
+		return qryResult.getResult();
+	}
+	
 	public query function qryTestCaseHistoryDataForScenario(scenarioid) {
 		qryNew = new query();
 		qryNew.setName("getTestCaseHistory");

@@ -4,7 +4,7 @@
 	
 	<cffunction name="listAxoSoftItems" access="public" output="true">
 		<cfargument name="axosoftItems" type="struct">
-		<cfargument name="projectid" type="numeric" default="0">
+		<cfargument name="projectid" type="numeric" default="0" required="true">
 		<cfargument name="ppaging" type="numeric" default="1">
 		<cfargument name="bpaging" type="numeric" default="1">
 		<div id="panelaxosoftitems" class="panel panel-default">
@@ -12,16 +12,16 @@
 			<div class="panel-body">
 			<cfif StructKeyExists(arguments.axosoftitems,"error") || !Application.AxoSoftUseAPI>
 				<ul class="nav nav-tabs">
-					<li class="active"><a href="##incidents" data-toggle="tab">Incidents</a></li>
-					<li><a href="##bugs" data-toggle="tab">Bugs</a><li>
+					<li<cfif arguments.ppaging gte 1 and arguments.bpaging eq 0> class="active"</cfif>><a href="##incidents" data-toggle="tab">Incidents</a></li>
+					<li<cfif arguments.bpaging gte 1 and arguments.ppaging eq 0> class="active"</cfif>><a href="##bugs" data-toggle="tab">Bugs</a><li>
 				</ul>
 				<div class="tab-content">
-					<div id="incidents" class="tab-pane fade in active">
+					<div id="incidents" class="tab-pane fade<cfif arguments.ppaging gte 1 and arguments.bpaging eq 0> in active</cfif>">
 						<cfquery name="qryIncidents">
 							SELECT id, ProjectTitle, AxoSoftID FROM TTestProject
 							WHERE AxoSoftID LIKE 'COG%'
 							<cfif arguments.projectid neq 0>
-							AND AxoSoftProjectID = arguments.projectid
+							AND AxoSoftProjectID = #arguments.projectid#
 							</cfif>
 							ORDER BY AxoSoftID
 						</cfquery>
@@ -40,7 +40,12 @@
 								</ul>
 							</nav>
 							<table class="table table-condensed table-striped">
-								<cfloop query="qryIncidents" startrow="#((arguments.ppaging-1)*20)+1#" endrow="#((arguments.ppaging)*20)#">
+								<cfif arguments.ppaging eq 0>
+									<cfset ppage = 1>
+								<cfelse>
+									<cfset ppage = arguments.ppaging>
+								</cfif>
+								<cfloop query="qryIncidents" startrow="#((ppage-1)*20)+1#" endrow="#((ppage)*20)#">
 									<tr>
 										<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#id#/">#AxoSoftID#</a></td>
 										<td>#ProjectTitle#</td>
@@ -51,18 +56,36 @@
 							<div class="alert alert-warning"><h2>There are no AxoSoft incidents for this project.</h2></div>
 						</cfif>
 					</div>
-					<div id="bugs" class="tab-pane fade">
+					<div id="bugs" class="tab-pane fade<cfif arguments.bpaging gte 1 and arguments.ppaging eq 0> in active</cfif>">
 						<cfquery name="qryBugs">
 							SELECT id, ProjectTitle,AxoSoftID FROM TTestProject
 							WHERE AxoSoftID NOT LIKE 'COG%' and AxoSoftID IS NOT NULL
 							<cfif arguments.projectid neq 0>
-							AND AxoSoftProjectID = arguments.projectid
+							AND AxoSoftProjectID = #arguments.projectid#
 							</cfif>
 							ORDER BY AxoSoftID
 						</cfquery>
 						<cfif qryBugs.RecordCount gt 0>
+							<cfset btotalPages = ceiling(qryBugs.RecordCount/20)>
+							<cfset bthisPage = ceiling(arguments.bpaging/20)>
+							<nav>
+								<ul class="pagination pagination-sm">
+									
+									<li<cfif arguments.bpaging eq 1> class="disabled"</cfif>><a href="?bpage=#arguments.bpaging - 1#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+									<cfloop from="1" to="#btotalPages#" index="page">
+										<li<cfif page eq arguments.bpaging> class="active"</cfif>><a href="?bpage=#page#">#page#</a></li>
+									</cfloop>
+									
+									<li<cfif arguments.bpaging gte btotalPages> class="disabled"</cfif>><a href="?bpage=#arguments.bpaging + 1#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+								</ul>
+							</nav>
 							<table class="table table-condensed table-striped">
-								<cfloop query="qryBugs">
+								<cfif arguments.bpaging eq 0>
+									<cfset bpage = 1>
+								<cfelse>
+									<cfset bpage = arguments.bpaging>
+								</cfif>
+								<cfloop query="qryBugs" startrow="#((bpage-1)*20)+1#" endrow="#((bpage)*20)#">
 									<tr>
 										<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#id#/">#AxoSoftID#</a></td>
 										<td>#ProjectTitle#</td>
@@ -152,7 +175,7 @@
 					<table class="table table-condensed table-striped">
 						<cfloop query="qryProjects">
 						<tr>
-							<td colspan="2"><a href="project/#AxoSoftPid#/">#Name#</a></td>
+							<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/project/#AxoSoftPid#/">#Name#</a></td>
 						</tr>
 						<cfquery name="qryChildren" dbtype="query">
 							SELECT AxoSoftPId, Name, ParentId
@@ -1050,6 +1073,124 @@
 			</div>
 	</cffunction>
 	
+	<cffunction name="TestCaseHub" access="public" output="true">
+		<cfargument name="projectid" type="numeric" required="true">
+		<cfargument name="addTestCase" type="boolean" required="false" default="false">
+		<cfset objData = createObject("component","Data")>
+		<cfset qryTestProject = objData.getProject(arguments.projectid)>
+		<cfset qryTestCases = objData.qryTestCasesForProject(arguments.projectid)>
+		<cfset qryTestCounts = objData.qryTestCaseHistoryDataByProject(arguments.projectid)>
+		<cfset arrStatus = EntityLoad("TTestStatus")>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(".selectpicker").selectpicker();
+				$(document).off('change','##ddluser');
+				$(document).on('change','##ddluser',function() {
+					var testcaseid = $(this).attr("tcid");
+					var userid = $(this).val();
+					$.ajax({
+						url: 'cfc/Forms.cfc?method=assignTester',
+						type: 'POST',
+						data: { testcaseid : testcaseid, testerid : userid }
+					}).done(function() {
+						$("##topcontent").removeClass("panel").removeClass("panel-default");
+						<!---$("##topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+#arguments.scenarioid#);--->
+						$("##midrow").empty();
+						$("##activitypanel").remove();
+						$("##lnkReturnToProject").attr("pjid",#arguments.ProjectID#);
+						$("##lnkReturnToProject").show();
+						$("##createreportpanel").remove();
+					});
+				});
+			});
+			function onRowSelect(objCheckbox) {
+				if ($(objCheckbox).is(":checked")) {
+					$("##addLink").removeClass("disabled");
+					$("##removeLink").removeClass("disabled");
+				} else {
+					if ( $("input:checkbox[name=cbxId]").is(":checked") ) {
+						$("##addLink").removeClass("disabled");
+						$("##removeLink").removeClass("disabled");
+					} else {
+						$("##addLink").addClass("disabled");
+						$("##removeLink").addClass("disabled");
+					}
+				}
+			}
+		</script>
+		<div class="panel panel-default">
+			<div class="panel-heading"><span class="label label-info">#qryTestProject.getAxoSoftID()#</span> #qryTestProject.GetProjectTitle()#
+			<!---<div class="btn-group" style="float:right;margin-top:-5px;">
+				<a class="btn btn-sm btn-info" href="##">
+					<i class="fa fa-bar-chart fa-fw"></i> Scenario Reports</a>
+					<a class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" href="##"><span class="fa fa-caret-down"></span></a>
+					<ul id="tsreportmentu" class="dropdown-menu">
+						<li><a href='##' class='lnkQuickTSReport' reportvalue='TestScenarioTestsAndResults' scenarioid="#arrScenarioData.getId()#"><i class='fa fa-pie-chart fa-fw'></i> Tests and Results</a></li>
+						<li><a href='##' class='lnkQuickTSReport' reportvalue='TestScenarioActivity' scenarioid="#arrScenarioData.getId()#"><i class='fa fa-line-chart fa-fw'></i> Activity</a></li>
+				</ul></div>--->
+			</div>
+			<div class="panel-body">
+				<!---#TestScenarioTestsAndResults(arguments.scenarioid)#
+				---><div class="clearfix"></div>
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<h4>All Test Cases <small>(#qryTestCases.RecordCount#)</h4>
+					<div class="navbar">
+						<div class="navbar-inner">
+							<ul class="nav navbar-nav navbar-right">
+								<li>
+									<div class="btn-group">
+										<a href="##" id="addLink" class="lnkAddResults btn btn-info btn-xs disabled"><i class="fa fa-plus-square"></i> Update/Add Results</a>
+										<a href="##" id="removeLink" class="lnkRemoveTestCases btn btn-info btn-xs disabled"><i class="fa fa-trash-o"></i> Remove Test Case(s)</a>
+										<a href="?addTestCase=true" class="btn btn-info btn-xs"><i class="fa fa-plus-square"></i> Add Test Case</a>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<table class="table table-condensed table-striped table-hover">
+						<thead>
+							<tr>
+								<th></th>
+								<th>Case ID</th>
+								<th>Test Title</th>
+								<th>Assigned To</th>
+								<th>Status</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+						<cfloop query="qryTestCases">
+						<tr>
+							<td><input type="checkbox" id="cbxId" name="cbxId" class="cbxTestId" caseid="#id#" onclick="onRowSelect(this);"  /></td>
+							<td><h4 style="margin:0"><span class="label label-info">TC#id#</span></h4></td>
+							<td>#TestTitle#</td>
+							<td><select id='ddluser' class='selectpicker' data-style='btn-primary btn-xs' tcid='#id#'>
+									<cfset arrTesters = EntityLoad("TTestTester")>
+									<cfloop array="#arrTesters#" index="tester">
+										<option value="#tester.getId()#"<cfif tester.getUserName() eq UserName> selected="selected"</cfif>>#tester.getUserName()#</option>
+									</cfloop></select></td>
+							<td style="width:8%">
+								<cfset qryTestStatus = objData.qryGetCurrentTestStatus(id)>
+								<!---<select class="form-control selectpicker" caseid="#testcaseid#" data-style="#returnBSLabelStyle(qryTestStatus.Status[1],"btn")# btn-xs">
+								<cfloop array="#arrStatus#" index="indstatus">
+									<option value="#indstatus.getId()#"<cfif qryTestStatus.Status[1] eq indstatus.getStatus()> selected</cfif>>#indstatus.getStatus()#</option>
+								</cfloop>
+								</select>--->
+								<h4 style="margin:0;"><span class="label #returnBSLabelStyle(qryTestStatus.Status[1],'label')# label-xs">#qryTestStatus.Status[1]#</span></h4>
+							</td>
+							<td>
+								<a href="?edittc=#id#" class="btn btn-xs btn-success">Edit</a>&nbsp;
+								<a href="?deletetc=#id#" class="btn btn-xs btn-danger">Delete</a>
+							</td>
+						</tr>
+						</cfloop>
+						</tbody>
+					</table>						
+				</div>
+			</div>	
+		</div>
+	</cffunction>
+	
 	<cffunction name="TestScenarioHub" access="remote" output="true">
 		<cfargument name="scenarioid" type="numeric" required="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
@@ -1334,19 +1475,19 @@
 		</div>			
 	</cffunction>
 	
-	<cffunction name="getTestScenarios" access="remote" output="true" httpmethod="post">
+	<cffunction name="getTestScenarios" access="public" output="true">
 		<cfargument name="projectid" required="true">
-		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
+		<!---<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfreturn>
 		</cfif>
 		<cfif !StructKeyExists(SESSION,"ProjectID")>
 			<cfreturn>
-		</cfif>
+		</cfif>--->
 		<cfquery name="qryTestScenarios" dbtype="hql" ormoptions=#{maxresults=5}#>
 			FROM TTestScenario
-			WHERE ProjectID = <cfqueryparam value="#Session.ProjectID#">
+			WHERE ProjectID = <cfqueryparam value="#arguments.ProjectID#">
 		</cfquery>
-		<div id="paneltestscenarios" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+		<div id="paneltestscenarios">
 			<div class="panel panel-default">
 				<div class="panel-heading">Test Scenario Status<div class="btn-group" style="float:right;margin-top:-5px;"><a href="##" class="lnkAddScenario btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Scenario</a><a href="##" class="lnkViewScenarios btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
 				<div class="panel-body">

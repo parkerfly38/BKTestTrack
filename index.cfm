@@ -2,7 +2,14 @@
 	objData = createObject("component","cfc.Data");
 	objDashboard = createObject("component","cfc.Dashboard");
 	objAxoSoft = createObject("component","cfc.AxoSoft");
+	objForm = createObject("component","cfc.Forms");
 	local.testsAssigned = objDashboard.assignedTestsCount(Session.UserIDInt);
+	if ( StructKeyExists(form,"addCase") ) {
+		objForm.saveTestCase(0,form.txtTestTitle,form.txtTestDetails,form.ddPriorityId,form.ddlTypeId,url.item,form.txtPreconditions,form.txtSteps, form.txtExpectedResult, 0, form.txtEstimate);
+	}
+	if ( StructKeyExists(form,"saveCase") ) {
+		objForm.saveTestCase(form.saveCase, form.txtTestTitle, form.txtTestDetails, form.ddPriorityId, form.ddlTypeId, url.item, form.txtPreconditions,form.txtSteps, form.txtExpectedResult,0, form.txtEstimate);
+	}
 </cfscript>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,6 +42,13 @@
 				var trid = <cfoutput>#URL.TR#</cfoutput>;
 				$("#largeModal .modal-title").text("Test Result");
 				$("#largeModal .modal-body").load("http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/cfc/dashboard.cfc?method=getTestResult&testresultid="+trid);
+				$("#largeModal").modal("show");
+			});
+		</script>
+		</cfif>
+		<cfif StructKeyExists(url,"addTestCase") || StructKeyExists(url,"edittc")>
+		<script type="text/javascript">
+			$(document).ready(function() {
 				$("#largeModal").modal("show");
 			});
 		</script>
@@ -177,14 +191,25 @@
 		  			<cfif StructKeyExists(url,"ppage")>
 		  				<cfset local.ppaging = url.ppage>
 		  			<cfelse>
-		  				<cfset local.ppaging = 1>
+		  				<cfif StructKeyExists(url,"bpage")>
+		  					<cfset local.ppaging = 0>
+		  				<cfelse>
+		  					<cfset local.ppaging = 1>
+		  				</cfif>
 		  			</cfif>
 		  			<cfif StructKeyExists(url,"bpage")>
 		  				<cfset local.bpaging = url.bpage>
 		  			<cfelse>
-		  				<cfset local.bpaging = 1>
+		  				<cfif StructKeyExists(url,"ppage")>
+		  					<cfset local.bpaging = 0>
+		  				<cfelse>
+		  					<cfset local.bpaging = 0>
+		  				</cfif>
 		  			</cfif>
 		  			<cfoutput>#objDashboard.listAxoSoftItems(objAxoSoft.getItems(url.projectid,Session.AxoSoftToken),url.projectid,local.ppaging,local.bpaging)#</cfoutput>
+		  		</cfif>
+		  		<cfif StructKeyExists(url,"item")>
+		  			<cfoutput>#objDashboard.TestCaseHub(url.item)#</cfoutput>
 		  		</cfif>
 		  		<div id="midrow" class="row"></div>
 		  	</div>
@@ -197,10 +222,18 @@
 		    <div class="modal-content" style="background-color:#FFF;">
 		      <div class="modal-header">
 		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		        <h4 class="modal-title" id="myModalLabel">Large Modal</h4>
+		        <h4 class="modal-title" id="myModalLabel">
+		        	<cfif StructKeyExists(url,"addTestCase")>Add/Edit Test Case</cfif>
+		        </h4>
 		      </div>
 		      <div class="modal-body">
+		      	<cfif StructKeyExists(url,"addTestCase")>
+		      		<cfoutput>#objForm.TestCaseForm(0,url.item)#</cfoutput>
+		      	<cfelseif StructKeyExists(url,"edittc")>
+		      		<cfoutput>#objForm.TestCaseForm(url.edittc,url.item)#</cfoutput>
+		      	<cfelse>
 		        <h3><i class="fa fa-cog fa-spin"></i></h3>
+		        </cfif>
 		      </div><div class="clearfix"></div>
 		      <div class="modal-footer">
 		        <button id="btnClose" type="button" class="btn btn-default">Close</button>
