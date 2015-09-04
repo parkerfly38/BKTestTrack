@@ -118,6 +118,7 @@
 								 	newTestProject.setRepositoryType(1);
 								 	newTestProject.setClosed(0);
 								 	newTestProject.setAxoSoftProjectID(i.project.id);
+								 	newTestProject.setAxoSoftSystemID(i.id);
 								 	EntitySave(newTestProject);
 								 }							
 							</cfscript>
@@ -145,6 +146,7 @@
 								 	newTestProject.setRepositoryType(1);
 								 	newTestProject.setClosed(0);
 								 	newTestProject.setAxoSoftProjectID(i.project.id);
+								 	newTestProject.setAxoSoftSystemID(i.id);
 								 	EntitySave(newTestProject);
 								 }							
 							</cfscript>

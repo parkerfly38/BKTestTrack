@@ -9,10 +9,15 @@
 	<cffunction name="getItems" access="public">
 		<cfargument name="project_id" type="numeric" default="0">
 		<cfargument name="access_token" required="true">
-		<cfif !Application.AxoSoftUseAPI>
+		<!---<cfif !Application.AxoSoftUseAPI>
 			<cfreturn structNew()>
+		</cfif>--->
+		<cfif project_id gt 0>
+			<cfset querystring = "?access_token=" & arguments.access_token & "&project_id=" & arguments.project_id>
+		<cfelse>
+			<cfset querystring = "?access_token=" & arguments.access_token>
 		</cfif>
-		<cfhttp url="#Application.AxoSoftURL#api/v5/items/?access_token=#arguments.access_token#&project_id=#arguments.project_id#" method="get" result="httpResult">
+		<cfhttp url="https://cornerops.axosoft.com/api/v5/items#querystring#" method="get" result="httpResult">
 		<cfreturn DeSerializeJSON(httpResult.fileContent) />
 	</cffunction>
 	

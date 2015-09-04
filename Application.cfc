@@ -52,7 +52,7 @@
     			</cfif>
     		</cfif>
     	</cfif>
-		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin) && !FindNoCase("logon.cfc",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport.cfm",CGI.SCRIPT_NAME) && !FindNoCase("AxoSoftRedirect.cfm",CGI.SCRIPT_NAME) && !FindNoCase(".cfr",CGI.SCRIPT_NAME) && !FindNoCase("report",CGI.SCRIPT_NAME)>
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin) && !FindNoCase("logon.cfc",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport.cfm",CGI.SCRIPT_NAME) && !FindNoCase("AxoSoftRedirect.cfm",CGI.SCRIPT_NAME) && !FindNoCase(".cfr",CGI.SCRIPT_NAME) && !FindNoCase("report",CGI.SCRIPT_NAME) && !FindNoCase("skedtasks",CGI.SCRIPT_NAME)>
 			<cfset Session.OrigURL = CGI.SERVER_NAME & "/" & CGI.SCRIPT_NAME & "?" & CGI.QUERY_STRING>
 			<cflocation url="/CFTestTrack/login.cfm" addtoken="false" />
 		</cfif>
@@ -68,7 +68,7 @@
 		
 		writeOutput( pageContent );
 		getPageContext().getOut().flush();
-		if (!FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport",CGI.Script_NAME) && !FindNoCase("report",CGI.SCRIPT_NAME)) {
+		if (!FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport",CGI.Script_NAME) && !FindNoCase("report",CGI.SCRIPT_NAME) && !FindNoCase("axosoftgrab",CGI.ScRIPT_NAME)) {
 			StructUpdate(application.SessionTracker,Session.UserIDInt,Now());
 		}
 		</cfscript>

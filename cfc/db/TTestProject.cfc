@@ -12,6 +12,8 @@ component table="TTestProject" persistent="true"
 	property name="Closed";
 	property name="Color" getter="false";
 	property name="AxoSoftProjectID";
+	property name="AxoSoftSystemID";
+	property name="AxoSoftClient";
 	
 	public TTestProject function init()
 	{
