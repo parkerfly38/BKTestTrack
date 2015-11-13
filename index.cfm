@@ -31,7 +31,7 @@
 		<script type="text/javascript">
 			
 			var projectid;
-			<cfif StructKeyExists(Session,"ProjectID")>projectid = #Session.ProjectID#;</cfif>
+			<cfif StructKeyExists(url,"ProjectID")>projectid = #url.ProjectID#;</cfif>
 			
 		</script>
 		</cfoutput>
@@ -131,15 +131,15 @@
 		            <span class="icon-bar"></span>
 	            	<span class="icon-bar"></span>
 	          	</button>
-	          	<a class="navbar-brand" href="#" id="lnkHome">CFTestTrack</a>
+	          	<a class="navbar-brand" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/" id="lnkHome">CFTestTrack</a>
 	          </div>
 		      <div id="navbar" class="navbar-collapse collapse">
-		        <ul id="uldashboard" class="nav navbar-nav navbar-right" <cfif !StructKeyExists(Session,"ProjectID")>style="display:none;"</cfif>>
+		        <ul id="uldashboard" class="nav navbar-nav navbar-right" <cfif !StructKeyExists(url,"ProjectID")>style="display:none;"</cfif>>
 		        	<li><a id="lnkReturnAllProjects" href="#" style="display:none;"><i class="fa fa-long-arrow-left"></i> All Projects Dashboard</a></li>
 		        </ul>
 		        <ul class="nav navbar-nav">
 		          <li><a id="lnkReturnToProject" class="pjlink" style="display:none;" href="#"><!---<i class="fa fa-home"></i>---> Project Home</a></li>
-		          <li class="dropdown ddmMilestones" style="display:none;"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-map-marker"> </i> --->Milestones</a>
+		          <li class="dropdown ddmMilestones"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-map-marker"> </i> --->Milestones</a>
 		          	<ul class="dropdown-menu" role="menu">
 		          		<li><a class="lnkViewMilestones" href="#">View All</a></li>
 		          		<li><a class="lnkAddMilestone" href="##">Add</a></li>
@@ -181,13 +181,24 @@
 		    </div>
 	    </nav>
 	    
-	  <div class="container-fluid" style="background:none;">
+	  <div class="container" style="background:none;">
 		  <div class="row">
 		  	<div id="projectcontent" class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-		  		<cfoutput>#objDashboard.listAxoSoftProjects(objAxoSoft.getProjects(Session.AxoSoftToken))#</cfoutput>
+		  		<cfif Application.AxoSoftIntegration>
+		  			<cfoutput>#objDashboard.listAxoSoftProjects(objAxoSoft.getProjects(Session.AxoSoftToken))#</cfoutput>
+		  		<cfelse>
+		  			<cfoutput>#objDashboard.listProjects()#</cfoutput>
+		  		</cfif>
 		  	</div>
 		  	<div id="featurecontent" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+		  		<cfif StructKeyExists(url,"scenarioid")>
+		  			<cfif isNumeric(url.scenarioid)>
+		  				<cfoutput>#objDashboard.TestScenarioHub(url.scenarioid)#</cfoutput>
+		  			</cfif>
+		  		</cfif>
 		  		<cfif StructKeyExists(url,"projectid")>
+		  			<cfif isNumeric(url.projectid)>
+		  			<cfoutput>#objDashboard.HubChart(url.projectid)#</cfoutput>
 		  			<cfif StructKeyExists(url,"ppage")>
 		  				<cfset local.ppaging = url.ppage>
 		  			<cfelse>
@@ -206,14 +217,30 @@
 		  					<cfset local.bpaging = 0>
 		  				</cfif>
 		  			</cfif>
-		  			<cfoutput>#objDashboard.listAxoSoftItems(objAxoSoft.getItems(url.projectid,Session.AxoSoftToken),url.projectid,local.ppaging,local.bpaging)#</cfoutput>
+		  				<cfif Application.AxoSoftIntegration>
+		  				<cfoutput>#objDashboard.listAxoSoftItems(objAxoSoft.getItems(url.projectid,Session.AxoSoftToken),url.projectid,local.ppaging,local.bpaging)#</cfoutput>
+		  				<cfelse>
+		  					<cfoutput>#objDashboard.listTestScenarios(url.projectid)#</cfoutput>
+		  				</cfif>
+		  			<cfelse>
+		  				<cfoutput>#objForm.ProjectForm()#</cfoutput>
+		  			</cfif>
+		  		</cfif>
+		  		<cfif StructIsEmpty(url)>
+		  			<cfif !Application.AxoSoftIntegration>
+		  				<cfoutput>#objDashboard.AllProjectsChart()#</cfoutput>
+		  			</cfif>
 		  		</cfif>
 		  		<cfif StructKeyExists(url,"item")>
 		  			<cfoutput>#objDashboard.TestCaseHub(url.item)#</cfoutput>
 		  		</cfif>
 		  		<div id="midrow" class="row"></div>
 		  	</div>
-		  	<div id="actioncontent" class="col-xs-3 col-sm-3 col-md-3 col-lg-3"></div>
+		  	<div id="actioncontent" class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+		  		<cfif StructKeyExists(url,"projectid") && IsNumeric(url.projectId)>
+		  			<cfoutput>#objDashboard.getMilestones(url.projectid)#</cfoutput>
+		  		</cfif>	  		
+		  	</div>
 		  </div>
 	  </div>
 	  
@@ -260,24 +287,6 @@
 		    </div>
   	   	</div> 
 	 </div>
-	 <div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModal" aria-hidden="true">
-		  <div class="modal-dialog modal-sm" style="background-color:#FFF;">
-		    <div class="modal-content" style="background-color:#FFF;">
-		      <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		        <h4 class="modal-title" id="myModalLabel">Chat</h4>
-		      </div>
-		      <div class="modal-body" style="overflow:scroll;height:300px;">
-		        <h3><i class="fa fa-cog fa-spin"></i></h3>
-		      </div><div class="clearfix"></div>
-		      <div class="modal-footer">
-		        <div class="input-group">
-		        	<input type="text" id="chatmessage" class="form-control" placeholder="Type your chat message..." />
-		        	<span class="input-group-btn"><button class='sendchat btn btn-info' type='button' fromid='0' toid='0'>Send</button></span>
-		        </div>		        
-		      </div>
-		    </div>
-  	   	</div> 
-	 </div>
+	 
 </body>
 </html>

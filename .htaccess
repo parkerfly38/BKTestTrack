@@ -1,4 +1,5 @@
 RewriteEngine on 
 RewriteRule ^project/(.*)/$ index.cfm?projectid=$1
+RewriteRule ^scenario/(.*)/$ index.cfm?scenarioid=$1
 #RewriteRule ^.*$ testreport.cfm
 

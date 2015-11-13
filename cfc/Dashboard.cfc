@@ -163,6 +163,32 @@
 		</div>
 	</cffunction>
 	
+	<cffunction name="listProjects" access="public" output="true">
+		<div id="panelaxosoftprojects" class="panel panel-default">
+			<div class="panel-heading"><i class="fa fa-wrench"></i> Projects</div>
+			<div class="panel-body">
+				<cfset objData = new CFTestTrack.cfc.Data()>
+				<cfset arrProjects = objData.getAllProjects()>
+				<table class="table table-condensed table-striped">
+					<tr>
+						<td colspan="2">
+							<a href="http://#cgi.server_name#/CFTestTrack/project/add/"><i class="fa fa-plus-circle"></i> Add Project</a>
+						</td>
+					</tr>
+					<cfif ArrayLen(arrProjects) gt 0>
+					<cfloop array="#arrProjects#" index="i">
+					<tr>
+						<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/project/#i.getId()#/">#i.getProjectTitle()#</a>
+							
+						</td>
+					</tr>
+					</cfloop>
+					</cfif>
+				</table>
+			</div>
+		</div>
+	</cffunction>					
+	
 	<cffunction name="listAxoSoftProjects" access="public" output="true">
 		<cfargument name="axosoftprojects" type="struct">
 		<div id="panelaxosoftprojects" class="panel panel-default">
@@ -175,6 +201,8 @@
 						FROM TTestAxoSoftProject
 					</cfquery>
 					<table class="table table-condensed table-striped">
+						<tr><td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/project/add/"><i class="fa fa-plus-circle"></i> Add Project</a></td>
+						</tr>
 						<cfloop query="qryProjects">
 						<tr>
 							<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/project/#AxoSoftPid#/">#Name#</a></td>
@@ -239,6 +267,41 @@
 		</div>
 	</cffunction>
 	
+	<cffunction name="listTestScenarios" access="public" output="true">
+		<cfargument name="projectid" required="true">
+		<cfquery name="qryTestScenarios" dbtype="hql" ormoptions=#{maxresults=5}#>
+			FROM TTestScenario
+			WHERE ProjectID = <cfqueryparam value="#arguments.ProjectID#">
+		</cfquery>
+		<div class="panel panel-default">
+				<div class="panel-heading">Test Scenario Status<div class="btn-group" style="float:right;margin-top:-5px;"><a href="##" class="lnkAddScenario btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Scenario</a><a href="##" class="lnkViewScenarios btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
+				<div class="panel-body">
+					<cfif ArrayLen(qryTestScenarios) gt 0>
+					<table class="table table-striped table-condensed">
+						<thead>
+							<th>Test Scenario</th>
+							<th>Tests Assigned</th>
+							<th></th>
+						</thead>
+						<tbody>
+							<cfloop array="#qryTestScenarios#" index="scenario">
+								<cfset objData = createObject("component","Data")>
+								<cfset qryTestCases = objData.qryTestCaseForScenarios(scenario.getId())>
+								<tr>
+									<td><a href="http://#cgi.server_name#/CFTestTrack/scenario/#scenario.getId()#/" scenarioid="#scenario.getId()#"><cfif Len(scenario.getAxoSoftNumber()) gt 0>#scenario.getAxoSoftNumber()# - </cfif>#scenario.getTestScenario()#</a></td>
+									<td>(#qryTestCases.RecordCount#)</td>
+									<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteScenario btn btn-danger btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-trash"></i> Delete</a></td>
+								</tr>
+							</cfloop>
+						</tbody>
+					</table>
+					<cfelse>
+					<div class="alert alert-warning"><h4>This project doesn't contain any test scenarios.</h4>Please add one from the actions link to the right.</div>
+					</cfif>
+				</div>
+			</div>
+	</cffunction>
+	
 	<cffunction name="getTestResult" access="remote" output="true" httpmethod="GET">
 		<cfargument name="testresultid" required="true">
 		<cfset arrTestResult = EntityLoadByPK("TTestResult",arguments.testresultid)>
@@ -252,7 +315,7 @@
 		</cfscript>
 	</cffunction>	
 		
-	<cffunction name="HubChart" access="remote" output="true" httpmethod="POST">
+	<cffunction name="HubChart" access="public" output="true">
 		<cfargument name="projectid" required="false" default="0">
 		<cfquery name="qryName" dbtype="hql">
 			FROM TTestProject
@@ -422,13 +485,13 @@
 			</div>
 	</cffunction>
 	
-	<cffunction name="AllProjectsChart" access="remote" output="false">
+	<cffunction name="AllProjectsChart" access="remote" output="true">
 		<cfstoredproc procedure="PGeneralActivityByProject">
 			<cfprocresult name="qryGeneralActivity">
 		</cfstoredproc>
 		<cfset arrColor = ['red','green','blue','yellow','gray','black','pink','brown'] />
-		<div id="topcontent" class="panel panel-default">
-		<div class="panel-heading" id="activitytitle">All Projects</div>
+		<div class="panel panel-default">
+		<div class="panel-heading" id="activitytitle"><i class="fa fa-pie-chart"></i> All Projects</div>
 		<div class="panel-body">
 			<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
 			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
@@ -497,7 +560,6 @@
 					};
 					var chartObj = new Chart(document.getElementById("chartcanvas").getContext("2d")).Line(barData,options);
 		</script>
-		</div>
 		</div>
 	</cffunction>
 	
@@ -1193,7 +1255,7 @@
 		</div>
 	</cffunction>
 	
-	<cffunction name="TestScenarioHub" access="remote" output="true">
+	<cffunction name="TestScenarioHub" access="public" output="true">
 		<cfargument name="scenarioid" type="numeric" required="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfreturn>
@@ -1220,7 +1282,7 @@
 						$("##topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+#arguments.scenarioid#);
 						$("##midrow").empty();
 						$("##activitypanel").remove();
-						$("##lnkReturnToProject").attr("pjid",#Session.ProjectID#);
+						<!---$("##lnkReturnToProject").attr("pjid",#Session.ProjectID#);--->
 						$("##lnkReturnToProject").show();
 						$("##createreportpanel").remove();
 					});
@@ -1433,7 +1495,7 @@
 		
 	</cffunction>
 
-	<cffunction name="getMilestones" access="remote" output="true" httpmethod="post">
+	<cffunction name="getMilestones" access="public" output="true">
 		<cfargument name="projectid" required="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfreturn>
@@ -1444,7 +1506,7 @@
 			AND (DueOn >= <cfqueryparam value="#DateFormat(now(),'yyyy-mm-dd')#"> OR Closed = 0)
 			ORDER By DueOn ASC
 		</cfquery>
-		<div id="panelmilestones" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+		<div id="panelmilestones">
 			<div class="panel panel-default">
 				<div class="panel-heading">Top 5 Milestones<div class="btn-group" style="float:right;margin-top:-5px;"><a href="##" class="lnkAddMilestone btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Milestone</a><a href="##" class="lnkViewMilestones btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
 				<div class="panel-body">
@@ -1475,49 +1537,6 @@
 				</div>
 			</div>
 		</div>			
-	</cffunction>
-	
-	<cffunction name="getTestScenarios" access="public" output="true">
-		<cfargument name="projectid" required="true">
-		<!---<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfreturn>
-		</cfif>
-		<cfif !StructKeyExists(SESSION,"ProjectID")>
-			<cfreturn>
-		</cfif>--->
-		<cfquery name="qryTestScenarios" dbtype="hql" ormoptions=#{maxresults=5}#>
-			FROM TTestScenario
-			WHERE ProjectID = <cfqueryparam value="#arguments.ProjectID#">
-		</cfquery>
-		<div id="paneltestscenarios">
-			<div class="panel panel-default">
-				<div class="panel-heading">Test Scenario Status<div class="btn-group" style="float:right;margin-top:-5px;"><a href="##" class="lnkAddScenario btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Scenario</a><a href="##" class="lnkViewScenarios btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
-				<div class="panel-body">
-					<cfif ArrayLen(qryTestScenarios) gt 0>
-					<table class="table table-striped table-condensed">
-						<thead>
-							<th>Test Scenario</th>
-							<th>Tests Assigned</th>
-							<th></th>
-						</thead>
-						<tbody>
-							<cfloop array="#qryTestScenarios#" index="scenario">
-								<cfset objData = createObject("component","Data")>
-								<cfset qryTestCases = objData.qryTestCaseForScenarios(scenario.getId())>
-								<tr>
-									<td><a href="##" class="lnkOpenScenarioHub" scenarioid="#scenario.getId()#"><cfif Len(scenario.getAxoSoftNumber()) gt 0>#scenario.getAxoSoftNumber()# - </cfif>#scenario.getTestScenario()#</a></td>
-									<td>(#qryTestCases.RecordCount#)</td>
-									<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteScenario btn btn-danger btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-trash"></i> Delete</a></td>
-								</tr>
-							</cfloop>
-						</tbody>
-					</table>
-					<cfelse>
-					<div class="alert alert-warning"><h4>This project doesn't contain any test scenarios.</h4>Please add one from the actions link to the right.</div>
-					</cfif>
-				</div>
-			</div>
-		</div>
 	</cffunction>
 	
 	<cffunction name="getLinks" access="remote" output="true">

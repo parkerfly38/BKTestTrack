@@ -253,9 +253,7 @@
 	
 	<cffunction name="MilestoneForm" access="remote" output="true">
 		<cfargument name="milestoneid" required="false" default="0" type="numeric">
-		<cfif !(StructKeyExists(Session,"ProjectID"))>
-			<cfexit>
-		</cfif>
+		<cfargument name="projectid" required="false" default="0" type="numeric">
 		<cfif !(StructKeyExists(Session,"LoggedIn")) || !Session.LoggedIn>
 			login
 			<cfexit>
@@ -285,7 +283,7 @@
 							MilestoneDescription : $("##txtMilestoneDescription").val(),
 							DueOn : $("##txtDueOn").val(),
 							Closed : $("##cbxClosed").is(":checked"),
-							ProjectID : '#Session.ProjectID#'
+							ProjectID : '#arguments.ProjectID#'
 						}
 					}).done(function(data) {
 						if ( data == "true" )
@@ -473,10 +471,8 @@
 	</cffunction>
 	
 	<cffunction name="TestScenarioForm" access="remote" output="true">
+		<cfargument name="projectid" required="True" default="0" type="numeric">
 		<cfargument name="testscenarioid" required="False" default="0" type="numeric">
-		<cfif !(StructKeyExists(Session,"ProjectID"))>
-			<cfreturn>
-		</cfif>
 		<cfif arguments.testscenarioid gt 0>
 			<cfset arrTestScenario = EntityLoadByPK("TTestScenario",arguments.testscenarioid)>
 		<cfelse>
@@ -511,7 +507,7 @@
 							TestDescription : $("##txtTestDescription").val(),
 							MilestoneID : $("##txtMilestoneID").val(),
 							TestDescription : $("##txtTestDescription").val(),
-							ProjectID : '#Session.ProjectID#',
+							ProjectID : '#arguments.ProjectID#',
 							SectionID : $("##ddlSectionId").val(),
 							AxoSoftNumber : $("##txtAxoSoftNumber").val()
 						}
@@ -550,7 +546,7 @@
 			
 			<div class="form-group">
 				<label for="ddlSectionId">Testing Section</label>
-				<cfset arrSections = EntityLoad("TTestProjectTestSection",{ProjectID = Session.ProjectID})>
+				<cfset arrSections = EntityLoad("TTestProjectTestSection",{ProjectID = arguments.ProjectID})>
 				<select class="form-control selectpicker" id="ddlSectionId" name="ddlSectionId" data-style="btn-info">
 					<option value="0" <cfif arrTestScenario.getSectionId() eq 0>selected</cfif>>Select a section</option>
 					<cfloop array="#arrSections#" index="section">
@@ -573,7 +569,7 @@
 							<ul class="dropdown-menu">
 								<cfquery name="qryMilestones" dbtype="hql">
 									FROM TTestMilestones
-									WHERE ProjectID = <cfqueryparam value="#Session.ProjectID#">
+									WHERE ProjectID = <cfqueryparam value="#arguments.ProjectID#">
 								</cfquery>
 								<cfif ArrayLen(qryMilestones) gt 0>
 									<cfloop array="#qryMilestones#" index="ms">
@@ -673,6 +669,9 @@
 				});		
 			});
 		</script>
+		<div class="panel panel-default">
+			<div class="panel-heading"><i class="fa fa-plus"></i> Add Project</div>
+			<div class="panel-body">
 		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
 			<div class="form-group required">
 				<label for="txtProjectTitle">Name</label>
@@ -690,7 +689,7 @@
 				</div>
 			</div>
 			<input type="hidden" name="txtRepositoryType" id="txtRepositoryType" value="#IsNull(arrProject.getRepositoryType()) ? 1 : arrProject.getRepositoryType()#" />
-			<div class="list-group">
+			<div class="list-group" style="display:none;">
 				<a href="##" class="list-group-item<cfif arrProject.getRepositoryType() eq 1 or IsNull(arrProject.getRepositoryType())> active</cfif>" rtvalue="1">
 					<h4 class="list-group-item-heading">Use a single test scenario for all test cases</h4>
 					<p class="list-group-item-text">For smaller projects where you may not have a need to compartmentalize versions or test cases.  You can still use sections to compartmentalize your testing.</p>
@@ -724,6 +723,8 @@
 				</div>
 			</div>
 			</cfif>
+		</div>
+		</div>
 		</div>
 	</cffunction>
 	<!--- form processing --->

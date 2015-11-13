@@ -47,7 +47,7 @@ $(document).ready(function() {
 		
 	projectIDCheck();
 	
-	initialLoadTimer = setInterval(function() {homeLoad()},10);
+	//initialLoadTimer = setInterval(function() {homeLoad()},10);
 	linkstimervar = setInterval(function() {insertLinks()},10);
 	todotimervar = setInterval(function() {insertTodos()},10);
 	timervar = setInterval(function() {insertAdditional()},10);
@@ -58,7 +58,7 @@ $(document).ready(function() {
 		var userid = $("a#lnkAssignedTests").attr("userid");
 		$("#featurecontent").load("/CFTestTrack/cfc/dashboard.cfc?method=assignedTestsGrid&userid="+userid+"&page=1&pageSize=10");
 	});
-	$("a#lnkHome").click(function(event) {
+	/*$("a#lnkHome").click(function(event) {
 		event.preventDefault();
 		$.ajax({ url:"/CFTestTrack/cfc/Dashboard.cfc?method=removeSessionProject",type:"POST"}).done(function()
 		{
@@ -67,7 +67,7 @@ $(document).ready(function() {
 			$("#panel-actions").remove();
 			homeLoad();
 		});
-	});
+	});*/
 	
 	$("a#lnkReturnAllProjects").click(function(event) {
 		event.preventDefault();
