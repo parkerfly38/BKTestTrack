@@ -12,14 +12,14 @@
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 	    <meta name="description" content="">
 	    <meta name="author" content="">
-	    <title>CFTestTracker Settings</title>
+	    <title>CFTestTrack :: Settings</title>
 	    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-		<link rel="stylesheet" href="style/bootstrap.css" />
-		<link href="font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" />
-		<script type="text/javascript" src="scripts/jquery-1.10.2.min.js"></script>
-		<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/style/bootstrap.css" />
+		<link href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" />
+		<script type="text/javascript" src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/scripts/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/scripts/bootstrap.min.js"></script>
 		<style>
-			body { padding-top: 60px; background: url('/CFTestTrack/images/bg.png'); }
+			body { padding-top: 60px; background-color: #9F5F9F; }
 			.rowoffset { margin-bottom: 20px; }
 			.form-group.required .control-label:after {
 				content:"*";
@@ -34,7 +34,7 @@
 		</style>
 	</head>
 	<body>
-		<nav class="navbar navbar-inverse navbar-fixed-top">
+		<nav class="navbar navbar-default navbar-fixed-top">
 		    <div class="container">
 		      <div class="navbar-header">
 		      	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -43,17 +43,17 @@
 		            <span class="icon-bar"></span>
 	            	<span class="icon-bar"></span>
 	          	</button>
-	          	<a class="navbar-brand" href="index.cfm" id="lnkHome">CFTestTrack</a>
+	          	<a class="navbar-brand" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/" id="lnkHome" style="padding:3px;"><img src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/images/TestTrack.png" border="0" style="height: 45px; width: auto;" /></a>
 	          </div>
 		      <div id="navbar" class="navbar-collapse collapse">
 		      
 		        <ul class="nav navbar-nav">
 		          <li><a id="lnkReturnToProject" class="pjlink" style="display:none;" href="index.cfm"><i class="fa fa-home"></i> Home</a></li>
-		          <li><a href="/CFTestTrack/settings.cfm?ac=users">Users</a></li>
-		          <li><a href="/CFTestTrack/settings.cfm?ac=settings">System Settings</a></li>
-		          <li><a href="/CFTestTrack/settings.cfm?ac=sked">Scheduled Tasks</a></li>
-		          <li><a href="/CFTestTrack/settings.cfm?ac=links">Links</a></li>
-		          <li><a href="/CFTestTrack/cfc/Logon.cfc?method=Logout"> <i class="fa fa-power-off"></i> Log out</a></li>
+		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings.cfm?ac=users">Users</a></li>
+		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings.cfm?ac=settings">System Settings</a></li>
+		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings.cfm?ac=sked">Scheduled Tasks</a></li>
+		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings.cfm?ac=links">Links</a></li>
+		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/logout/"> <i class="fa fa-power-off"></i> Log out</a></li>
 		        </ul>
 		      </div><!--/.nav-collapse -->
 		    </div>

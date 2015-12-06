@@ -48,7 +48,7 @@ $(document).ready(function() {
 	projectIDCheck();
 	
 	//initialLoadTimer = setInterval(function() {homeLoad()},10);
-	linkstimervar = setInterval(function() {insertLinks()},10);
+	//linkstimervar = setInterval(function() {insertLinks()},10);
 	todotimervar = setInterval(function() {insertTodos()},10);
 	timervar = setInterval(function() {insertAdditional()},10);
 	logincheck = setInterval(function() {checkLoggedIn()}, 30*60*1000);

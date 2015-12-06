@@ -13,6 +13,7 @@
 	<cfset this.mappings["/reportpdfs"] = "#this.directory#reportpdfs/">
 	<cfset this.mappings["/excel"] = "#this.directory#excel/">
 	<cfset this.mappings["/avatars"] = "#this.directory#images/avatars/">
+	<cfset this.wschannels = [{name="general",cfclistener="cfc.Chat"}] >
 	<!--- production only 
 	<cfsetting showdebugoutput="false" />--->
 	
@@ -52,7 +53,7 @@
     			</cfif>
     		</cfif>
     	</cfif>
-		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin) && !FindNoCase("logon.cfc",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport.cfm",CGI.SCRIPT_NAME) && !FindNoCase("AxoSoftRedirect.cfm",CGI.SCRIPT_NAME) && !FindNoCase(".cfr",CGI.SCRIPT_NAME) && !FindNoCase("report",CGI.SCRIPT_NAME) && !FindNoCase("skedtasks",CGI.SCRIPT_NAME)>
+		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin) && !FindNoCase("logon.cfc",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport.cfm",CGI.SCRIPT_NAME) && !FindNoCase("AxoSoftRedirect.cfm",CGI.SCRIPT_NAME) && !FindNoCase(".cfr",CGI.SCRIPT_NAME) && !FindNoCase("report",CGI.SCRIPT_NAME) && !FindNoCase("skedtasks",CGI.SCRIPT_NAME) && !FindNoCase("chat.cfm", CGI.SCRIPT_NAME)>
 			<cfset Session.OrigURL = CGI.SERVER_NAME & "/" & CGI.SCRIPT_NAME & "?" & CGI.QUERY_STRING>
 			<cflocation url="/CFTestTrack/login.cfm" addtoken="false" />
 		</cfif>
@@ -78,11 +79,6 @@
 	<cffunction name="onSessionEnd">
 	    <cfargument name = "SessionScope" required=true/>
 	    <cfargument name = "AppScope" required=true/>
-	    <!---<cfset var sessionLength = TimeFormat(Now() - SessionScope.started,
-	        "H:mm:ss")>
-	    <cflock name="AppLock" timeout="5" type="Exclusive">
-	        <cfset Arguments.AppScope.sessions = Arguments.AppScope.sessions - 1>
-	    </cflock>--->
 		<cfset temp = StructDelete(application.SessionTracker, Arguments.SessionScope.UserIDInt) />
 	</cffunction>
 	
@@ -125,6 +121,8 @@
 		<!---bk if we pull from a nightly/hourly job from axosoft instead of real time API reference --->
 		<cfset qryAxoSoftUseAPI = EntityLoad("TTestSettings",{Setting="AxoSoftUseAPI"},true)>
 		<cfset Application.AxoSoftUseAPI = qryAxoSoftUseAPI.getSettingValue()>
+		<cfset Application.ChatStruct = StructNew()>
+		<cfset Application.ChatStruct.connectionInfo.userName = "CFTestTrack" />
 	</cffunction>
 	
 	<cffunction name="onMissingTemplate" output="true">
@@ -132,4 +130,13 @@
 		#arguments.template#
 	</cffunction>
 
+	<cffunction name="onWSAuthenticate">
+		<cfargument name="username" type="string" />
+		<cfargument name="password" type="string" />
+		<cfargument name="connectionInfo" type="Struct" />
+		
+		<cfset connectionInfo.username=arguments.username />
+		<cfreturn true />
+	</cffunction>
+	
 </cfcomponent>

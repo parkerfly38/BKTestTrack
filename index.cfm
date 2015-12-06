@@ -1,4 +1,8 @@
 <cfscript>
+	if ( StructKeyExists(url,"logout") ) {
+		objLogon = createObject("component","cfc.Logon");
+		objLogon.Logout();
+	}
 	objData = createObject("component","cfc.Data");
 	objDashboard = createObject("component","cfc.Dashboard");
 	objAxoSoft = createObject("component","cfc.AxoSoft");
@@ -66,7 +70,7 @@
 		</script>
 		</cfif>
 		<style>
-			body { padding-top: 60px; background: url('/CFTestTrack/images/bg.png'); }
+			body { padding-top: 60px; }
 			.rowoffset { margin-bottom: 20px; }
 			.form-group.required .control-label:after {
 				content:"*";
@@ -121,8 +125,8 @@
     		}
 		</style>
 	</head>
-	<body>
-		<nav class="navbar navbar-inverse navbar-fixed-top">
+	<body style="background-color: #9F5F9F;">
+		<nav class="navbar navbar-default navbar-fixed-top">
 		    <div class="container">
 		      <div class="navbar-header">
 		      	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -131,7 +135,7 @@
 		            <span class="icon-bar"></span>
 	            	<span class="icon-bar"></span>
 	          	</button>
-	          	<a class="navbar-brand" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/" id="lnkHome">CFTestTrack</a>
+	          	<a class="navbar-brand" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/" id="lnkHome" style="padding:3px;"><img src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/images/TestTrack.png" border="0" style="height: 45px; width: auto;" /></a>
 	          </div>
 		      <div id="navbar" class="navbar-collapse collapse">
 		        <ul id="uldashboard" class="nav navbar-nav navbar-right" <cfif !StructKeyExists(url,"ProjectID")>style="display:none;"</cfif>>
@@ -174,8 +178,8 @@
 		          	</ul>
 		          </li>
 		          <li><a class="lnkViewReports" href="#" style="display:none;"><!---<i class="fa fa-bars"> </i> --->Reporting</a></li>
-		          <li><a href="settings.cfm"> <!---<i class="fa fa-gear"></i>---> Settings</a></li>
-		          <li><a href="/CFTestTrack/cfc/Logon.cfc?method=Logout"> <!---<i class="fa fa-power-off"></i>---> Log out</a></li>
+		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings/"> <!---<i class="fa fa-gear"></i>---> Settings</a></li>
+		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/logout/"> <i class="fa fa-power-off"></i> Log out</a></li>
 		        </ul>
 		      </div><!--/.nav-collapse -->
 		    </div>
@@ -237,6 +241,15 @@
 		  		<div id="midrow" class="row"></div>
 		  	</div>
 		  	<div id="actioncontent" class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+		  		<cfif Application.EnableChat>
+		  			<div class="panel panel-default">
+		  				<div class="panel-heading"><i class="fa fa-users"></i> Chat</div>
+		  				<div class="panel-body"><cfinclude template="chat.cfm" /></div>
+		  			</div>
+		  		</cfif>
+		  		<cfif !StructKeyExists(url,"reports")>
+		  			<cfoutput>#objDashboard.GetLinks()#</cfoutput>
+		  		</cfif>
 		  		<cfif StructKeyExists(url,"projectid") && IsNumeric(url.projectId)>
 		  			<cfoutput>#objDashboard.getMilestones(url.projectid)#</cfoutput>
 		  		</cfif>	  		

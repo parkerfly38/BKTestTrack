@@ -31,13 +31,16 @@
     		<cfset Session.Email = results.mail[1] />
     		<cfset Session.Name = results.cn[1] />
     		<cfset Session.UserId = results.samaccountname[1] />
-    		<cfset Session.AxoSoftToken = arrUser.getAxoSoftToken() />
+    		<cfif Application.AxoSoftIntegration>
+    			<cfset Session.AxoSoftToken = arrUser.getAxoSoftToken() />
+    		</cfif>
 			<cfcatch>
 				<cflog text="#cfcatch.message# #cfcatch.detail# #cfcatch.ExtendedInfo#"log="APPLICATION" type="Error" application="yes">
 				<cfset isAuthenticated = false />
 				<cfset Session.LoggedIn = false />
 			</cfcatch>
 		</cftry>
+		<cfset wsPublish("general",Session.Name + "has logged in.") />
 		<cfreturn isAuthenticated />
 	</cffunction>
 	
@@ -64,9 +67,12 @@
 	  		<cfset Session.Name = qryLogin.getUserName()>
 	  		<cfset Session.UserID = qryLogin.getADID()>
 	  		<!--- adding new token routine, get one per session instead of reusing one --->
-	  		<cfhttp url="https://cornerops.axosoft.com/api/oauth2/token?grant_type=password&username=bkresge&password=nugget38&client_id=84a344d7-9034-4ed7-8a01-ba35f9642648&client_secret=yUNiYAek30KibBtietQVo9UktJz8gv8GLdniTvzyv7rzWW4n2Xq0cSmedoJKMB_PUX5aWUyb2y5LXimFX-1wIJeCQocZSF6HTE7Q&scope=read" method="get" result="tokenResult" />
-			<cfset accessToken = DeSerializeJSON(tokenResult.filecontent).access_token>
-	  		<cfset Session.AxoSoftToken = accessToken>
+	  		<cfif Application.AxoSoftIntegration>
+	  			<cfhttp url="https://cornerops.axosoft.com/api/oauth2/token?grant_type=password&username=bkresge&password=nugget38&client_id=84a344d7-9034-4ed7-8a01-ba35f9642648&client_secret=yUNiYAek30KibBtietQVo9UktJz8gv8GLdniTvzyv7rzWW4n2Xq0cSmedoJKMB_PUX5aWUyb2y5LXimFX-1wIJeCQocZSF6HTE7Q&scope=read" method="get" result="tokenResult" />
+				<cfset accessToken = DeSerializeJSON(tokenResult.filecontent).access_token>
+	  			<cfset Session.AxoSoftToken = accessToken>
+			</cfif>
+			<cfset wsPublish("general","<strong>" & Session.Name & "</strong> has logged in.") />
 			<cfreturn true />
 		<cfelse>
 			<cfreturn false />
@@ -112,6 +118,8 @@
 	</cffunction>
 	
 	<cffunction name="Logout" access="remote" returntype="void">
+		
+		<cfset wsPublish("general","<strong>" & Session.Name &  "</strong> has logged out.") />
 		<cfset StructDelete(Application.SessionTracker,Session.UserIDInt,false) />
 		<cfset StructClear(SESSION) />
 		<cflocation url="/#application.applicationname#/" addtoken="false">

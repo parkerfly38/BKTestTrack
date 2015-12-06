@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Bree+Serif);
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
 /*******************
 SELECTION STYLING
@@ -25,7 +25,7 @@ BODY STYLING
 }
 
 body {
-	background: url('../images/bg.png');
+	background-color: #9F5F9F !important;
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	font-weight:300;
 	text-align: left;
@@ -130,7 +130,7 @@ HEADER
 }
 
 .login-form .header h1 {
-	font-family: 'Bree Serif', serif;
+	font-family: 'Open Sans', sans-serif;
 	font-weight: 300;
 	font-size: 28px;
 	line-height:34px;
@@ -209,13 +209,13 @@ CONTENT
 }
 
 .user-icon {
-	top:153px; /* Positioning fix for slide-in, got lazy to think up of simpler method. */
-	background: rgba(65,72,72,0.75) url(http://www.demo.amitjakhu.com/login-form/images/user-icon.png) no-repeat center;	
+	top:376px; /* Positioning fix for slide-in, got lazy to think up of simpler method. */
+	background: rgba(65,72,72,0.75) url(../images/user-icon.png) no-repeat center;	
 }
 
 .pass-icon {
-	top:201px;
-	background: rgba(65,72,72,0.75) url(http://www.demo.amitjakhu.com/login-form/images/pass-icon.png) no-repeat center;
+	top:426px;
+	background: rgba(65,72,72,0.75) url(../images/pass-icon.png) no-repeat center;
 }
 
 .content input:focus + div{
@@ -252,14 +252,14 @@ FOOTER
 	float:right;
 	padding: 11px 25px;
 	
-	font-family: 'Bree Serif', serif;
+	font-family: 'Open Sans', serif;
 	font-weight: 300;
 	font-size: 18px;
 	color: #fff;
 	text-shadow: 0px 1px 0 rgba(0,0,0,0.25);
 	
-	background: #56c2e1;
-	border: 1px solid #46b3d3;
+	background: #B272A6;
+	border: 1px solid #871F78;
 	border-radius: 5px;
 	cursor: pointer;
 	
@@ -269,8 +269,8 @@ FOOTER
 }
 
 .login-form .footer .button:hover {
-	background: #3f9db8;
-	border: 1px solid rgba(256,256,256,0.75);
+	background: #871F78;
+	border: 1px solid #871F78;
 	
 	box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
 	-moz-box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
@@ -299,7 +299,7 @@ FOOTER
 	border: none;
 	cursor: pointer;
 	
-	font-family: 'Bree Serif', serif;
+	font-family: 'Open Sans', serif;
 	font-weight: 300;
 	font-size: 18px;
 	color: #414848;

@@ -1508,7 +1508,7 @@
 		</cfquery>
 		<div id="panelmilestones">
 			<div class="panel panel-default">
-				<div class="panel-heading">Top 5 Milestones<div class="btn-group" style="float:right;margin-top:-5px;"><a href="##" class="lnkAddMilestone btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Milestone</a><a href="##" class="lnkViewMilestones btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
+				<div class="panel-heading">Top 5 Milestones</div>
 				<div class="panel-body">
 					<cfif ArrayLen(qryMilestones) gt 0>
 						<table class="table table-striped table-condensed">
@@ -1535,11 +1535,12 @@
 						<div class="alert alert-warning"><h4>This project doesn't contain any milestones.</h4>Please add one from the actions link to the right.</div>
 					</cfif>
 				</div>
+				<div class="panel-footer"><div class="btn-group"><a href="##" class="lnkAddMilestone btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Milestone</a><a href="##" class="lnkViewMilestones btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
 			</div>
 		</div>			
 	</cffunction>
 	
-	<cffunction name="getLinks" access="remote" output="true">
+	<cffunction name="getLinks" access="public" output="true">
 		<div id="linkspanel" class='panel panel-default'><div class='panel-heading'><i class='fa fa-code'></i> Links</span></div>
 		<div class='panel-body'>
 		<cfset arrLinks = entityload("TTestLinks")>

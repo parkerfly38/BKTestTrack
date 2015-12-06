@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>COG Test Tracker :: Login</title>
+		<title>CFTestTrack :: Login</title>
 		<link rel="icon" href="favicon.ico" type="image/x-icon" />
 		<link rel="stylesheet" type="text/css" href="style/style.css">
 		<link rel="stylesheet" type="text/css" href="style/bootstrap.css">
@@ -41,6 +41,7 @@
 	<form name="login-form" class="login-form" action="index.cfm" method="post">
 		
 		<div class="header">
+		<img src="images/TestTrack.png" style="width:100%" border="0" />
 		<h1>Login Form</h1>
 		<cfif Application.useLDAP>
 			<span>Enter your Windows login, the same you use to access your workstation.</span>

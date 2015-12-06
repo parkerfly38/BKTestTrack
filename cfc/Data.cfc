@@ -196,4 +196,24 @@ component
 				"WHERE a.id = :caseid");
 		return qryResult.getResult();
 	}
+	
+	public query function qryGetChatLog()
+	{
+		qryChatLog = queryExecute(
+			"SELECT a.* FROM (SELECT TOP 100 username, messageDate, messageBody FROM TTestMessageLog ORDER BY messageDate DESC) a order by a.MessageDate"
+			);
+		return qryChatLog;
+	}
+	
+	public void function SaveMessage(string username, date messagedate, string messagebody)
+	{
+		queryexecute("
+			INSERT INTO TTestMessageLog (username, messageDate, messageBody)
+			VALUES ( :username, :messagedate, :messagebody )",
+			{ username : { value: arguments.username, cfSqlType: "cf_sql_varchar" },
+			  messagedate : { value: arguments.messagedate, cfSqlType: "cf_sql_timestamp" },
+			  messagebody : { value: arguments.messagebody, cfsqltype: "cf_sql_varchar" }
+			 });
+		
+	}
 }
