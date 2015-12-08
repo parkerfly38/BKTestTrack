@@ -1,6 +1,7 @@
 RewriteEngine on 
-RewriteRule ^project/(.*)/$ index.cfm?projectid=$1
+RewriteRule ^project/([^/]+)/ index.cfm?projectid=$1
 RewriteRule ^scenario/(.*)/$ index.cfm?scenarioid=$1
+RewriteRule ^milestone/([^/]+)/ index.cfm?milestone=$1
 RewriteRule ^settings/(.*)$ settings.cfm
 ReWriteRule ^logout/(.*)$ index.cfm?logout=true
 #RewriteRule ^.*$ testreport.cfm

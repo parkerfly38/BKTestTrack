@@ -109,7 +109,7 @@ $(document).ready(function() {
 			url:"/CFTestTrack/cfc/Forms.cfc?method=deleteTestCase&tcid="+tcid,
 			type: "GET"
 		}).done(function(){
-			$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllTests");
+			$("#featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllTests");
 		});
 	});
 	
@@ -224,10 +224,9 @@ $(document).ready(function() {
 		event.preventDefault();
 		var mid = $(this).attr("milestoneid");
 		$.ajax({ url: "/CFTestTrack/cfc/forms.cfc?method=deleteMilestone",data: {mid : mid},type:"POST"}).done(function() {
-			if ($("#allmilestonespanel").length > 0 ) {
-				$("#topcontent").removeClass("panel").removeClass("panel-default");
-				$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllMilestones");
-			}
+				$("#featurecontent").removeClass("panel").removeClass("panel-default");
+				$("#featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllMilestones");
+			
 			if ($("#panelmilestones").length > 0) {
 				$("#panelmilestones").remove();
 				insertMilestones();
@@ -238,10 +237,9 @@ $(document).ready(function() {
 		event.preventDefault();
 		var scenarioid = $(this).attr("scenarioid");
 		$.ajax({ url: "/CFTestTrack/cfc/forms.cfc?method=deleteScenario", data: { scid : scenarioid},type:"POST"}).done(function() {
-			if ($("#scenariospanel").length > 0 ) {
-				$("#topcontent").removeClass("panel").removeClass("panel-default");
-				$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios");
-			}
+				$("#featurecontent").removeClass("panel").removeClass("panel-default");
+				$("#featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios");
+			
 			if ($("#paneltestscenarios").length > 0) {
 				$("#paneltestscenarios").remove();
 				insertScenarios();
@@ -302,33 +300,23 @@ $(document).ready(function() {
 	});
 	$(document).on("click","a.lnkViewTests",function(event){
 		event.preventDefault();
-		$("#topcontent").removeClass("panel").removeClass("panel-default");
-		$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllTests");
-		$("#midrow").empty();
+		$("#featurecontent").removeClass("panel").removeClass("panel-default");
+		$("#featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllTests");
 		$("#activitypanel").remove();
-		$("#lnkReturnToProject").attr("pjid",projectid);
-		$("#lnkReturnToProject").show();		
 		$("#createreportpanel").remove();
 	});
 	$(document).on("click","a.lnkViewMilestones",function(event) {
 		event.preventDefault();
-		$("#topcontent").removeClass("panel").removeClass("panel-default");
-		$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllMilestones");
-		$("#midrow").empty();
-		$("#activitypanel").remove();	
-		$("#lnkReturnToProject").attr("pjid",projectid);
-		$("#lnkReturnToProject").show();
+		$("#featurecontent").removeClass("panel").removeClass("panel-default");
+		$("#featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllMilestones");
 		currentview = "milestones";
 		$("#createreportpanel").remove();
 	});
 	$(document).on("click","a.lnkViewScenarios",function(event) {
 		event.preventDefault();
-		$("#topcontent").removeClass("panel").removeClass("panel-default");
-		$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios");
-		$("#midrow").empty();
+		$("#featurecontent").removeClass("panel").removeClass("panel-default");
+		$("#featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios");
 		$("#activitypanel").remove();
-		$("#lnkReturnToProject").attr("pjid",projectid);
-		$("#lnkReturnToProject").show();
 		$("#createreportpanel").remove();
 	});
 	$(document).on("click","a.lnkOpenScenarioHub",function(event) {
@@ -650,7 +638,7 @@ function insertMilestones() {
 function insertScenarios() {
 	$("#paneltestscenarios").remove();
 	$.ajax({
-		url: "/CFTestTrack/cfc/dashboard.cfc?method=getTestScenarios",
+		url: "/CFTestTrack/cfc/dashboard.cfc?method=listTestScenarios",
 		type: "post",
 		data: { projectid : projectid }
 	}).done(function(data) {

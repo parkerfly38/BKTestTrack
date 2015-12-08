@@ -3,6 +3,14 @@
 		objLogon = createObject("component","cfc.Logon");
 		objLogon.Logout();
 	}
+	if (StructKeyExists(url,"projectid"))
+	{
+		Session.ProjectID = url.projectid;
+	}
+	if (StructIsEmpty(url) )
+	{
+		Session.ProjectID = "";
+	}
 	objData = createObject("component","cfc.Data");
 	objDashboard = createObject("component","cfc.Dashboard");
 	objAxoSoft = createObject("component","cfc.AxoSoft");
@@ -138,26 +146,24 @@
 	          	<a class="navbar-brand" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/" id="lnkHome" style="padding:3px;"><img src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/images/TestTrack.png" border="0" style="height: 45px; width: auto;" /></a>
 	          </div>
 		      <div id="navbar" class="navbar-collapse collapse">
-		        <ul id="uldashboard" class="nav navbar-nav navbar-right" <cfif !StructKeyExists(url,"ProjectID")>style="display:none;"</cfif>>
-		        	<li><a id="lnkReturnAllProjects" href="#" style="display:none;"><i class="fa fa-long-arrow-left"></i> All Projects Dashboard</a></li>
-		        </ul>
+		      	
+		        
+		        <cfif StructKeyExists(url,"projectid") || isNumeric(Session.projectID)>
 		        <ul class="nav navbar-nav">
-		          <li><a id="lnkReturnToProject" class="pjlink" style="display:none;" href="#"><!---<i class="fa fa-home"></i>---> Project Home</a></li>
+		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/"><!---<i class="fa fa-home"></i>---> Project Home</a></li>
 		          <li class="dropdown ddmMilestones"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-map-marker"> </i> --->Milestones</a>
 		          	<ul class="dropdown-menu" role="menu">
-		          		<li><a class="lnkViewMilestones" href="#">View All</a></li>
+		          		<li><a class="lnkViewMilestones" href="milestones">View All</a></li>
 		          		<li><a class="lnkAddMilestone" href="##">Add</a></li>
-		          		<li class="divider"></li>
-		          		<li class="dropdown-header">Reports</li>
 		          	</ul>
 		          </li>
-		          <li class="dropdown ddmScenarios" style="display:none;"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-suitcase"> </i>---> Test Scenarios</a>
+		          <li class="dropdown ddmScenarios"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-suitcase"> </i>---> Test Scenarios</a>
 		          	<ul class="dropdown-menu" role="menu">
 		          		<li><a class="lnkViewScenarios" href="##">View All</a></li>
 		          		<li><a class="lnkAddScenario" href="##">Add</a></li>
 		          	</ul>
 		          </li>
-		          <li class="dropdown ddmTestCases" style="display:none;"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-tachometer"> </i>--->Test Cases</a>
+		          <li class="dropdown ddmTestCases"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-tachometer"> </i>--->Test Cases</a>
 		          	<ul class="dropdown-menu" role="menu">
 		          		<li><a class="lnkViewTests" href="#">View All</a></li>
 		          		<li><a class="lnkAddTest" href="#">Add</a></li>
@@ -167,7 +173,7 @@
 		          		<li><a class="lnkUploadTestCases" href="#">Upload Via Excel</a></li>
 		          	</ul>
 		          </li>
-		          <li class="dropdown ddmAutomationStudio" style="display:none;"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-list-alt"> </i> --->Automation Studio</a>
+		          <li class="dropdown ddmAutomationStudio"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-list-alt"> </i> --->Automation Studio</a>
 		          	<ul class="dropdown-menu" role="menu">
 		          		<li><a class="lnkBuildAutomatedTest" href="#">Build Test</a></li>
 		          		<li><a class="lnkScheduleTests" href="#">Schedule Tests</a></li>
@@ -181,12 +187,15 @@
 		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings/"> <!---<i class="fa fa-gear"></i>---> Settings</a></li>
 		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/logout/"> <i class="fa fa-power-off"></i> Log out</a></li>
 		        </ul>
+		      	</cfif>
 		      </div><!--/.nav-collapse -->
 		    </div>
 	    </nav>
 	    
 	  <div class="container" style="background:none;">
 		  <div class="row">
+		  	<!--- do some cool stuff here to change layout --->
+		  	<cfif !StructKeyExists(url,"projectid") && !isNumeric(Session.projectID)>
 		  	<div id="projectcontent" class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 		  		<cfif Application.AxoSoftIntegration>
 		  			<cfoutput>#objDashboard.listAxoSoftProjects(objAxoSoft.getProjects(Session.AxoSoftToken))#</cfoutput>
@@ -194,7 +203,12 @@
 		  			<cfoutput>#objDashboard.listProjects()#</cfoutput>
 		  		</cfif>
 		  	</div>
-		  	<div id="featurecontent" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+		  	<cfset local.panelsizeint = 6 />
+		  	<cfelse>
+		  	<cfset local.panelsizeint = 9 />
+		  	</cfif>
+		  	
+		  	<cfoutput><div id="featurecontent" class="col-xs-#local.panelsizeint# col-sm-#local.panelsizeint# col-md-#local.panelsizeint# col-lg-#local.panelsizeint#"></cfoutput>
 		  		<cfif StructKeyExists(url,"scenarioid")>
 		  			<cfif isNumeric(url.scenarioid)>
 		  				<cfoutput>#objDashboard.TestScenarioHub(url.scenarioid)#</cfoutput>
@@ -250,9 +264,9 @@
 		  		<cfif !StructKeyExists(url,"reports")>
 		  			<cfoutput>#objDashboard.GetLinks()#</cfoutput>
 		  		</cfif>
-		  		<cfif StructKeyExists(url,"projectid") && IsNumeric(url.projectId)>
+		  		<!---<cfif StructKeyExists(url,"projectid") && IsNumeric(url.projectId)>
 		  			<cfoutput>#objDashboard.getMilestones(url.projectid)#</cfoutput>
-		  		</cfif>	  		
+		  		</cfif>	  		--->
 		  	</div>
 		  </div>
 	  </div>

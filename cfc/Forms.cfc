@@ -127,9 +127,9 @@
 		</div>
 	</cffunction>
 	
-	<cffunction name="TestCaseForm" access="public" output="true">
+	<cffunction name="TestCaseForm" access="remote" output="true">
 		<cfargument name="testcaseid" required="false" default="0" type="numeric">
-		<cfargument name="projectid" required="false" default="0" type="numeric">
+		<cfargument name="projectid" required="false" default="#Session.ProjectId#" type="numeric">
 		
 		<cfif arguments.testcaseid gt 0>
 			<cfset arrTestCase = EntityLoadByPK("TTestCase",arguments.testcaseid)>
@@ -138,6 +138,8 @@
 				<script type="text/javascript">
 					projectid = <cfoutput>#arrTestCase.getProjectId()#;</cfoutput>
 				</script>
+			<cfelse>
+				<cfset local.projectID = arguments.projectid>
 			</cfif>
 		<cfelse>
 			<cfset local.ProjectID = arguments.projectid>
@@ -170,25 +172,42 @@
 				$(document).off("click","##btnSave");
 				$(document).on("click","##btnSave",function(event) {
 					event.preventDefault();
-					$("##frmAddCase").submit();
+					$.ajax({
+						url: "http://#cgi.server_NAME#/CFTestTrack/CFC/forms.cfc?method=saveTestCase",
+						type: "POST",
+						data: {
+							id : $("##txtId").val(),
+							TestTitle : $("##txtTestTitle").val(),
+							PriorityId : $("##ddlPriorityId").val(),
+							TypeId : $("##ddlTypeId").val(),
+							ProjectId : '#local.ProjectID#',
+							Preconditions : $("##txtPreconditions").val(),
+							Steps: $("##txtSteps").val(),
+							ExpectedResult: $("##txtExpectedResult").val(), 
+							MilestoneId : '0',
+							Estimate : $("##txtEstimate").val(),
+							TestDetails : $("##txtTestDetails").val()
+						}
+					}).done(function(data) {
+						if ( data == "true" )
+						{
+							$("##largeModal").modal('hide');
+							$("##featurecontent").load("http://#cgi.server_NAME#/CFTestTrack/CFC/Dashboard.cfc?method=AllTests");
+							
+						} else {
+							alert("There was an error with your save.  Please contact system administrator.");
+						}
+					});
 					
 				});
 			});
 		</script>
 		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
 		<div class="form-group">
-			<cfscript>
-				frmAction = "";
-				if ( arguments.testcaseid gt 0 ) {
-					frmAction = "saveCase";
-				} else {
-					frmAction = "addCase";
-				}
-			</cfscript>
-			<form method="post" action="http://#cgi.server_name#/CFTestTrack/item/#local.projectid#/" id="frmAddCase">
-			<input type="hidden" value="#arguments.testcaseid#" id="#frmAction#" name="#frmAction#" />
+			
+			<input type="hidden" value="#arguments.testcaseid#" id="txtId" name="txtId" />
 			<label for="txtTestTitle">Title</label>
-			<input type="text" name="txtTestTitle" id="txtTestTitle" name="txtTestTitle" value="#arrTestCase.getTestTitle()#" class="form-control" />
+			<input type="text" id="txtTestTitle" name="txtTestTitle" value="#arrTestCase.getTestTitle()#" class="form-control" />
 			<label for="txtPreconditions">Preconditions and Assumptions</label>
 			<textarea class="form-control" rows="5" id="txtPreconditions" name="txtPreconditions">#arrTestCase.getPreconditions()#</textarea>
 			<p class="help-block">Anything that must be done prior to executing this test.  You can reference other test cases using TC + Number, like TC1 for test case 1.</p>
@@ -245,7 +264,6 @@
 						<div class="alert alert-warning small"><h4>No Test Scenarios Assigned</h4>This can be accomplished from individual scenario hubs.</div>
 					</cfif>
 				</cfif>
-				</form>
 			</div>
 		</div>
 			 
@@ -253,7 +271,7 @@
 	
 	<cffunction name="MilestoneForm" access="remote" output="true">
 		<cfargument name="milestoneid" required="false" default="0" type="numeric">
-		<cfargument name="projectid" required="false" default="0" type="numeric">
+		<cfargument name="projectid" required="false" default="#Session.ProjectID#" type="numeric">
 		<cfif !(StructKeyExists(Session,"LoggedIn")) || !Session.LoggedIn>
 			login
 			<cfexit>
@@ -275,7 +293,7 @@
 				$(document).on("click","##btnSave",function(event) {
 					event.preventDefault();
 					$.ajax({
-						url: "CFC/forms.cfc?method=saveMilestone",
+						url: "http://#cgi.server_NAME#/CFTestTrack/CFC/forms.cfc?method=saveMilestone",
 						type: "POST",
 						data: {
 							id : $("##txtID").val(),
@@ -295,7 +313,7 @@
 								insertMilestones();
 							} else {
 								$("##allmilestonespanel").remove();
-								$("##topcontent").load("cfc/Dashboard.cfc?method=AllMilestones");
+								$("##featurecontent").load("http://#cgi.server_NAME#/CFTestTrack/CFC/Dashboard.cfc?method=AllMilestones");
 							}
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");
@@ -471,7 +489,7 @@
 	</cffunction>
 	
 	<cffunction name="TestScenarioForm" access="remote" output="true">
-		<cfargument name="projectid" required="True" default="0" type="numeric">
+		<cfargument name="projectid" required="True" default="#Session.ProjectID#" type="numeric">
 		<cfargument name="testscenarioid" required="False" default="0" type="numeric">
 		<cfif arguments.testscenarioid gt 0>
 			<cfset arrTestScenario = EntityLoadByPK("TTestScenario",arguments.testscenarioid)>
@@ -499,7 +517,7 @@
 				$(document).on("click","##btnSave",function(event) {
 					event.preventDefault();
 					$.ajax({
-						url: "CFC/forms.cfc?method=saveScenario",
+						url: "/CFTestTrack/CFC/forms.cfc?method=saveScenario",
 						type: "POST",
 						data: {
 							id : $("##txtID").val(),
@@ -521,7 +539,7 @@
 								insertScenarios();
 							} else {
 								$("##scenariospanel").remove();
-								$("##topcontent").load("cfc/Dashboard.cfc?method=AllScenarios");
+								$("##featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios");
 							}
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");

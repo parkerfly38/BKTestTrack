@@ -846,7 +846,7 @@
 					<!--- subcounts --->
 					<cfset qryTestCounts = objData.qryTestCaseHistoryForScenarios(scenario.getId())>
 						<tr>
-							<td><h5><a href="##" class="lnkOpenScenarioHub" scenarioid="#scenario.getId()#"><cfif len(scenario.getAxoSoftNumber()) gt 0>#scenario.getAxoSoftNumber()# - </cfif>#scenario.getTestScenario()#</a><h5>
+							<td><h5><a href="/CFTestTrack/scenario/#scenario.getId()#/"><cfif len(scenario.getAxoSoftNumber()) gt 0>#scenario.getAxoSoftNumber()# - </cfif>#scenario.getTestScenario()#</a><h5>
 								<cfset untestedPercent = 0>
 								<cfset blockedPercent = 0>
 								<Cfset retestPercent = 0>
