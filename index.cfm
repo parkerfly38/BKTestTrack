@@ -148,8 +148,8 @@
 		      <div id="navbar" class="navbar-collapse collapse">
 		      	
 		        
-		        <cfif StructKeyExists(url,"projectid") || isNumeric(Session.projectID)>
 		        <ul class="nav navbar-nav">
+		        <cfif StructKeyExists(url,"projectid") || isNumeric(Session.projectID)>
 		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/"><!---<i class="fa fa-home"></i>---> Project Home</a></li>
 		          <li class="dropdown ddmMilestones"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-map-marker"> </i> --->Milestones</a>
 		          	<ul class="dropdown-menu" role="menu">
@@ -183,11 +183,12 @@
 		          		<li><a class="" href="#">Automated Test Activity</a></li>
 		          	</ul>
 		          </li>
-		          <li><a class="lnkViewReports" href="#" style="display:none;"><!---<i class="fa fa-bars"> </i> --->Reporting</a></li>
+		          <li><a class="lnkViewReports" href="#"><!---<i class="fa fa-bars"> </i> --->Reporting</a></li>
 		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings/"> <!---<i class="fa fa-gear"></i>---> Settings</a></li>
-		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/logout/"> <i class="fa fa-power-off"></i> Log out</a></li>
-		        </ul>
+		         
 		      	</cfif>
+		      	<li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/logout/"> <i class="fa fa-power-off"></i> Log out</a></li>
+		        </ul>
 		      </div><!--/.nav-collapse -->
 		    </div>
 	    </nav>

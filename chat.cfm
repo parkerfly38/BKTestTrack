@@ -15,7 +15,8 @@ var msgHandler = function(message)
          {
             // If data is present write it to the div
             var txt=document.getElementById("myDiv");
-           txt.innerHTML+= data + "<br>";
+            txt.innerHTML+= data + "<br>";
+            $('#myDiv').scrollTop($('#myDiv')[0].scrollHeight);
          }
 }
 
@@ -44,7 +45,10 @@ var openHandler = function()
 			</cfif>
 		</cfloop>
 	</cfloop>
-</cfoutput>			
+</cfoutput>
+	<script type="text/javascript">
+		$('#myDiv').scrollTop($('#myDiv')[0].scrollHeight);
+    </script>
 </div>
 <br />
 <div class="input-group">

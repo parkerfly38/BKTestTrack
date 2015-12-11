@@ -57,7 +57,7 @@
 				$(document).on("click","##btnSave",function(event) {
 					event.preventDefault();
 					$.ajax({
-						url: "CFC/forms.cfc?method=saveTestResult",
+						url: "/CFTestTrack/CFC/forms.cfc?method=saveTestResult",
 						type: "POST",
 						data: {
 							caseidslist : allTests.join(),
@@ -72,8 +72,8 @@
 						if ( data == "true" )
 						{
 							$("##largeModal").modal('hide');
-							$("##topcontent").removeClass("panel").removeClass("panel-default");
-							$("##topcontent").load("cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid=#arguments.scenarioid#");
+							$("##featurecontent").removeClass("panel").removeClass("panel-default");
+							$("##featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid=#arguments.scenarioid#");
 							$("##midrow").empty();
 							$("##activitypanel").remove();
 							$("##lnkReturnToProject").attr("pjid",#session.projectid#);
@@ -986,7 +986,7 @@
 				testresult.setTestCaseID(ListElement);
 				EntitySave(testresult);
 				arrTestDetail = EntityLoadByPK("TTestCase",ListElement);
-				mailbody = "There is an update on test case <strong>TC" & arrTestDetail.getId() & " - " & arrTestDetail.getTestTitle() & ".</strong>  Click <a href='http://" & CGI.SERVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TC=" & arrTestDetail.getId() & "'>here</a> to view test case.";
+				/*mailbody = "There is an update on test case <strong>TC" & arrTestDetail.getId() & " - " & arrTestDetail.getTestTitle() & ".</strong>  Click <a href='http://" & CGI.SERVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TC=" & arrTestDetail.getId() & "'>here</a> to view test case.";
 				objFunc.MailerFunction(TesterObj.getEmail(),Application.MAILERDAEMONADDRESS,"Test Case Update - TC" & arrTestDetail.getid(), mailbody);
 				if ( Application.AxoSoftIntegration && StructKeyExists(Session,"AxoSoftToken") ) {
 					objAxoSoft = new CFTestTrack.cfc.AxoSoft();
@@ -998,7 +998,7 @@
 							objAxoSoft.updateIncident(arrScenario.getAxoSoftNumber(),"http://" & cgi.serVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TR="  & arrScenario.getId(),Session.AxoSoftToken);
 						}
 					}
-				}
+				}*/
 			</cfscript>
 		</cfloop>
 		<cfreturn true />

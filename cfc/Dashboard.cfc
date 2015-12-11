@@ -1255,7 +1255,7 @@
 		</div>
 	</cffunction>
 	
-	<cffunction name="TestScenarioHub" access="public" output="true">
+	<cffunction name="TestScenarioHub" access="remote" output="true">
 		<cfargument name="scenarioid" type="numeric" required="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfreturn>
