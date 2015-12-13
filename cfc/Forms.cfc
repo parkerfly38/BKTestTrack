@@ -416,18 +416,15 @@
 					
 					var multipleValues = $("##testcases").val() || [];
 					$.ajax({
-						url : "CFC/Forms.cfc?method=saveCasesToScenario",
+						url : "/CFTestTrack/CFC/Forms.cfc?method=saveCasesToScenario",
 						type : "POST",
 						data : {testcases : multipleValues.join(", "),scenarioid : "#arguments.scenarioid#"}
 					}).done(function(data) {
 						$("##smallModal").modal("hide");
 						event.preventDefault();
-						$("##topcontent").removeClass("panel").removeClass("panel-default");
-						$("##topcontent").load("cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid=#arguments.scenarioid#");
-						$("##midrow").empty();
-						$("##activitypanel").remove();
-						$("##lnkReturnToProject").attr("pjid",#session.projectid#);
-						$("##lnkReturnToProject").show();
+						$("##featurecontent").removeClass("panel").removeClass("panel-default");
+						$("##featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid=#arguments.scenarioid#");
+						
 						$("##createreportpanel").remove();
 					});
 				});

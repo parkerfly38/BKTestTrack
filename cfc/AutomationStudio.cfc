@@ -222,7 +222,7 @@ component extends="cfselenium.CFSeleniumTestCase"
 		writeOutput("	$(document).ready(function() { "&chr(13));
 		writeOutput("		$(document).on('click','a.btnDeleteTAS',function(event) { " & chr(13));
 		writeOutput("			event.preventDefault();" & chr(13));
-		writeOutput("			$.ajax({url: 'CFC/Maintenance.cfc?method=deleteAutomationTask',type:'POST',data: {testcaseid : $(this).attr('testcaseid')}}).done(function() { $('##largeModal .modal-body').load('cfc/AutomationStudio.cfc?method=viewAutomatedTasks'); });" & chr(13));
+		writeOutput("			$.ajax({url: '/CFTestTrack/CFC/Maintenance.cfc?method=deleteAutomationTask',type:'POST',data: {testcaseid : $(this).attr('testcaseid')}}).done(function() { $('##largeModal .modal-body').load('/CFTestTrack/cfc/AutomationStudio.cfc?method=viewAutomatedTasks'); });" & chr(13));
 		writeOutput("		});" & chr(13));
 		writeOutput("	});" & chr(13));
 		writeOutput("</script>" & chr(13));
@@ -252,6 +252,7 @@ component extends="cfselenium.CFSeleniumTestCase"
 	}
 	
 	remote any function saveCaseData(numeric testcaseid, string testURL, string browsers, string startDate, string startTime) {
+		fileData = "<cfset objForms = new CFTestTrack.cfc.Forms() />" & chr(13);
 		for (i = 1; i <= ListLen(arguments.browsers); i++ ) 
 		{
 			//save or update record
@@ -261,7 +262,47 @@ component extends="cfselenium.CFSeleniumTestCase"
 			arrCase.setBrowser(ListGetAt(arguments.browsers,i));
 			arrCase.setURL(arguments.testURL);
 			EntitySave(arrCase);
+			fileData &= '<cfscript>' & chr(13);
+			fileData &= 'selenium = new CFSelenium.selenium("localhost",4444);' & chr(13);
+			fileData &= 'mxunit = new mxunit.framework.TestCase();' & chr(13);
+			fileData &= 'try {'&chr(13);
+			fileData &= 'selenium.start("' & arguments.testURL & '","' & arrCase.getBrowser() & '");' & chr(13);
+			arrTests = EntityLoad("TASSteps",{testid = arguments.testcaseid}, {sortorder: "OrderOfOperation"});
+			for ( x = 1; x <= ArrayLen(arrTests); x++ )
+			{
+				if ( arrTests[x].getAction() contains "assert" )
+				{
+					fileData &= "mxunit." & arrTests[x].getAction() & "(";
+				} else {
+					fileData &= "selenium." & arrTests[x].getAction() & "(";
+				}
+				if (!Isnull(arrTests[x].getValueOne()) && Len(arrTests[x].getValueOne()) gt 0 )
+				{
+					fileData &= '"' & arrTests[x].getValueOne() & '"';
+				}
+				if (!Isnull(arrTests[x].getValueTwo()) && Len(arrTests[x].getValueTwo()) gt 0 )
+				{
+					fileData &= ',"' & arrTests[x].getValueTwo() & '"';
+				}
+				if (!Isnull(arrTests[x].getValueThree()) && Len(arrTests[x].getValueThree()) gt 0 )
+				{
+					fileData &= ',"' & arrTests[x].getValueThree() & '"';
+				}
+				if (!Isnull(arrTests[x].getValueFour()) && Len(arrTests[x].getValueFour()) gt 0 )
+				{
+					fileData &= ',"' & arrTests[x].getValueFour() & '"';
+				}
+				fileData &= ');' & chr(13);
+				fileData &= ' objForms.saveTestResult(' & arguments.testcaseid & ', 1,8,0,0,"Automated Passed");' & chr(13);
+				fileData &= '}' & chr(13);
+				fileData &= ' catch (any e) { ' & chr(13);
+				fileData &= ' objForms.saveTestResult(' & arguments.testcaseid & ', 3,8,0,0,e.Message);' & chr(13);
+				fileData &= '}' & chr(13);
+			}
+			fileData &= 'selenium.stop();' & chr(13);
+			fileData &= '</cfscript>';
 		}
+		fileWrite("/Applications/ColdFusion11/cfusion/wwwroot/CFTestTrack/skedtasks/"&arguments.testcaseid&".cfm",fileData,"utf-8"); 
 		objMaintenance = createObject("component","Maintenance");
 		objMaintenance.createAutomationTask(arguments.testcaseid,'once',arguments.startDate,arguments.startTime);
 	}
@@ -323,7 +364,7 @@ component extends="cfselenium.CFSeleniumTestCase"
 		writeOutput(" $(document).off('click','##btnSave');" & chr(13));
 		writeOutput(" $(document).on('click','##btnSave', function(event) {"& chr(13));
 		writeOutput("	var multiBrowse = $('##ddlBrowser').val() || [];" & chr(13));
-		writeOutput(" 	$.ajax({url: 'cfc/AutomationStudio.cfc?method=saveCaseData', type: 'POST', data: { testcaseid : $('##ddlTestCases').val(), testURL : $('##txtTestURL').val(), browsers: multiBrowse.join(', '), startDate : $('##txtStartDate').val(), startTime : $('##txtStartTime').val()}}).done( function() { " & chr(13));
+		writeOutput(" 	$.ajax({url: '/CFTestTrack/cfc/AutomationStudio.cfc?method=saveCaseData', type: 'POST', data: { testcaseid : $('##ddlTestCases').val(), testURL : $('##txtTestURL').val(), browsers: multiBrowse.join(', '), startDate : $('##txtStartDate').val(), startTime : $('##txtStartTime').val()}}).done( function() { " & chr(13));
 		writeOutput("	$('##largeModal').modal('hide'); }); });" & chr(13));
 		writeOutput("});" & chr(13));
 		
@@ -357,7 +398,7 @@ component extends="cfselenium.CFSeleniumTestCase"
 			writeOutput("<option value='" & rsBrowser.BrowserString[i] & "'>" & rsBrowser.BrowserName[i] & "</option>");
 		}
 		writeOutput("</select></td></tr></tbody></table>");
-		writeOutput("<div class='form-group'><label for='txtStartDate'>Date/Time to Run Test:</label><br /><input type='text' class='datepicker' id='txtStartDate' />&nbsp;&nbsp;<input type='number' id='txtStartTime' min='0000' max='2300' step='100' value='2100' /></div></div>");
+		writeOutput("<div class='form-group'><label for='txtStartDate'>Date/Time to Run Test:</label><br /><input type='text' class='datepicker' id='txtStartDate' />&nbsp;&nbsp;<input type='time' id='txtStartTime' /></div></div>");
 	}
 	
 	remote string function GetListObj() output="true" {
@@ -381,17 +422,17 @@ component extends="cfselenium.CFSeleniumTestCase"
 		writeOutput("			var valuefour = $(this).find('.valuefour').val();" & chr(13));
 		writeOutput("			var assertionmessage = $(this).find('.assertionmessage').val();" & chr(13));
 		writeOutput("			var orderofoperation = $(this).find('.orderofoperation').val();" & chr(13));
-		writeOutput("			$.ajax({url:'CFC/AutomationStudio.cfc?method=saveRow',type:'POST',data: { automationid : automationid, testid : testid, action : action, valueone : valueone, valuetwo : valuetwo, valuethree : valuethree, valuefour : valuefour, assertionmessage : assertionmessage, orderofoperation : orderofoperation }});"&chr(13));
+		writeOutput("			$.ajax({url:'/CFTestTrack/CFC/AutomationStudio.cfc?method=saveRow',type:'POST',data: { automationid : automationid, testid : testid, action : action, valueone : valueone, valuetwo : valuetwo, valuethree : valuethree, valuefour : valuefour, assertionmessage : assertionmessage, orderofoperation : orderofoperation }});"&chr(13));
 		writeOutput("	 	});"&chr(13));
 		writeOutput("		$('##largeModal').modal('hide');" & chr(13));
 		writeOutput("	});"&chr(13));
 		writeOutput("	$(document).off('change','##ddlTestCase');" & chr(13));
 		writeOutput("	$(document).on('change','##ddlTestCase',function() {" & chr(13));
-   		writeOutput("			$.ajax({ url: 'cfc/AutomationStudio.cfc?method=loadAutomationArray',type:'POST',data: { testcaseid : $(this).val() }}).done( function(data) { $('##actiontable').html(data); });" & chr(13));
+   		writeOutput("			$.ajax({ url: '/CFTestTrack/cfc/AutomationStudio.cfc?method=loadAutomationArray',type:'POST',data: { testcaseid : $(this).val() }}).done( function(data) { $('##actiontable').html(data); });" & chr(13));
    		writeOutput("	});" & chr(13));
    		writeOutput("	$(document).off('click','##btnAddTestStep');" & chr(13));
    		writeOutput("	$(document).on('click','##btnAddTestStep',function(event) { "& chr(13));
-   		writeOutput("		$.ajax({ url: 'cfc/AutomationStudio.cfc?method=appendAutomationArray',type:'POST',data : { testcaseid : $('##ddlTestCase').val(), action : $('##ddlTAction').val(), valueone : $('##txtValueOne').val(), valuetwo : $('##txtValueTwo').val(), valuethree : $('##txtValueThree').val(), valuefour : $('##txtValueFour').val(), assertionmessage : $('##txtAssertionMessage').val(), orderofoperation : $('##txtOrderofOperations').val()}}).done(function(data) { " & chr(13));
+   		writeOutput("		$.ajax({ url: '/CFTestTrack/cfc/AutomationStudio.cfc?method=appendAutomationArray',type:'POST',data : { testcaseid : $('##ddlTestCase').val(), action : $('##ddlTAction').val(), valueone : $('##txtValueOne').val(), valuetwo : $('##txtValueTwo').val(), valuethree : $('##txtValueThree').val(), valuefour : $('##txtValueFour').val(), assertionmessage : $('##txtAssertionMessage').val(), orderofoperation : $('##txtOrderofOperations').val()}}).done(function(data) { " & chr(13));
    		writeOutput("			$('##txtValueOne').attr('disabled','disabled');" & chr(13));
    		writeOutput("			$('##txtValueTwo').attr('disabled','disabled');" & chr(13));
    		writeOutput("			$('##txtValueThree').attr('disabled','disabled');" & chr(13));
@@ -407,7 +448,7 @@ component extends="cfselenium.CFSeleniumTestCase"
    		writeOutput("	$(document).off('change','##ddlTAction');" & chr(13));
    		writeOutput("	$(document).on('change','##ddlTAction',function() { " & chr(13));
    		writeOutput("		var funcname = $(this).val();" & chr(13));
-   		writeOutput("		$.getJSON('cfc/AutomationStudio.cfc?method=getSpecificMeta&funcName='+funcname,function(data) {" & chr(13));
+   		writeOutput("		$.getJSON('/CFTestTrack/cfc/AutomationStudio.cfc?method=getSpecificMeta&funcName='+funcname,function(data) {" & chr(13));
    		writeOutput("			$('##pnlDesc .panel-heading').text(funcname);" & chr(13));
    		writeOutput("			$('##pnlDesc .panel-body').html(data.HINT);" & chr(13));
    		writeOutput("			if ( data.PARAMS.length == 1 ) {" & chr(13));
@@ -469,6 +510,7 @@ component extends="cfselenium.CFSeleniumTestCase"
 		arrTestCases = EntityLoad("TTestCase",{TypeId = 4, ProjectID = Session.ProjectID});
 		if ( ArrayLen(arrTestCases) == 0 ) {
 			writeOutput("<div class='alert alert-danger'><strong>There are no automated test cases created for this project.</strong></div>");
+			return;
 		} else {
 			writeOutput("<div class='alert alert-warning'><strong>Select a test case:</strong><br /><select class='form-control selectpicker' id='ddlTestCase' name='ddlTestCase' data-style='btn-info'>");
 			writeOutput("<option> --- </option>");

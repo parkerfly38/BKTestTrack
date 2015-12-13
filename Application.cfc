@@ -69,7 +69,7 @@
 		
 		writeOutput( pageContent );
 		getPageContext().getOut().flush();
-		if (!FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport",CGI.Script_NAME) && !FindNoCase("report",CGI.SCRIPT_NAME) && !FindNoCase("axosoftgrab",CGI.ScRIPT_NAME)) {
+		if (!FindNoCase("skedtasks",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport",CGI.Script_NAME) && !FindNoCase("report",CGI.SCRIPT_NAME) && !FindNoCase("axosoftgrab",CGI.ScRIPT_NAME)) {
 			StructUpdate(application.SessionTracker,Session.UserIDInt,Now());
 		}
 		</cfscript>

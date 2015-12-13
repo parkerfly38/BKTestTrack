@@ -59,7 +59,7 @@
 		<cfargument name="startDate" required="true">
 		<cfargument name="startTime" required="true">
 		
-		<cfschedule action="update" task="TAS#arguments.testcaseid#" operation="HTTPRequest" url="automationhandler.cfm?id=#arguments.testcaseid#" startDate="#arguments.startDate#" startTime="#arguments.startTime#" interval="#arguments.interval#" resolveURL="no" publish="false" path="#GetDirectoryFromPath(ExpandPath("*.*"))#" requesttimeout="3500" />
+		<cfschedule action="update" task="TAS#arguments.testcaseid#" operation="HTTPRequest" url="http://#cgi.server#/CFTestTrack/skedtasks/#arguments.testcaseid#.cfm" startDate="#arguments.startDate#" startTime="#TimeFormat(arguments.startTime,'hh:m:ss tt')#" interval="#arguments.interval#" resolveURL="no" publish="false" path="#GetDirectoryFromPath(ExpandPath("*.*"))#" requesttimeout="3500" />
 					
 		<cfreturn returnTasks() />
 	</cffunction>

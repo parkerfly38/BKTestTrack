@@ -339,12 +339,8 @@ $(document).ready(function() {
 	});
 	$(document).on("click","a.lnkTestScriptLibrary",function(event) {
 		event.preventDefault();
-		$("#topcontent").removeClass("panel").removeClass("panel-default");
-		$("#topcontent").load("/CFTestTrack/cfc/AutomationStudio.cfc?method=listScripts");
-		$("#midrow").empty();
-		$("#activitypanel").remove();
-		$("#lnkReturnToProject").attr("pjid",projectid);
-		$("#lnkReturnToProject").show();
+		$("#featurecontent").removeClass("panel").removeClass("panel-default");
+		$("#featurecontent").load("/CFTestTrack/cfc/AutomationStudio.cfc?method=listScripts");
 		$("#createreportpanel").remove();
 	});
 	$(document).on("click","a.lnkViewReports",function(event){
