@@ -9,6 +9,7 @@
 	<cfset this.ormSettings.cflocation = "CFC.db" />
 	<cfset this.ormSettings.datasource = "COGData" />
 	<cfset this.ormSettings.eventhandling = true />
+	<cfset this.ormSettings.dbCreate = "update" />
 	<cfset this.directory = getdirectoryfrompath(getcurrenttemplatepath()) >
 	<cfset this.mappings["/reportpdfs"] = "#this.directory#reportpdfs/">
 	<cfset this.mappings["/excel"] = "#this.directory#excel/">
