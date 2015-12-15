@@ -1,14 +1,14 @@
 component table="TTestTester" persistent="true"
 {
-	property name="id" column="id" fieldtype="id" generator="identity";
-	property name="ADID";
-	property name="UserName";
-	property name="password";
-	property name="salt";
-	property name="email";
-	property name="samaccountname";
-	property name="isApproved" getter="false";
-	property name="AxoSoftToken";
+	property name="id" column="id" fieldtype="id" ormtype="integer" generator="identity";
+	property name="ADID" ormtype="string" length="50" notnull="true";
+	property name="UserName" ormtype="string" length="255" notnull="true";
+	property name="password" ormtype="string" length="1000" notnull="false";
+	property name="email" ormtype="string" length="255" notnull="false";
+	property name="salt" ormtype="string" length="1000" notnull="false";
+	property name="samaccountname" ormtype="string" length="255" notnull="false";
+	property name="isApproved" getter="false" ormtype="boolean" notnull="true";
+	property name="AxoSoftToken" ormtype="string" length="50" notnull="false";
 	
 	public TTestTester function init() 
 	{

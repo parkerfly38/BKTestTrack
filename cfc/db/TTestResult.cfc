@@ -5,9 +5,9 @@ component table="TTestResult" persistent="true"
 	property name="Version";
 	property name="ElapsedTime";
 	property name="Comment";
-	property name="DateTested";
+	property name="DateTested" ormtype="timestamp" notnull="true";
 	property name="AttachmentList";
-	property name="TestCaseID";
+	property name="TestCaseID" ormtype="integer";
 	property name="Defects";
 	property name="TTestStatus" fieldtype="one-to-one" cfc="TTestStatus" fkcolumn="StatusID";
 	property name="TTestTester" fieldtype="one-to-one" cfc="TTestTester" fkcolumn="TesterID";

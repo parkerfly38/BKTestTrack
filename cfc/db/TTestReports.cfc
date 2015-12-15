@@ -9,5 +9,5 @@ component table="TTestReports" persistent="true"
 	property name="ReportDescription";
 	property name="ReportOptions";
 	property name="ReportAccessAndScheduling";
-	property name="ProjectID";
+	property name="ProjectID" ormtype="integer";
 }

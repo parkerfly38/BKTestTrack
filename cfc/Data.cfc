@@ -199,9 +199,18 @@ component
 	
 	public query function qryGetChatLog()
 	{
-		qryChatLog = queryExecute(
-			"SELECT a.* FROM (SELECT TOP 100 username, messageDate, messageBody FROM TTestMessageLog ORDER BY messageDate DESC) a order by a.MessageDate"
+		cfdbinfo(name="dbInfo",type="version",datasource="COGData");
+		
+		if (dbinfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
+		{
+			qryChatLog = queryExecute(
+				"SELECT a.* FROM (SELECT username, messageDate, messageBody FROM TTestMessageLog ORDER BY messageDate DESC LIMIT 100) a order by a.MessageDate"
 			);
+		} else {
+			qryChatLog = queryExecute(
+				"SELECT a.* FROM (SELECT TOP 100 username, messageDate, messageBody FROM TTestMessageLog ORDER BY messageDate DESC) a order by a.MessageDate"
+			);
+		}
 		return qryChatLog;
 	}
 	

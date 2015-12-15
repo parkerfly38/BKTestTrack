@@ -486,9 +486,23 @@
 	</cffunction>
 	
 	<cffunction name="AllProjectsChart" access="remote" output="true">
-		<cfstoredproc procedure="PGeneralActivityByProject">
-			<cfprocresult name="qryGeneralActivity">
-		</cfstoredproc>
+		<cfdbinfo type="version" name="dbInfo">
+		<cfif dbinfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL">
+			<cfquery name="qryGeneralActivity">
+				SELECT *
+				FROM crosstab('SELECT ProjectTitle, DateTested, Color
+				FROM TTestProject
+				INNER JOIN TTestCase ON TTestCase.ProjectID = TTestProject.id
+				INNER JOIN TTestResult ON TTestResult.TestCaseID = TTestCase.id
+				WHERE DateTested <= CURRENT_DATE and DateTested >= (CURRENT_DATE - INTERVAL ''14 days'')
+				AND Closed = false')
+				as ttestproject(projecttitle text, date_1 text, date_2 text, date_3 text, date_4 text, date_5 text, date_6 text, date_7 text, date_8 text, date_9 text, date_10 text, date_11 text, date_12 text, date_13 text, date_14 text);
+			</cfquery>
+		<cfelse>
+			<cfstoredproc procedure="PGeneralActivityByProject">
+				<cfprocresult name="qryGeneralActivity">
+			</cfstoredproc>
+		</cfif>
 		<cfset arrColor = ['red','green','blue','yellow','gray','black','pink','brown'] />
 		<div class="panel panel-default">
 		<div class="panel-heading" id="activitytitle"><i class="fa fa-pie-chart"></i> All Projects</div>

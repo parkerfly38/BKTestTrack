@@ -9,7 +9,11 @@
 	writeDump(objAxoSoft.getItems(3,accessToken));
 </cfscript>--->
 
-<cfscript>
+<!---<cfscript>
 	objSlack = new CFTestTrack.cfc.Slack();
 	writeDump(objSlack.slackPostMessage(text="TestTrack now integrated with SlackBot.", as_user=true));
+</cfscript>--->
+<cfscript>
+	cfdbinfo(name="qrydbinfo",type="version");
+	writeDump(qrydbinfo);
 </cfscript>

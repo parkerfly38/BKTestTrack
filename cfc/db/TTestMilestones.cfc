@@ -1,11 +1,11 @@
 component table="TTestMilestones" persistent="true"
 {
-	property name="id" column="id" fieldtype="id" generator="identity";
+	property name="id" column="id" fieldtype="id" ormtype="integer" generator="identity";
 	property name="Milestone";
-	property name="DueOn" ormtype="date" type="date";
+	property name="DueOn" ormtype="timestamp" notnull="false";
 	property name="MilestoneDescription";
-	property name="Closed" getter="false";
-	property name="ProjectID";
+	property name="Closed" getter="false" ormtype="boolean";
+	property name="ProjectID" ormtype="integer";
 	
 	public TTestMilestones function init() 
 	{

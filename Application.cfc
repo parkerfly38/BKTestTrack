@@ -10,6 +10,7 @@
 	<cfset this.ormSettings.datasource = "COGData" />
 	<cfset this.ormSettings.eventhandling = true />
 	<cfset this.ormSettings.dbCreate = "update" />
+	<cfset this.ormSettings.useDBForMapping = "false" />
 	<cfset this.directory = getdirectoryfrompath(getcurrenttemplatepath()) >
 	<cfset this.mappings["/reportpdfs"] = "#this.directory#reportpdfs/">
 	<cfset this.mappings["/excel"] = "#this.directory#excel/">
@@ -22,6 +23,7 @@
 		<!--- debug only, remove otherwise --->
 		<cfif StructKeyExists(URL, "reload")> 
         	<cfset ApplicationStop() />
+			<cfset ORMReload() />
         	<cfset StructClear(Session) /> 
         </cfif>
         <!--- end debug only --->
