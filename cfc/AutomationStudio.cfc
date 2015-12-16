@@ -263,7 +263,7 @@ component extends="cfselenium.CFSeleniumTestCase"
 			arrCase.setURL(arguments.testURL);
 			EntitySave(arrCase);
 			fileData &= '<cfscript>' & chr(13);
-			fileData &= 'selenium = new CFSelenium.selenium("localhost",4444);' & chr(13);
+			fileData &= 'selenium = new CFSelenium.selenium("localhost",4441);' & chr(13);
 			fileData &= 'mxunit = new mxunit.framework.TestCase();' & chr(13);
 			fileData &= 'try {'&chr(13);
 			fileData &= 'selenium.start("' & arguments.testURL & '","' & arrCase.getBrowser() & '");' & chr(13);
