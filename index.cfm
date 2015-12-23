@@ -216,33 +216,37 @@
 		  			</cfif>
 		  		</cfif>
 		  		<cfif StructKeyExists(url,"projectid")>
-		  			<cfif isNumeric(url.projectid)>
-		  			<cfoutput>#objDashboard.HubChart(url.projectid)#</cfoutput>
-		  			<cfif StructKeyExists(url,"ppage")>
-		  				<cfset local.ppaging = url.ppage>
-		  			<cfelse>
-		  				<cfif StructKeyExists(url,"bpage")>
-		  					<cfset local.ppaging = 0>
-		  				<cfelse>
-		  					<cfset local.ppaging = 1>
-		  				</cfif>
-		  			</cfif>
-		  			<cfif StructKeyExists(url,"bpage")>
-		  				<cfset local.bpaging = url.bpage>
-		  			<cfelse>
-		  				<cfif StructKeyExists(url,"ppage")>
-		  					<cfset local.bpaging = 0>
-		  				<cfelse>
-		  					<cfset local.bpaging = 0>
-		  				</cfif>
-		  			</cfif>
+		  			<cfif isNumeric(url.projectid) && !StructKeyExists(url,"edit")>
+		  				<cfoutput>#objDashboard.HubChart(url.projectid)#</cfoutput>
+						<cfif StructKeyExists(url,"ppage")>
+							<cfset local.ppaging = url.ppage>
+						<cfelse>
+							<cfif StructKeyExists(url,"bpage")>
+								<cfset local.ppaging = 0>
+							<cfelse>
+								<cfset local.ppaging = 1>
+							</cfif>
+						</cfif>
+						<cfif StructKeyExists(url,"bpage")>
+							<cfset local.bpaging = url.bpage>
+						<cfelse>
+							<cfif StructKeyExists(url,"ppage")>
+								<cfset local.bpaging = 0>
+							<cfelse>
+								<cfset local.bpaging = 0>
+							</cfif>
+						</cfif>
 		  				<cfif Application.AxoSoftIntegration>
 		  				<cfoutput>#objDashboard.listAxoSoftItems(objAxoSoft.getItems(url.projectid,Session.AxoSoftToken),url.projectid,local.ppaging,local.bpaging)#</cfoutput>
 		  				<cfelse>
 		  					<cfoutput>#objDashboard.listTestScenarios(url.projectid)#</cfoutput>
 		  				</cfif>
 		  			<cfelse>
-		  				<cfoutput>#objForm.ProjectForm()#</cfoutput>
+					  	<cfif isNumeric(url.projectid)>
+						  	<cfoutput>#objForm.ProjectForm(url.projectid)#</cfoutput>
+						<cfelse>
+		  					<cfoutput>#objForm.ProjectForm()#</cfoutput>
+						</cfif>
 		  			</cfif>
 		  		</cfif>
 		  		<cfif StructIsEmpty(url)>

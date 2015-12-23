@@ -67,17 +67,14 @@ $(document).ready(function() {
 		});
 	});
 	
-	$(document).on("click","a.lnkDeleteProject", function(event) {
+	$("button.lnkDeleteProject").click(function(event) {
 		event.preventDefault();
 		var pid = $(this).attr("projectid");
 		$.ajax({
 			url:"/CFTestTrack/cfc/Forms.cfc?method=deleteProject&pjid="+pid,
 			type:"GET"
 		}).done(function(){
-			//$.getJSON("/CFTestTrack/cfc/Dashboard.cfc?method=allProjectsJSON",function(data){
-			//	jsonProjects = data;
-				//insertProjectInfo();
-			//});			
+			location.href ="/CFTestTrack";			
 		});
 	});
 	
@@ -323,7 +320,7 @@ $(document).ready(function() {
 	});
 	$(document).on("click","a.lnkViewReports",function(event){
 		event.preventDefault();
-		$("#topcontent").removeClass("panel").removeClass("panel-default");
+		$("#featurecontent").removeClass("panel").removeClass("panel-default");
 		reportScreen();
 	});
 	$(document).on("click",".btnDeleteFile", function(event){
@@ -357,8 +354,8 @@ $(document).ready(function() {
         }).done(function( response ) {
             // display response in DIV
             //$("#output").html( response.toString());
-            $("#topcontent").removeClass("panel").removeClass("panel-default");
-			$("#topcontent").load("/CFTestTrack/cfc/AutomationStudio.cfc?method=listScripts");
+            $("#featurecontent").removeClass("panel").removeClass("panel-default");
+			$("#featurecontent").load("/CFTestTrack/cfc/AutomationStudio.cfc?method=listScripts");
 			$("#midrow").empty();
 			$("#activitypanel").remove();
 			$("#lnkReturnToProject").attr("pjid",projectid);
@@ -379,7 +376,7 @@ $(document).ready(function() {
 			type: "POST",
 			data: {reportid : $(this).attr("reportid") }
 		}).done(function(data){
-			$("#topcontent").removeClass("panel").removeClass("panel-default");
+			$("#featurecontent").removeClass("panel").removeClass("panel-default");
 			reportScreen();
 		});
 	});
@@ -463,7 +460,7 @@ function insertTodos() {
 }
 
 function reportScreen() {
-	$("#topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllReports");
+	$("#featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllReports");
 	//$("#actioncontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=getCreateReports");
 	if ($("#createreportpanel").length == 0) {
 		$.ajax({

@@ -178,9 +178,10 @@
 					<cfif ArrayLen(arrProjects) gt 0>
 					<cfloop array="#arrProjects#" index="i">
 					<tr>
-						<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/project/#i.getId()#/">#i.getProjectTitle()#</a>
-							
-						</td>
+						<td><a href="http://#cgi.server_name#/CFTestTrack/project/#i.getId()#/">#i.getProjectTitle()#</a></td>
+						<td>
+							<a class="btn btn-xs btn-default" href="/CFTestTrack/project/#i.getId()#&edit=true/" ><i class="fa fa-pencil"> </i></a>
+							<button class="btn btn-xs btn-danger lnkDeleteProject" projectid="#i.getId()#"><i class="fa fa-trash"> </i></button>
 					</tr>
 					</cfloop>
 					</cfif>
@@ -267,7 +268,7 @@
 		</div>
 	</cffunction>
 	
-	<cffunction name="listTestScenarios" access="public" output="true">
+	<cffunction name="listTestScenarios" access="remote" output="true">
 		<cfargument name="projectid" required="true">
 		<cfquery name="qryTestScenarios" dbtype="hql" ormoptions=#{maxresults=5}#>
 			FROM TTestScenario
@@ -324,10 +325,7 @@
 		<div id="topcontent" class="panel panel-default">
 		<div class="panel-heading" id="activitytitle"><span class="label label-info">P#qryName[1].getId()#</span> #qryName[1].getProjectTitle()#</div>
 		<div class="panel-body">
-		<cfstoredproc procedure="PReturnTestResultCounts">
-			<cfprocparam cfsqltype="cf_sql_int" value="#arguments.projectid#">
-			<cfprocresult name="qryCounts" />
-		</cfstoredproc>
+		<cfset qryCounts = objData.qryCounts(arguments.projectid)>
 		<cfscript>
 			local.TotalPassedCount = 0;
 			local.TotalFailedCount = 0;
@@ -421,10 +419,7 @@
 		<div id="topcontent" class="panel panel-default">
 		<div class="panel-heading" id="activitytitle">#qryName[1].getProjectTitle()#</div>
 		<div class="panel-body">
-		<cfstoredproc procedure="PReturnTestResultCountsTotal">
-			<cfprocparam cfsqltype="cf_sql_int" value="#arguments.projectid#">
-			<cfprocresult name="qryCounts" />
-		</cfstoredproc>
+		<cfset qryCounts = objData.qryTestResultCountsTotal(arguments.projectid) />
 		<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
 		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 			<cfset local.totals = 0>
@@ -487,22 +482,7 @@
 	
 	<cffunction name="AllProjectsChart" access="remote" output="true">
 		<cfdbinfo type="version" name="dbInfo">
-		<cfif dbinfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL">
-			<cfquery name="qryGeneralActivity">
-				SELECT *
-				FROM crosstab('SELECT ProjectTitle, DateTested, Color
-				FROM TTestProject
-				INNER JOIN TTestCase ON TTestCase.ProjectID = TTestProject.id
-				INNER JOIN TTestResult ON TTestResult.TestCaseID = TTestCase.id
-				WHERE DateTested <= CURRENT_DATE and DateTested >= (CURRENT_DATE - INTERVAL ''14 days'')
-				AND Closed = false')
-				as ttestproject(projecttitle text, date_1 text, date_2 text, date_3 text, date_4 text, date_5 text, date_6 text, date_7 text, date_8 text, date_9 text, date_10 text, date_11 text, date_12 text, date_13 text, date_14 text);
-			</cfquery>
-		<cfelse>
-			<cfstoredproc procedure="PGeneralActivityByProject">
-				<cfprocresult name="qryGeneralActivity">
-			</cfstoredproc>
-		</cfif>
+		<cfset qryGeneralActivity = objData.qryGeneralActivity()>
 		<cfset arrColor = ['red','green','blue','yellow','gray','black','pink','brown'] />
 		<div class="panel panel-default">
 		<div class="panel-heading" id="activitytitle"><i class="fa fa-pie-chart"></i> All Projects</div>
@@ -1164,20 +1144,16 @@
 				$(".selectpicker").selectpicker();
 				$(document).off('change','##ddluser');
 				$(document).on('change','##ddluser',function() {
+					alert("test point");
 					var testcaseid = $(this).attr("tcid");
 					var userid = $(this).val();
 					$.ajax({
-						url: 'cfc/Forms.cfc?method=assignTester',
+						url: '/CFTestTrack/cfc/Forms.cfc?method=assignTester',
 						type: 'POST',
 						data: { testcaseid : testcaseid, testerid : userid }
 					}).done(function() {
-						$("##topcontent").removeClass("panel").removeClass("panel-default");
-						<!---$("##topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+#arguments.scenarioid#);--->
-						$("##midrow").empty();
-						$("##activitypanel").remove();
-						$("##lnkReturnToProject").attr("pjid",#arguments.ProjectID#);
-						$("##lnkReturnToProject").show();
-						$("##createreportpanel").remove();
+						$("##featurecontent").removeClass("panel").removeClass("panel-default");
+						$("##featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+#arguments.scenarioid#);
 					});
 				});
 			});
@@ -1288,17 +1264,12 @@
 					var testcaseid = $(this).attr("tcid");
 					var userid = $(this).val();
 					$.ajax({
-						url: 'cfc/Forms.cfc?method=assignTester',
+						url: '/CFTestTrack/cfc/Forms.cfc?method=assignTester',
 						type: 'POST',
 						data: { testcaseid : testcaseid, testerid : userid }
 					}).done(function() {
-						$("##topcontent").removeClass("panel").removeClass("panel-default");
-						$("##topcontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+#arguments.scenarioid#);
-						$("##midrow").empty();
-						$("##activitypanel").remove();
-						<!---$("##lnkReturnToProject").attr("pjid",#Session.ProjectID#);--->
-						$("##lnkReturnToProject").show();
-						$("##createreportpanel").remove();
+						$("##featurecontent").removeClass("panel").removeClass("panel-default");
+						$("##featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid="+#arguments.scenarioid#);
 					});
 				});
 			});
@@ -1602,6 +1573,7 @@
 			</script>
 			<div class="panel-heading"><i class="fa fa-bars"></i> Create Reports</div>
 			<div class="panel-body">
+				<cfif Application.AxoSoftIntegration>
 				<strong>AxoSoft</strong><br />
 				<table class="table table-condensed table-hover">
 					<tbody>
@@ -1614,6 +1586,7 @@
 						</tr>
 					</tbody>
 				</table><Br />
+				</cfif>
 				<strong>Projects</strong><br />
 				<table class="table table-condensed table-hover">
 					<tbody>
@@ -1621,9 +1594,9 @@
 						</tr>
 						<!---<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Coverage for References</td>
 						</tr>--->
-						<tr><td><a href="##" class="lnkCreateReport" reporttype="ExecutionList" data-toggle="tooltip" data-placement="left" title="Displays Execution data for test scenarios."><i class="fa fa-plus-circle" style="color:green;"></i> Execution List</td>
+						<tr><td><a href="##" class="lnkCreateReport" reporttype="ExecutionList" data-toggle="tooltip" data-placement="left" title="Displays Execution data for test scenarios."><i class="fa fa-plus-circle" style="color:green;"></i> Execution List</a></td>
 						</tr>
-						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Problem Test Cases</td>
+						<tr><td><a href="##" class="lnkCreateReport" reporttype="ProblemTestCases" data-toggle="tooltip" data-placement="left" title="Displays problem test cases for this project."><i class="fa fa-plus-circle" style="color:green;"></i> Problem Test Cases</a></td>
 						</tr>
 					</tbody>
 				</table>

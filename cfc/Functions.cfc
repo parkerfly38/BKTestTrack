@@ -52,12 +52,18 @@
 		<cfargument name="mailtype" default="html">
 		<cfargument name="attachment" type="binary" required="false">
 		
+		<cftry>
+		
 		<cfmail to="#arguments.toemail#" from="#arguments.fromemail#" subject="#arguments.subject#" type="#arguments.mailtype#">
 			#arguments.body#
 			<cfif StructKeyExists(arguments,"attachment")>
 			<cfmailparam file="#getUTC()#.pdf" type="application/pdf" content="#arguments.attachment#">
 			</cfif>
 		</cfmail>
+		<cfcatch>
+		
+		</cfcatch>
+		</cftry>
 		
 	</cffunction>
 	

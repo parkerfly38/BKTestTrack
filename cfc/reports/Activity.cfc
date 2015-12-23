@@ -168,6 +168,10 @@ component implements="CFTestTrack.cfc.IReports"
 		}
 		
 	}
+	public any function showReport() {
+
+	}
+	
 	public any function runReport() {
 		if ( StructKeyExists(variables.AccessAndScheduling,"CreateReport") && variables.AccessAndScheduling.CreateReport == "Once")
 		{

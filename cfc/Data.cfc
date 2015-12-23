@@ -110,15 +110,13 @@ component
 		links = entityLoad("TTestLinks");
 		return links;
 	}
-	public query function qryTestCaseForScenarios(scenarioid)
+	public query function qryTestCaseForScenarios(numeric scenarioid)
 	{
-		QueryHistory = new query();
-		QueryHistory.setName("getTestCaseHistory");
-		QueryHistory.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
-		qryResult = QueryHistory.execute(sql="SELECT a.id as TestCaseId, a.TestTitle, b.DateOfAction, c.UserName, b.DateActionClosed" &
-				" FROM TTestCaseHistory b INNER JOIN TTestCase a ON a.id = b.CaseId INNER JOIN TTestTester c on b.TesterID = c.id INNER JOIN TTestScenarioCases d ON a.id = d.CaseId" &
-				" WHERE d.ScenarioId = :scenarioid and b.DateActionClosed IS NULL");
-		return qryResult.getResult();
+		qryResult = queryExecute(
+			"SELECT a.id as TestCaseId, a.TestTitle, b.DateOfAction, c.UserName, b.DateActionClosed" &
+			" FROM TTestCaseHistory b INNER JOIN TTestCase a ON a.id = b.CaseId INNER JOIN TTestTester c on b.TesterID = c.id INNER JOIN TTestScenarioCases d ON a.id = d.CaseId" &
+			" WHERE d.ScenarioId = " & arguments.scenarioid & " and b.DateActionClosed IS NULL");
+		return qryResult;	
 	}
 	public query function qryTestCasesForProject(projectid)
 	{
@@ -130,12 +128,14 @@ component
 				" WHERE a.ProjectId = :projectid and b.DateActionClosed IS NULL");
 		return qryResult.getResult();
 	}
-	public query function qryTestCaseHistoryForScenarios(scenarioid) {
-		QueryHistory = new query();
-		QueryHistory.setName("getTestCaseHistory");
-		QueryHistory.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
-		qryResult = QueryHistory.execute(sql="SELECT id,Status,Sum(StatusCount) as StatusCount FROM ( Select TTestStatus.id, Status, ISNULL(Count(a.id),0) as StatusCount FROM TTestStatus LEFT JOIN ( SELECT b.id, b.[Action] FROM TTestCaseHistory b INNER JOIN TTestScenarioCases c on b.CaseId = c.CaseId WHERE c.ScenarioId = :scenarioid and b.DateActionClosed is null ) a ON a.Action = TTestStatus.Status GROUP BY TTestStatus.id, Status  UNION ALL SELECT 1 as id,(CASE WHEN [Action] IN ('Created','Assigned') THEN 'Untested' END) as Status, ISNULL(Count(TTestCaseHistory.id),0) as StatusCount FROM TTestCaseHistory INNER JOIN TTestScenarioCases on TTestScenarioCases.CaseID = TTestCaseHistory.CaseID WHERE ScenarioId = :scenarioid AND [Action] IN ('Created','Assigned') AND DateActionClosed IS NULL GROUP BY [Action] ) DERIVED GROUP BY id, Status");
-		return qryResult.getResult();
+	public query function qryTestCaseHistoryForScenarios(numeric scenarioid) {
+		qryResult = queryExecute(
+			"SELECT id,Status,Sum(StatusCount) as StatusCount FROM ( Select TTestStatus.id, Status, COALESCE(Count(a.id),0) as StatusCount FROM TTestStatus 
+			LEFT JOIN ( SELECT b.id, b.Action FROM TTestCaseHistory b INNER JOIN TTestScenarioCases c on b.CaseId = c.CaseId WHERE c.ScenarioId = " & arguments.scenarioid & " and b.DateActionClosed is null ) a 
+			ON a.Action = TTestStatus.Status GROUP BY TTestStatus.id, Status  UNION ALL SELECT 1 as id,(CASE WHEN Action IN ('Created','Assigned') THEN 'Untested' END) as Status, 
+			COALESCE(Count(TTestCaseHistory.id),0) as StatusCount FROM TTestCaseHistory INNER JOIN TTestScenarioCases on TTestScenarioCases.CaseID = TTestCaseHistory.CaseID 
+			WHERE ScenarioId = " & arguments.scenarioid & " AND Action IN ('Created','Assigned') AND DateActionClosed IS NULL GROUP BY Action ) DERIVED GROUP BY id, Status");
+		return qryResult;
 	}
 	public query function qryTestCaseHistoryDataByProject(projectid) {
 		qryNew = new query();
@@ -149,17 +149,14 @@ component
 		return qryResult.getResult();
 	}
 	
-	public query function qryTestCaseHistoryDataForScenario(scenarioid) {
-		qryNew = new query();
-		qryNew.setName("getTestCaseHistory");
-		qryNew.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
-		qryResult = qryNew.execute(sql="SELECT DISTINCT d.TestTitle, a.TestCaseId, a.DateTested, e.Status, c.UserName FROM TTestResult a " &
+	public query function qryTestCaseHistoryDataForScenario(numeric scenarioid) {
+		qryResult = queryExecute("SELECT DISTINCT d.TestTitle, a.TestCaseId, a.DateTested, e.Status, c.UserName FROM TTestResult a " &
 										"INNER JOIN TTestScenarioCases b on a.TestCaseId = b.CaseId " &
 										"INNER JOIN TTestTester c on a.TesterID = c.id " &
 										"INNER JOIN TTestCase d on a.TestCaseId = d.id " &
 										"INNER JOIN TTestStatus e on a.StatusID = e.id " &
-										"WHERE b.ScenarioId = :scenarioid");
-		return qryResult.getResult();
+										"WHERE b.ScenarioId = " & arguments.scenarioid);
+		return qryResult;
 	}
 	public query function qryTestCaseHistoryAllForScenario(scenarioid) {
 		qrynew = new query();
@@ -176,25 +173,33 @@ component
 									   "ORDER BY TestTitle, DateTested");
 		return qryResult.getResult();
 	}
-	public query function qryTestCasesAssignedScenario(scenarioid) {
-		qryNew = new query();
-		qryNew.setName("getScenarioTestCases");
-		qryNew.addParam(name="scenarioid",value=arguments.scenarioid,cfsqltype="cf_sql_int");
-		qryResult = qryNew.execute(sql="SELECT b.TestTitle, c.DateOfAction, d.UserName FROM TTestScenarioCases a " &
+	public query function qryTestCasesAssignedScenario(numeric scenarioid) {
+		qryResult = queryExecute("SELECT b.TestTitle, c.DateOfAction, d.UserName FROM TTestScenarioCases a " &
 										"INNER JOIN TTestCase b ON b.id = a.CaseId " &
 										"INNER JOIN TTestCaseHistory c on c.CaseID = a.CaseId " &
 										"INNER JOIN TTestTester d on d.id = c.TesterID " &
-										"WHERE a.ScenarioId = :scenarioid AND c.Action = 'Assigned'");
-		return qryResult.getResult();
+										"WHERE a.ScenarioId = " & arguments.scenarioid & " AND c.Action = 'Assigned'");
+		return qryResult;
 	}
-	public query function qryGetCurrentTestStatus(caseid) {
-		qryNew = new query();
-		qryNew.setName("getCaseStatus");
-		qryNew.addParam(name="caseid",value=arguments.caseid,cfsqltype="cf_sql_int");
-		qryResult = qryNew.execute(sql="SELECT ISNULL(d.Status,'Assigned') as Status FROM TTestCase a " &
-				"LEFT JOIN (SELECT TOP 1 c.TestCaseId, b.Status FROM TTestResult c INNER JOIN TTestStatus b on b.id = c.StatusID WHERE c.TestCaseId = :caseid ORDER BY c.id DESC) d ON d.TestCaseId = a.id " &
-				"WHERE a.id = :caseid");
-		return qryResult.getResult();
+	public query function qryGetCurrentTestStatus(numeric caseid) {
+		cfdbinfo(name="dbInfo",type="version",datasource="COGData");
+		
+		if (dbinfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
+		{
+			qryResult = queryExecute(
+				"SELECT COALESCE(d.Status,'Assigned') as Status FROM TTestCase a
+				LEFT JOIN (SELECT c.TestCaseId, b.Status FROM TTestResult c INNER JOIN TTestStatus b on b.id = c.StatusID WHERE c.TestCaseId = " & arguments.caseid & "
+				ORDER BY c.id DESC LIMIT 1) d on d.TestCaseId = a.id
+				WHERE a.id = " & arguments.caseid
+			);
+		} else {	
+			qryResult = queryExecute(
+				"SELECT COALESCE(d.Status,'Assigned') as Status FROM TTestCase a 
+				LEFT JOIN (SELECT TOP 1 c.TestCaseId, b.Status FROM TTestResult c INNER JOIN TTestStatus b on b.id = c.StatusID WHERE c.TestCaseId = " & arguments.caseid & "
+				ORDER BY c.id DESC) d ON d.TestCaseId = a.id 
+				WHERE a.id = " & arguments.caseid);
+		}
+		return qryResult;
 	}
 	
 	public query function qryGetChatLog()
@@ -223,6 +228,100 @@ component
 			  messagedate : { value: arguments.messagedate, cfSqlType: "cf_sql_timestamp" },
 			  messagebody : { value: arguments.messagebody, cfsqltype: "cf_sql_varchar" }
 			 });
+	}
+	
+	public query function qryGeneralActivity()
+	{
+		cfdbinfo(name="dbInfo", type="version", datasource="COGData");
+		if (dbinfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
+		{
+			qryGeneralActivity = queryExecute(
+				"SELECT *
+					FROM crosstab('SELECT ProjectTitle, DateTested, Color
+					FROM TTestProject
+					INNER JOIN TTestCase ON TTestCase.ProjectID = TTestProject.id
+					INNER JOIN TTestResult ON TTestResult.TestCaseID = TTestCase.id
+					WHERE DateTested <= CURRENT_DATE and DateTested >= (CURRENT_DATE - INTERVAL ''14 days'')
+					AND Closed = false')
+					as ttestproject(projecttitle text, date_1 text, date_2 text, date_3 text, date_4 text, date_5 text, date_6 text, date_7 text, date_8 text, date_9 text, date_10 text, date_11 text, date_12 text, date_13 text, date_14 text);
+				");
+		} else {
+			cfstoredproc(procedure="PGeneralActivityByProject")
+			{
+				cfprocresult(name="qryGeneralActivity");
+			}
+		}
+		return qryGeneralActivity;
+	}
+	public query function qryCounts(numeric projectid)
+	{
+		cfdbinfo(name="dbInfo", type="version", datasource="COGData");
+		if (dbInfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
+		{
+			qryCounts = queryExecute(
+				"SELECT		to_char(DateTested, 'MM/DD/YYYY') as DateTested,
+							sum(case when StatusID = 2 then 1 else 0 end) as PassedCount,
+							sum(case when StatusID = 3 then 1 else 0 end) as FailedCount,
+							sum(case when StatusID = 1 then 1 else 0 end) as UntestedCount,
+							sum(case when StatusID = 4 then 1 else 0 end) as BlockedCount,
+							sum(case when StatusID = 5 then 1 else 0 end) as RetestCount
+				FROM		TTestResult
+				INNER JOIN	TTestCase ON TTestResult.TestCaseID = TTestCase.id
+				WHERE		DateTested <= CURRENT_DATE and DateTested >= (CURRENT_DATE - INTERVAL '14 days')
+				AND			TTestCase.ProjectID = " & arguments.projectid & "
+				GROUP BY	DateTested"
+			);
+		} else {
+			cfstoredproc(procedure="PReturnTestResultCounts")
+			{
+				cfprocparam(cfsqltype="cf_sql_int", value="#arguments.projectId#");
+				cfprocresult(name="qryCounts");
+			}
+		}
+		return qryCounts;
 		
+		public query function qryTestResultCountsTotal(numeric projectid)
+		{
+			cfdbinfo(name="dbInfo", type="version");
+			if (dbInfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
+			{
+				qryCounts = queryExecute(
+					"SELECT		a.StatusID,b.[Status], count(a.id) as ItemCount
+					FROM		TTestResult a
+					INNER JOIN	TTestStatus b on a.StatusID = b.id
+					INNER JOIN  TTestCase c on a.TestCaseID = c.id
+					WHERE		c.ProjectID = " & arguments.projectid & "
+					GROUP BY	a.StatusID,b.[Status]"
+				);
+			} else {
+				cfstoredproc(procedure="PReturnTestResultCountsTotal")
+				{
+					cfprocparam(cfsqltype="cf_sql_int", value="#arguments.projectid#");
+					qfprocresult(name="qryCounts");
+				}
+			}
+		}
+		
+		public query function qryGetProblemTestCases(numeric projectid, date datestart, date dateend)
+		{
+			qryResult = queryExecute(
+				"SELECT 
+						TTestCase.id,
+						TTestCase.TestTitle,
+						results.ResultCount
+				FROM
+					TTestCase
+				INNER JOIN (			
+				SELECT testcaseid, Count(id) AS ResultCount
+				FROM TTestResult
+				WHERE statusid in (3,4,5)
+				AND datetested >= '" & arguments.datestart & "'
+				AND datetested <= '" & arguments.dateend & "'
+				GROUP BY testcaseid ) results ON results.testcaseid = TTestCase.id
+				WHERE results.ResultCount > 2
+				"
+			);
+			return qryResult;
+		}
 	}
 }

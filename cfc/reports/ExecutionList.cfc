@@ -60,8 +60,8 @@ component implements="CFTestTrack.cfc.IReports"
 		sReturn &=	"var reportAandS = " & serializeJSON(getAccessAndScheduling()) & chr(13) & chr(10);
 		sReturn &=	"reportOptions.GROUPINGANDCHANGES.INCLUDECHANGES = $('##includechanges:checked').map(function() {return this.value;}).get().join(',');" & chr(13) & chr(10);
 		sReturn &=	"reportOptions.TIMEFRAME = $('##timeframe').val();" & chr(13) & chr(10);
-		sReturn &=	"var ts = $('##testscenarios').val() || [];" & chr(13) & chr(10);
-		sReturn &=	"reportOptions.TESTSCENARIOS = ts.join(',');" & chr(13) & chr(10);
+		sReturn &=	"var ts = $('##testscenarios').val();" & chr(13) & chr(10);
+		sReturn &=	"reportOptions.TESTSCENARIOS = ts;" & chr(13) & chr(10);
 		sReturn &=	"reportAandS.ACCESSBY = $('##AccessBy').val();" & chr(13) & chr(10);
 		sReturn &=	"reportAandS.CREATEREPORT = $('##createreport').val();" & chr(13) & chr(10);
 		sReturn &=	"reportAandS.EMAIL.NOTIFYME = $('##notifyme:checked').length == 1 ? '"& session.useridint & "' : '0';" & chr(13) & chr(10);
@@ -81,11 +81,6 @@ component implements="CFTestTrack.cfc.IReports"
 		formbody &= "<li><a data-toggle='tab' href='##TestScenarios'>Test Scenario</a></ul>";
 		formbody &= "<div class='tab-content'>";
 		formbody &= "<div id='Options' class='tab-pane fade in active'>";
-		/*formbody &= "<div class='input-group'>";
-		formbody &= "<h5>Include New Test Cases and/or Updates</h5>";
-		formbody &= "<label><input type='checkbox' value='new' id='includechanges' name='includechanges' value='new'> New</label><br />";
-		formbody &= "<label><input type='checkbox' value='updated' id='includechanges' name='includechanges' value='updated'> Updated</label>";
-		formbody & = "</div>";*/
 		formbody &= "<div class='input-group'>";
 		formbody &= "<label for='timeframe'>Use the following time frame:<br />";
 		formbody &= "<select id='timeframe' name='timeframe' class='selectpicker' data-style='btn-info btn-xs'><option value='Today' selected>Today</option><option value='Week'>This Week</option><option value='Month'>This Month</option><option value='All'>All Time</option></select></label>";
@@ -169,6 +164,11 @@ component implements="CFTestTrack.cfc.IReports"
 		}
 		
 	}
+	
+	public any function showReport() {
+		
+	}
+	
 	public any function runReport() {
 		if ( StructKeyExists(variables.AccessAndScheduling,"CreateReport") && variables.AccessAndScheduling.CreateReport == "Once")
 		{

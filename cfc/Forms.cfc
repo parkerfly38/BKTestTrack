@@ -454,7 +454,7 @@
 				$(document).on("click","##btnSave",function(event) {
 					#report.getJSONFormDataForPost()#;
 					$.ajax({
-						url : "cfc/forms.cfc?method=saveReport",
+						url : "/CFTestTrack/cfc/forms.cfc?method=saveReport",
 						type : "POST",
 						data: {  reportType : '#arguments.reporttype#',
 								 reportName : $("##reportname").val(),
@@ -463,7 +463,7 @@
 						 }
 					}).done(function(data) {
 						$("##largeModal").modal('hide');
-						$("##topcontent").removeClass("panel").removeClass("panel-default");
+						$("##featurecontent").removeClass("panel").removeClass("panel-default");
 						reportScreen();
 					});
 				});
@@ -661,7 +661,7 @@
 				$(document).on("click","##btnSave",function(event) {
 					event.preventDefault();
 					$.ajax({
-						url: "CFC/forms.cfc?method=saveProject",
+						url: "/CFTestTrack/CFC/forms.cfc?method=saveProject",
 						type: "POST",
 						data: {
 							id : '#arguments.projectId#',
@@ -676,7 +676,7 @@
 					}).done(function(data) {
 						if ( data == "true" )
 						{
-							$("##largeModal").modal('hide');
+							location.href="/CFTestTrack";
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");
 						}
@@ -739,6 +739,9 @@
 			</div>
 			</cfif>
 		</div>
+		</div>
+		<div class="panel-footer">
+		        <button id="btnSave" type="button" class="btn btn-primary">Save changes</button>
 		</div>
 		</div>
 	</cffunction>
@@ -936,7 +939,7 @@
 		</cfscript>
 	</cffunction>
 	
-	<cffunction name="assignTester" access="remote" returntype="any">
+	<cffunction name="assignTester" access="remote" returntype="void">
 		<cfargument name="testcaseid" type="numeric" required="true">
 		<cfargument name="testerid" type="numeric" required="true">
 		<cfset objFunc = createObject("component","Functions")>
