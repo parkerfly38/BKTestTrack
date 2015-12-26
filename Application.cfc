@@ -10,6 +10,7 @@
 	<cfset this.ormSettings.datasource = "COGData" />
 	<cfset this.ormSettings.eventhandling = true />
 	<cfset this.ormSettings.dbCreate = "update" />
+	<cfset this.ormSettings.dialect = "MicrosoftSQLServer" />
 	<cfset this.ormSettings.useDBForMapping = "false" />
 	<cfset this.directory = getdirectoryfrompath(getcurrenttemplatepath()) >
 	<cfset this.mappings["/reportpdfs"] = "#this.directory#reportpdfs/">

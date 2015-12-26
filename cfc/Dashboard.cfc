@@ -645,7 +645,7 @@
 								<td>#report.getReportName()#</td>
 								<td>#optionsStruct.TimeFrame#</td>
 								<td>#skedStruct.CreateReport#</td>
-								<td><div class="btn-group"><a class="btn btn-primary btn-sm" href="reportpdfs/#report.getId()#.pdf" target="_blank">View</a><a class="lnkReportDelete btn btn-primary btn-sm" reportid="#report.getId()#" href="##">Delete</a></div></td>
+								<td><div class="btn-group"><a class="btn btn-primary btn-sm" href="/CFTestTrack/reportpdfs/#report.getId()#.pdf" target="_blank">View</a><a class="lnkReportDelete btn btn-primary btn-sm" reportid="#report.getId()#" href="##">Delete</a></div></td>
 							</tr>
 							</cfloop>
 						</tbody>
@@ -1687,7 +1687,7 @@
 		<!--- active projects --->
 		<cfquery name="qryActiveProjects" dbtype="hql">
 			FROM TTestProject
-			WHERE ProjectStartDate <= <cfqueryparam value="#now()#">
+			WHERE ProjectStartDate <= <cfqueryparam value="#DateFormat(now(),'yyyy-mm-dd')#" >
 			AND Closed = 0
 		</cfquery>
 		<cfset returnData["ActiveProjects"] = arrayLen(qryActiveProjects) >
@@ -1707,7 +1707,7 @@
 		</cfif>
 		<cfquery name="qryActiveProjects" dbtype="hql">
 			FROM TTestProject
-			<CFIF !includeInactiveProjects>WHERE Closed = false</CFIF>
+			<CFIF !includeInactiveProjects>WHERE Closed = 0</CFIF>
 			ORDER BY id
 		</cfquery>
 		<cfreturn serializeJSON(qryActiveProjects)>

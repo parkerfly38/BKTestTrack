@@ -279,49 +279,48 @@ component
 			}
 		}
 		return qryCounts;
+	}
 		
-		public query function qryTestResultCountsTotal(numeric projectid)
+	public query function qryTestResultCountsTotal(numeric projectid)
+	{
+		cfdbinfo(name="dbInfo", type="version");
+		if (dbInfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
 		{
-			cfdbinfo(name="dbInfo", type="version");
-			if (dbInfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
+			qryCounts = queryExecute(
+				"SELECT		a.StatusID,b.[Status], count(a.id) as ItemCount
+				FROM		TTestResult a
+				INNER JOIN	TTestStatus b on a.StatusID = b.id
+				INNER JOIN  TTestCase c on a.TestCaseID = c.id
+				WHERE		c.ProjectID = " & arguments.projectid & "
+				GROUP BY	a.StatusID,b.[Status]"
+			);
+		} else {
+			cfstoredproc(procedure="PReturnTestResultCountsTotal")
 			{
-				qryCounts = queryExecute(
-					"SELECT		a.StatusID,b.[Status], count(a.id) as ItemCount
-					FROM		TTestResult a
-					INNER JOIN	TTestStatus b on a.StatusID = b.id
-					INNER JOIN  TTestCase c on a.TestCaseID = c.id
-					WHERE		c.ProjectID = " & arguments.projectid & "
-					GROUP BY	a.StatusID,b.[Status]"
-				);
-			} else {
-				cfstoredproc(procedure="PReturnTestResultCountsTotal")
-				{
-					cfprocparam(cfsqltype="cf_sql_int", value="#arguments.projectid#");
-					qfprocresult(name="qryCounts");
-				}
+				cfprocparam(cfsqltype="cf_sql_int", value="#arguments.projectid#");
+				qfprocresult(name="qryCounts");
 			}
 		}
+	}
 		
-		public query function qryGetProblemTestCases(numeric projectid, date datestart, date dateend)
-		{
-			qryResult = queryExecute(
-				"SELECT 
-						TTestCase.id,
-						TTestCase.TestTitle,
-						results.ResultCount
-				FROM
-					TTestCase
-				INNER JOIN (			
-				SELECT testcaseid, Count(id) AS ResultCount
-				FROM TTestResult
-				WHERE statusid in (3,4,5)
-				AND datetested >= '" & arguments.datestart & "'
-				AND datetested <= '" & arguments.dateend & "'
-				GROUP BY testcaseid ) results ON results.testcaseid = TTestCase.id
-				WHERE results.ResultCount > 2
-				"
-			);
-			return qryResult;
-		}
+	public query function qryGetProblemTestCases(numeric projectid, date datestart, date dateend)
+	{
+		qryResult = queryExecute(
+			"SELECT 
+					TTestCase.id,
+					TTestCase.TestTitle,
+					results.ResultCount
+			FROM
+				TTestCase
+			INNER JOIN (			
+			SELECT testcaseid, Count(id) AS ResultCount
+			FROM TTestResult
+			WHERE statusid in (3,4,5)
+			AND datetested >= '" & DateFormat(arguments.datestart,'yyyy-mm-dd') & "'
+			AND datetested <= '" & DateFormat(arguments.dateend,'yyyy-mm-dd') & "'
+			GROUP BY testcaseid ) results ON results.testcaseid = TTestCase.id
+			WHERE results.ResultCount > 2
+			AND TTestCase.ProjectId = " & arguments.projectid);
+		return qryResult;
 	}
 }

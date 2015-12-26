@@ -7,7 +7,7 @@ component implements="CFTestTrack.cfc.IReports"
 	variables.ReportOptions = StructNew();
 	variables.AccessAndScheduling = StructNew();
 	
-	public ExecutionList function init(required numeric reportid, required string reportname, required struct reportoptions, required struct accessandscheduling) {
+	public ProblemTestCases function init(required numeric reportid, required string reportname, required struct reportoptions, required struct accessandscheduling) {
 		variables.reportid = arguments.reportid;
 		variables.ReportName = arguments.reportname;
 		variables.ReportOptions = arguments.reportoptions;
@@ -172,14 +172,30 @@ component implements="CFTestTrack.cfc.IReports"
 			}
 		}
 		
-		//sp = new storedproc(); 
-    	//sp.setProcedure("rptExecutionList");
-    	//sp.addParam(cfsqltype="cf_sql_numeric",type="in",value=variables.ReportOptions.TestScenarios);
-    	//sp.addProcResult(name="rs", resultset=1);
-		//result = sp.execute();
-		//rs1 = result.getProcResultSets().rs;
-		objData = createObject(component,"CFTestTrack.cfc.Data");
-		rs1 = objData.qryGetProblemTestCases(Session.ProjectID);
+		if ( StructKeyExists(variables.ReportOptions,"TimeFrame") )
+		{
+			switch(variables.ReportOptions.TimeFrame)
+			{
+				case "Today":
+					datestart = Now();
+					dateend = Now();
+					break;
+				case "Week":
+					datestart = Now();
+					dateend = DateAdd("d",-7,Now());
+					break;
+				case "Month":
+					datestart = Now();
+					dateend = DateAdd("m",-1,Now());
+					break;
+				case "All":
+					datestart = DateAdd("yyyy",-10,now());
+					dateend = Now();
+					break;
+			}	
+		}
+		objData = createObject("component","CFTestTrack.cfc.Data");
+		rs1 = objData.qryGetProblemTestCases(Session.ProjectID,datestart,dateend);
 		reportoutput = "<h3>Problem Test Cases</h3><table class='table table-condensed table-striped'><thead><tr><th>Test Title</th><th>Problem Count</th></tr></thead><tbody>";
 		//for ( q in rs1 ) {
 		for ( q = 1; q <= rs1.RecordCount; q++ ) {
