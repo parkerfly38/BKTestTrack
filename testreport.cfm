@@ -8,6 +8,7 @@
 	objAxoSoft = new CfTestTrack.cfc.AxoSoft();
 	writeDump(objAxoSoft.getItems(3,accessToken));
 </cfscript>--->
+<<<<<<< Updated upstream
 
 <!---<cfscript>
 	objSlack = new CFTestTrack.cfc.Slack();
@@ -17,3 +18,11 @@
 	cfdbinfo(name="qrydbinfo",type="version");
 	writeDump(qrydbinfo);
 </cfscript>
+=======
+<!---
+<cfscript>
+	objSlack = new CFTestTrack.cfc.Slack();
+	writeDump(objSlack.slackPostMessage(text="TestTrack now integrated with SlackBot.", as_user=false));
+</cfscript>--->
+<cfoutput>#ListGetAt(SERVER.ColdFusion.ProductVersion,1)#</cfoutput>
+>>>>>>> Stashed changes

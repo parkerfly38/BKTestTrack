@@ -1573,7 +1573,7 @@
 			</script>
 			<div class="panel-heading"><i class="fa fa-bars"></i> Create Reports</div>
 			<div class="panel-body">
-				<cfif Application.AxoSoftIntegration>
+				<cfif Application.AxoSoftIntegration eq "true">
 				<strong>AxoSoft</strong><br />
 				<table class="table table-condensed table-hover">
 					<tbody>
@@ -1585,8 +1585,7 @@
 							<td><a href="##" class="lnkCreateReport" reporttype="ClientAcceptance" data-toggle="tooltip" data-placement="left" title="Client acceptance items report."><i class="fa fa-plus-circle" style="color: green;"></i> Client Acceptance</a></td>
 						</tr>
 					</tbody>
-				</table><Br />
-				</cfif>
+				</table><Br /></cfif>
 				<strong>Projects</strong><br />
 				<table class="table table-condensed table-hover">
 					<tbody>

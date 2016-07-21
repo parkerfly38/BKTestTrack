@@ -1,12 +1,11 @@
 <cfcomponent>
 
-	<cfset this.Name = "CFTestTrack" />
+	<cfset this.Name = "TheCrucible" />
 	<cfset this.sessionManagement = true />
 	<cfset this.applicationTimeout = createTimeSpan(1,0,0,0)>
 	<cfset this.sessionTimeout = createTimeSpan(0,0,30,0)>
 	<cfset this.ormEnabled = true />
 	<cfset this.datasource = "COGData" />
-	<cfset this.ormSettings.cflocation = "CFC.db" />
 	<cfset this.ormSettings.datasource = "COGData" />
 	<cfset this.ormSettings.eventhandling = true />
 	<cfset this.ormSettings.dbCreate = "update" />
@@ -16,6 +15,10 @@
 	<cfset this.mappings["/reportpdfs"] = "#this.directory#reportpdfs/">
 	<cfset this.mappings["/excel"] = "#this.directory#excel/">
 	<cfset this.mappings["/avatars"] = "#this.directory#images/avatars/">
+	<cfset this.mappings["/cfc"] = "#this.directory#cfc/">
+	<cfset this.mappings["/db"] = "#this.directory#cfc/db/">
+	<cfset this.mappings["/style"] = "#this.directory#style/">
+	<cfset this.ormSettings.cflocation = "db" />
 	<cfset this.wschannels = [{name="general",cfclistener="cfc.Chat"}] >
 	<!--- production only 
 	<cfsetting showdebugoutput="false" />--->
@@ -127,6 +130,10 @@
 		<cfset Application.AxoSoftUseAPI = qryAxoSoftUseAPI.getSettingValue()>
 		<cfset Application.ChatStruct = StructNew()>
 		<cfset Application.ChatStruct.connectionInfo.userName = "CFTestTrack" />
+        <cfset Application.SlackIntegration = EntityLoad("TTestSettings", {Setting="SlackIntegration"},true).getSettingValue() />
+        <cfset Application.SlackAPIToken = EntityLoad("TTestSettings", {Setting="SlackAPIToken"},true).getSettingValue() />
+        <cfset Application.SlackBotChannel = EntityLoad("TTestSettings", {Setting="SlackBotChannel"},true).getSettingValue() />
+        <cfset Application.SlackBotURL = EntityLoad("TTestSettings", {Setting="SlackBotURL"},true) />
 	</cffunction>
 	
 	<cffunction name="onMissingTemplate" output="true">

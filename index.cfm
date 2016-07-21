@@ -31,7 +31,7 @@
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 	    <meta name="description" content="">
 	    <meta name="author" content="">
-	    <title>CFTestTracker</title>
+	    <title>The Crucible Test Suite</title>
 	    <link rel="icon" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/favicon.ico" type="image/x-icon" />
 		<link rel="stylesheet" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/style/bootstrap.css" />
 		<link href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -146,12 +146,10 @@
 	          	<a class="navbar-brand" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/" id="lnkHome" style="padding:3px;"><img src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/images/TestTrack.png" border="0" style="height: 45px; width: auto;" /></a>
 	          </div>
 		      <div id="navbar" class="navbar-collapse collapse">
-		      	
-		        
-		        <ul class="nav navbar-nav">
-		        <cfif StructKeyExists(url,"projectid") || isNumeric(Session.projectID)>
-		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/"><!---<i class="fa fa-home"></i>---> Project Home</a></li>
-		          <li class="dropdown ddmMilestones"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-map-marker"> </i> --->Milestones</a>
+		      	<ul class="nav navbar-nav">
+		          <cfif StructKeyExists(url,"projectid") || isNumeric(Session.projectID)>
+		       		<li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/"><!---<i class="fa fa-home"></i>---> Project Home</a></li>
+		          	<li class="dropdown ddmMilestones"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-map-marker"> </i> --->Milestones</a>
 		          	<ul class="dropdown-menu" role="menu">
 		          		<li><a class="lnkViewMilestones" href="milestones">View All</a></li>
 		          		<li><a class="lnkAddMilestone" href="##">Add</a></li>
@@ -161,6 +159,7 @@
 		          	<ul class="dropdown-menu" role="menu">
 		          		<li><a class="lnkViewScenarios" href="##">View All</a></li>
 		          		<li><a class="lnkAddScenario" href="##">Add</a></li>
+		          		<li><a class="lnkAddSections" href="##">Add Test Sections</a></li>
 		          	</ul>
 		          </li>
 		          <li class="dropdown ddmTestCases"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-tachometer"> </i>--->Test Cases</a>
@@ -183,11 +182,10 @@
 		          		<li><a class="" href="#">Automated Test Activity</a></li>
 		          	</ul>
 		          </li>
-		          <li><a class="lnkViewReports" href="#"><!---<i class="fa fa-bars"> </i> --->Reporting</a></li>
+		          </cfif>
+		          <li><a class="lnkViewReports" href="#" style="display:none;"><!---<i class="fa fa-bars"> </i> --->Reporting</a></li>
 		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings/"> <!---<i class="fa fa-gear"></i>---> Settings</a></li>
-		         
-		      	</cfif>
-		      	<li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/logout/"> <i class="fa fa-power-off"></i> Log out</a></li>
+		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/logout/"> <i class="fa fa-power-off"></i> Log out</a></li>
 		        </ul>
 		      </div><!--/.nav-collapse -->
 		    </div>
@@ -213,6 +211,11 @@
 		  		<cfif StructKeyExists(url,"scenarioid")>
 		  			<cfif isNumeric(url.scenarioid)>
 		  				<cfoutput>#objDashboard.TestScenarioHub(url.scenarioid)#</cfoutput>
+		  			</cfif>
+		  		</cfif>
+		  		<cfif StructKeyExists(url, "testcase")>
+		  			<cfif isNumeric(url.testcase)>
+		  				<cfoutput>#objForm.TestCaseForm(url.testcase)#</cfoutput>
 		  			</cfif>
 		  		</cfif>
 		  		<cfif StructKeyExists(url,"projectid")>

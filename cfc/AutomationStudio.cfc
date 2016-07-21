@@ -222,7 +222,7 @@ component extends="cfselenium.CFSeleniumTestCase"
 		writeOutput("	$(document).ready(function() { "&chr(13));
 		writeOutput("		$(document).on('click','a.btnDeleteTAS',function(event) { " & chr(13));
 		writeOutput("			event.preventDefault();" & chr(13));
-		writeOutput("			$.ajax({url: '/CFTestTrack/CFC/Maintenance.cfc?method=deleteAutomationTask',type:'POST',data: {testcaseid : $(this).attr('testcaseid')}}).done(function() { $('##largeModal .modal-body').load('/CFTestTrack/cfc/AutomationStudio.cfc?method=viewAutomatedTasks'); });" & chr(13));
+		writeOutput("			$.ajax({url: '/CFTestTrack/cfc/Maintenance.cfc?method=deleteAutomationTask',type:'POST',data: {testcaseid : $(this).attr('testcaseid')}}).done(function() { $('##largeModal .modal-body').load('cfc/AutomationStudio.cfc?method=viewAutomatedTasks'); });" & chr(13));
 		writeOutput("		});" & chr(13));
 		writeOutput("	});" & chr(13));
 		writeOutput("</script>" & chr(13));
@@ -422,7 +422,7 @@ component extends="cfselenium.CFSeleniumTestCase"
 		writeOutput("			var valuefour = $(this).find('.valuefour').val();" & chr(13));
 		writeOutput("			var assertionmessage = $(this).find('.assertionmessage').val();" & chr(13));
 		writeOutput("			var orderofoperation = $(this).find('.orderofoperation').val();" & chr(13));
-		writeOutput("			$.ajax({url:'/CFTestTrack/CFC/AutomationStudio.cfc?method=saveRow',type:'POST',data: { automationid : automationid, testid : testid, action : action, valueone : valueone, valuetwo : valuetwo, valuethree : valuethree, valuefour : valuefour, assertionmessage : assertionmessage, orderofoperation : orderofoperation }});"&chr(13));
+		writeOutput("			$.ajax({url:'/CFTestTrack/cfc/AutomationStudio.cfc?method=saveRow',type:'POST',data: { automationid : automationid, testid : testid, action : action, valueone : valueone, valuetwo : valuetwo, valuethree : valuethree, valuefour : valuefour, assertionmessage : assertionmessage, orderofoperation : orderofoperation }});"&chr(13));
 		writeOutput("	 	});"&chr(13));
 		writeOutput("		$('##largeModal').modal('hide');" & chr(13));
 		writeOutput("	});"&chr(13));
@@ -507,7 +507,7 @@ component extends="cfselenium.CFSeleniumTestCase"
 		writeOutput("</script>" & chr(13));
 		
 		//load test cases by those set to automated and session id
-		arrTestCases = EntityLoad("TTestCase",{TypeId = 4, ProjectID = Session.ProjectID});
+		arrTestCases = EntityLoad("TTestCase",{TypeId = 3, ProjectID = Session.ProjectID});
 		if ( ArrayLen(arrTestCases) == 0 ) {
 			writeOutput("<div class='alert alert-danger'><strong>There are no automated test cases created for this project.</strong></div>");
 			return;

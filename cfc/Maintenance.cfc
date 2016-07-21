@@ -7,7 +7,7 @@
 		    	<cfset objCF9 = createObject("component","cf9below")>
 		    	<cfset qryScheduledTasks = objCF9.getScheduleQuery()>
 		    </cfcase>
-		    <cfcase value="10,11">
+		    <cfcase value="10,11,2016">
 		   		<cfset objCF10 = createObject("component","cf10plus")>
 		   		<cfset qryScheduledTasks = objCF10.getScheduleQuery()>
 		    </cfcase>
@@ -26,7 +26,7 @@
 				<cfset objCF9 = createObject("component","cf9below")>
 				<cfset qryScheduledTasks = objCF9.getScheduleQuery()>
 			</cfcase>
-			<cfcase value="10,11">
+			<cfcase value="10,11,2016">
 				<cfset objCF10 = createObject("component","cf10plus")>
 				<cfset qryScheduledTasks = objCF10.getScheduleQuery()>
 			</cfcase>

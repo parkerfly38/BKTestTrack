@@ -1,8 +1,8 @@
 <cfcomponent>
 	
-	<cfset api_token = "xoxb-15570080624-enfYmo68URHDZ43Bq8sK4kCj">
-	<cfset bot_channel = "C0F91JR9C" >
-	<cfset slackbot_url = "https://bk-mp.slack.com/services/hooks/slackbot?token=SnVXOOFeNY8jkD4g2DL2UvSx" >
+	<cfset api_token = Application.SlackAPIToken>
+	<cfset bot_channel = Application.SlackBotChannel >
+	<!---<cfset slackbot_url = Application.SlackBotURL >--->
 	
 	<cffunction name="slackTestAuthentication" access="public" returntype="Any">
 		<cfhttp method="post" url="https://slack.com/api/auth.test" result="httpResult">

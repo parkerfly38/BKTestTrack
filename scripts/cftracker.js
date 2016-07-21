@@ -423,6 +423,8 @@ $(document).ready(function() {
 		event.preventDefault();
 		$("#largeModal").modal('hide');
 		$("#smallModal").modal('hide');
+		restoreSpinner();
+		$("#smallModal .modal-body").html('<h3><i class="fa fa-cog fa-spin"></i></h3>');
 	});
 	$(window).resize(function() {
 		
@@ -596,6 +598,11 @@ function insertScenarios() {
 	}).done(function(data) {
 		$("#midrow").append(data);
 	});
+}
+
+function restoreSpinner()
+{
+	$("#largeModal .modal-body").html('<h3><i class="fa fa-cog fa-spin"></i></h3>');
 }
 
 function homeLoad() {

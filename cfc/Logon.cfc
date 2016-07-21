@@ -31,6 +31,11 @@
     		<cfset Session.Email = results.mail[1] />
     		<cfset Session.Name = results.cn[1] />
     		<cfset Session.UserId = results.samaccountname[1] />
+    		<cfif arrUser.getIsAdmin() gt 0>
+    			<cfset Session.IsAdmin = true />
+    		<cfelse>
+    			<cfset Session.IsAdmin = false />
+    		</cfif>
     		<cfif Application.AxoSoftIntegration>
     			<cfset Session.AxoSoftToken = arrUser.getAxoSoftToken() />
     		</cfif>
@@ -68,6 +73,7 @@
 	  		<cfset Session.UserID = qryLogin.getADID()>
 	  		<!--- adding new token routine, get one per session instead of reusing one --->
 	  		<cfif Application.AxoSoftIntegration>
+	  			<!--- todo:  please change to variables for axosoft --->
 	  			<cfhttp url="https://cornerops.axosoft.com/api/oauth2/token?grant_type=password&username=bkresge&password=nugget38&client_id=84a344d7-9034-4ed7-8a01-ba35f9642648&client_secret=yUNiYAek30KibBtietQVo9UktJz8gv8GLdniTvzyv7rzWW4n2Xq0cSmedoJKMB_PUX5aWUyb2y5LXimFX-1wIJeCQocZSF6HTE7Q&scope=read" method="get" result="tokenResult" />
 				<cfset accessToken = DeSerializeJSON(tokenResult.filecontent).access_token>
 	  			<cfset Session.AxoSoftToken = accessToken>

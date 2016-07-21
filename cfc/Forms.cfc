@@ -79,6 +79,7 @@
 							$("##lnkReturnToProject").attr("pjid",#session.projectid#);
 							$("##lnkReturnToProject").show();
 							$("##createreportpanel").remove();
+							restoreSpinner();
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");
 						}
@@ -193,6 +194,7 @@
 						{
 							$("##largeModal").modal('hide');
 							$("##featurecontent").load("http://#cgi.server_NAME#/CFTestTrack/CFC/Dashboard.cfc?method=AllTests");
+							restoreSpinner();
 							
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");
@@ -315,6 +317,7 @@
 								$("##allmilestonespanel").remove();
 								$("##featurecontent").load("http://#cgi.server_NAME#/CFTestTrack/CFC/Dashboard.cfc?method=AllMilestones");
 							}
+							restoreSpinner();
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");
 						}
@@ -382,6 +385,7 @@
 						if ( data == "true" )
 						{
 							$("##smallModal").modal('hide');
+							$("##smallModal .modal-body").html('<h3><i class="fa fa-cog fa-spin"></i></h3>');
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");
 						}
@@ -426,6 +430,7 @@
 						$("##featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=TestScenarioHub&scenarioid=#arguments.scenarioid#");
 						
 						$("##createreportpanel").remove();
+						$("##smallModal .modal-body").html('<h3><i class="fa fa-cog fa-spin"></i></h3>');
 					});
 				});
 			});
@@ -738,6 +743,9 @@
 				</div>
 			</div>
 			</cfif>
+			<div class="form-group">
+				<button id="btnSave" type="button" class="btn btn-primary">Save changes</button>
+			</div>
 		</div>
 		</div>
 		<div class="panel-footer">
@@ -867,6 +875,11 @@
 			arrTestCase.setEstimate(arguments.Estimate);
 			try {
 				EntitySave(arrTestCase);
+				if (application.SlackIntegration == "true") 
+				{
+					slackObj = createObject("component","Slack");
+					slackObj.slackPostMessage(text="#arrTestCase.GetTestTitle()# created - http://#cgi.server_name#/CFTestTrack/testcase/#arrTestCase.getId()#/", as_user=false);
+				}
 				return true;
 			} catch (any ex) {
 				return serializeJSON(ex);
@@ -932,6 +945,11 @@
 			arrProject.setClosed((isNull(arguments.Closed) ? 0 : arguments.Closed));
 			try {
 				EntitySave(arrProject);
+				if (application.SlackIntegration == "true")
+				{
+					slackObj = createObject("component","Slack");
+					slackObj.slackPostMessage(text="#arguments.ProjectTitle# created - http://#cgi.server_name#/CFTestTrack/project/#arrProject.getId()#/", as_user=false);
+				}
 				return true;
 			} catch (any ex) {
 				return serializeJSON(ex);
