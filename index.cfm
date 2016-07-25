@@ -134,6 +134,10 @@
 		</style>
 	</head>
 	<body style="background-color: #9F5F9F;">
+		
+	          	<cfif StructKeyExists(url,"projectid") || isNumeric(Session.projectID)>
+	          		<a href="/CFTestTrack/" class="btn btn-default" style="position: fixed; top: -3px; left: -3px;z-index:9999;"><i class="fa fa-arrow-left"></i>&nbsp;Dashboard</a>
+	          	</cfif>
 		<nav class="navbar navbar-default navbar-fixed-top">
 		    <div class="container">
 		      <div class="navbar-header">
@@ -143,7 +147,12 @@
 		            <span class="icon-bar"></span>
 	            	<span class="icon-bar"></span>
 	          	</button>
-	          	<a class="navbar-brand" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/" id="lnkHome" style="padding:3px;"><img src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/images/TestTrack.png" border="0" style="height: 45px; width: auto;" /></a>
+	          	<cfif StructKeyExists(url,"projectid") || isNumeric(Session.projectID)>
+	          		<a class="navbar-brand" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/<cfoutput>project/#session.projectID#/</cfoutput>" id="lnkHome">
+	          		&nbsp;<cfoutput>#EntityLoadByPk("TTestProject",Session.ProjectID).getProjectTitle()#</cfoutput>
+	          		</a>
+	          		<cfelse><a class="navbar-brand">The Crucible</a>
+	          		</cfif>
 	          </div>
 		      <div id="navbar" class="navbar-collapse collapse">
 		      	<ul class="nav navbar-nav">

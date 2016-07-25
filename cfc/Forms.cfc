@@ -838,6 +838,10 @@
 			arrMilestone.setProjectID(arguments.ProjectID);
 			try {
 				EntitySave(arrMilestone);
+				if (Application.SlackIntegration eq "true") {
+					objSlack = createObject("component","Slack");
+					objSlack.slackPostMessage(text="#arrMilestone.GetMilestone()# added to http://#cgi.server_name#/CFTestTrack/project/#arrMilestone.getProjectID()#",as_user=false);
+				}
 				return true;
 			} catch (any ex) {
 				return serializeJSON(ex);
