@@ -18,7 +18,8 @@
 	<cfset this.mappings["/cfc"] = "#this.directory#cfc/">
 	<cfset this.mappings["/db"] = "#this.directory#cfc/db/">
 	<cfset this.mappings["/style"] = "#this.directory#style/">
-	<cfset this.ormSettings.cflocation = "db" />
+	<cfset this.mappings["/taffy"] = "#this.directory#taffy/">
+	<cfset this.ormSettings.cfclocation = "db" />
 	<cfset this.wschannels = [{name="general",cfclistener="cfc.Chat"}] >
 	<!--- production only 
 	<cfsetting showdebugoutput="false" />--->
@@ -95,37 +96,31 @@
 		<cfset Application.charttype = "html" /><!--- options being flash, jpg, png, html --->
 		<cfset qryAuthenticationType = EntityLoad("TTestSettings",{Setting="UseLDAP"},true)>
 		<cfset qryAllowCaseDelete = EntityLoad("TTestSettings",{Setting="AllowCaseDelete"},true)>
-		<cfset Application.useLDAP = qryAuthenticationType.getSettingValue() /><!--- set this to true if you want to use LDAP --->
-		<cfset Application.DOMAIN = "CORNEROPS" /><!--- set your domain name here, further adjustments may be necessary in Logon.cfc --->
+		<cfset Application.useLDAP = qryAuthenticationType.getSettingValue() />
+		<cfset Application.DOMAIN = "" />
 		<cfset Application.AllowCaseDelete = qryAllowCaseDelete.getSettingValue() />
 		<cfset qryMailerDaemon = EntityLoad("TTestSettings",{Setting="MAILERDAEMONADDRESS"},true)>
 		<cfset Application.MAILERDAEMONADDRESS = qryMailerDaemon.getSettingValue() />
 		<cfset qryChat = EntityLoad("TTestSettings",{Setting="AllowChat"},true)>
 		<cfset Application.EnableChat = qryChat.getSettingValue() />
-		<!--- by user chat count --->
 		<cfset arrUsers = EntityLoad("TTestTester")>
 		<cfloop array="#arrUsers#" index="user">
 			<cfset Application.UserChatCount[user.getId()] = 0 />
 		</cfloop>
-		<!--- AxoSoft Integration --->
-		<!--- if public or private --->
 		<cfset qryAxoSoftIntegration = EntityLoad("TTestSettings",{Setting="AxoSoftIntegration"},true)>
 		<cfset Application.AxoSoftIntegration = qryAxoSoftIntegration.getSettingValue()>
 		<cfset qryAxoSoftAuthentication = EntityLoad("TTestSettings",{Setting="AxoSoftAuthentication"},true)>
-		<cfset Application.AxoSoftAuthentication = qryAxoSoftAuthentication.getSettingValue()> <!--- for public Authorization, for private Username is possible --->
+		<cfset Application.AxoSoftAuthentication = qryAxoSoftAuthentication.getSettingValue()>
 		<cfset qryAxoSoftClient_Id = EntityLoad("TTestSettings",{Setting="AxoSoftClient_Id"},true)>
 		<cfset Application.AxoSoftClient_Id = qryAxoSoftClient_Id.getSettingValue() >
-		<!--- client secret if Username --->
 		<cfset qryAxoSoftClient_Secret = EntityLoad("TTestSettings",{Setting="AxoSoftClient_Secret"},true)>
 		<cfset Application.AxoSoftClient_Secret = qryAxoSoftClient_Secret.getSettingValue()>
 		<cfset qryAxoSoftRedirectURI = EntityLoad("TTestSettings",{Setting="AxoSoftRedirectURI"},true)>
 		<cfset Application.AxoSoftRedirectURI = qryAxoSoftRedirectURI.getSettingValue()>
-		<!---<cfset Application.AxoSoftRedirectURI = "http://localhost/CFTestTrack/AxoSoftRedirect.cfm">--->
 		<cfset qryAxoSoftExpiration = EntityLoad("TTestSettings",{Setting="AxoSoftRedirectURI"},true)>
-		<cfset Application.AxoSoftExpiration = qryAxoSoftExpiration.getSettingValue()>  <!--- default is 30, a value of false will never expire --->
+		<cfset Application.AxoSoftExpiration = qryAxoSoftExpiration.getSettingValue()>
 		<cfset qryAxoSoftURL = EntityLoad("TTestSettings",{Setting="AxoSoftURL"},true)>
 		<cfset Application.AxoSoftURL = qryAxoSoftURL.getSettingValue()>
-		<!---bk if we pull from a nightly/hourly job from axosoft instead of real time API reference --->
 		<cfset qryAxoSoftUseAPI = EntityLoad("TTestSettings",{Setting="AxoSoftUseAPI"},true)>
 		<cfset Application.AxoSoftUseAPI = qryAxoSoftUseAPI.getSettingValue()>
 		<cfset Application.ChatStruct = StructNew()>
