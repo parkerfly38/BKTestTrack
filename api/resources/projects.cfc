@@ -1,14 +1,14 @@
 component extends="taffy.core.resource" taffy_uri="/projects"
 {
 	objHelpers = createObject("component", "/CFTestTrack/api/helpers");
-	public function get()
+	public function get() hint='Returns all projects.'
 	{
 		objData = createObject("component","/CFTestTrack/cfc/Data");
 		//return representationOf(objData.getAllProjects());
 		return representationOf(application._taffy);
 	}
 	
-	public function post() hint='{
+	public function post() hint='Adds a new project using the following JSON: {
 		  "Id" : "0",
 		  "ProjectTitle" : "Project Title",
 		  "ProjectDescription" : "",
@@ -47,10 +47,12 @@ component extends="taffy.core.resource" taffy_uri="/projects"
 			newProject.setAxoSoftClient(datapayload.axosoftclient);
 			EntitySave(newProject);
 			return representationOf(newProject);
+		} else {
+			return representationOf(objHelpers.testStruct(dataPayload, objMetaData));
 		}
 	}
 	
-	public function put() hint='{
+	public function put() hint='Updates a project using the following JSON: {
 		"id" : "1",
 		"ProjectTitle" : "Project Title",
 		"ProjectDescription" : "",
@@ -89,6 +91,8 @@ component extends="taffy.core.resource" taffy_uri="/projects"
 			updatedProject.setAxoSoftClient(datapayload.axosoftclient);
 			EntitySave(updatedProject);
 			return representationOf(updatedProject);
+		} else {
+			return representationOf(objHelpers.testStruct(dataPayload, objMetaData));
 		}
 	}
 }

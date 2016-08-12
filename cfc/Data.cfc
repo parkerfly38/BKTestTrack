@@ -67,9 +67,10 @@ component
 		return arrTestCases;
 	}
 	
-	public void function saveTestCase(db.TTestCase tc)
+	public db.TTestCase function saveTestCase(db.TTestCase tc)
 	{
 		entitySave(arguments.tc);
+		return arguments.tc;
 	}
 	
 	public array function getAllStatuses()
@@ -93,6 +94,12 @@ component
 	public array function getTestCaseHistoryByTestCase(id) {
 		history = entityLoad("TTestCaseHistory",{CaseId = arguments.id},false);
 		return history;
+	}
+	
+	public void function deleteTestCaseHistory(id)
+	{
+		testcasehistory = EntityLoadByPk("TTestCaseHistory", id);
+		EntityDelete(testcasehistory);
 	}
 	
 	public query function qryTestCaseHistoryByTestCase(id) {

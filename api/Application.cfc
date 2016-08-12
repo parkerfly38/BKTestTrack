@@ -22,6 +22,8 @@
 		variables.framework.reloadPassword = "true";
 		variables.framework.serializer = "taffy.core.nativeJsonSerializer";
 		variables.framework.returnExceptionsAsJson = true;
+		variables.framework.docs.APIName = "CrucibleAPI";
+		variables.framework.docs.APIVersion = "1.1.0";
 
 		function onApplicationStart(){
 			return super.onApplicationStart();
