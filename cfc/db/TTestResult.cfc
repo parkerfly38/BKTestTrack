@@ -9,8 +9,10 @@ component table="TTestResult" persistent="true"
 	property name="AttachmentList";
 	property name="TestCaseID" ormtype="integer";
 	property name="Defects";
-	property name="TTestStatus" fieldtype="one-to-one" cfc="TTestStatus" fkcolumn="StatusID";
-	property name="TTestTester" fieldtype="one-to-one" cfc="TTestTester" fkcolumn="TesterID";
+	property name="StatusID" ormtype="integer";
+	property name="TesterID" ormtype="integer";
+	//property name="TTestStatus" fieldtype="one-to-one" cfc="TTestStatus" fkcolumn="StatusID";
+	//property name="TTestTester" fieldtype="one-to-one" cfc="TTestTester" fkcolumn="TesterID";
 	
 	public TTestResult function init() 
 	{

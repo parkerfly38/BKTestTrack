@@ -46,10 +46,34 @@ component
 		return arrTestCases;
 	}
 	
+	public array function getTestResults(id)
+	{
+		arrTestResults = EntityLoad("TTestResult",{TestCaseId = arguments.id});
+		return arrTestResults;
+	}
+	
+	public array function getAllTestResults()
+	{
+		arrTestResults = EntityLoad("TTestResult");
+		return arrTestResults;
+	}
+	
 	public array function getTestCasesByProject(projectid)
 	{
 		arrTestCases = EntityLoad("TTestCase",{ProjectID=arguments.projectid});
 		return arrTestCases;
+	}
+	
+	public array function getAllScenarios()
+	{
+		arrScenarios = EntityLoad("TTestScenario");
+		return arrScenarios;
+	}
+	
+	public array function getTestTypes()
+	{
+		arrTestTypes = EntityLoad("TTestType");
+		return arrTestTypes;
 	}
 	
 	public void function deleteTestCase(id) {
@@ -117,6 +141,13 @@ component
 		links = entityLoad("TTestLinks");
 		return links;
 	}
+	
+	public array function getAllPriorityTypes()
+	{
+		prioritytypes = entityLoad("TTestPriorityType");
+		return prioritytypes;
+	}
+	
 	public query function qryTestCaseForScenarios(numeric scenarioid)
 	{
 		qryResult = queryExecute(
