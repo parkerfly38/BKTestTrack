@@ -1,5 +1,28 @@
 component
 {
+	public boolean function isAPIKeyActivated(string publicKey)
+	{
+		return EntityLoad("TTestAPIUserKeys", {clientid=publicKey},true).getActivated();
+	}
+	
+	public string function getPrivateKeyByPublicKey(string publicKey)
+	{
+		privateKey = EntityLoad("TTestAPIUserKeys",{clientid=publicKey},true).getPrivatekey();
+		return privateKey;
+	}
+	
+	public any function generatePublicPrivateKeys(integer testerid)
+	{
+		newkeys = {publickey = CreateUUID(), privatekey = CreateUUID() };
+		newAPIKey = EntityNew("TTestAPIUserKeys");
+		newAPIKey.setClientid(newkeys.publickey);
+		newAPIKey.setPrivatekey(newkeys.privatekey);
+		newAPIKey.setTesterid(arguments.testerid);
+		newAPIKey.setActivated("false");
+		EntitySave(newAPIKey);
+		return newAPIKey;
+	}
+	
 	public array function getAllProjects()
 	{
 		arrProjects = EntityLoad("TTestProject");
@@ -339,6 +362,36 @@ component
 				qfprocresult(name="qryCounts");
 			}
 		}
+	}
+	
+	public query function getLastTestResultStatus(numeric testcaseid)
+	{
+		cfdbinfo(name="dbInfo", type="version");
+		if (dbInfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
+		{
+			qryResult = queryExecute(
+				"SELECT COALESCE(StatusID,5) as StatusID FROM TTestResult
+				WHERE TestCaseID = " & arguments.testcaseid & "
+				ORDER BY id DESC
+				LIMIT 1"
+			);
+		} else {
+			qryResult = queryExecute(
+				"SELECT ISNULL(StatusID,5) as StatusID FROM TTestResult WHERE
+				id in (SELECT MAX(id) FROM TTestResult WHERE TestCaseID = " & arguments.testcaseid & ")");
+		}
+		return qryResult;
+	}
+	
+	public query function getTestCasesByScenarioId(numeric projectid, numeric scenarioid)
+	{
+		qryResult = queryExecute(
+			"	SELECT id, TestTitle
+			FROM TTestCase
+			WHERE ProjectID = " & arguments.projectid & "
+			AND id not in (SELECT CaseID from TTestScenarioCases where ScenarioId = " & arguments.scenarioid & ") "
+		);
+		return qryResult;
 	}
 		
 	public query function qryGetProblemTestCases(numeric projectid, date datestart, date dateend)

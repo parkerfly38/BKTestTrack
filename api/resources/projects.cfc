@@ -53,20 +53,22 @@ component extends="taffy.core.resource" taffy_uri="/projects"
 	}
 	
 	public function put() hint='Updates a project using the following JSON: {
-		"id" : "1",
-		"ProjectTitle" : "Project Title",
-		"ProjectDescription" : "",
-		"ProjectStartDate" : "08/11/2016",
-		"ProjectProjectedEndDate" : "09/02/2016",
-		"ProjectActualEndDate" : "",
-		"IncludeAnnouncement" : false,
-		"Closed" : false,
-		"Color" : "red",
-		"RepositoryType" : "git",
-		"AxoSoftID" : "",
-		"AxoSoftProjectID" : "",
-		"AxoSoftSystemID" : "",
-		"AxoSoftClient" : ""
+		"id" : integer,
+		"ProjectTitle" : string,
+		"ProjectDescription" : string,
+		"ProjectStartDate" : string,
+		"ProjectProjectedEndDate" : datetime,
+		"ProjectActualEndDate" : datetime or null,
+		"IncludeAnnouncement" : boolean,
+		"Closed" : boolean,
+		"Color" : string //hex,
+		"RepositoryType" : string,
+		"AxoSoftID" : string,
+		"AxoSoftProjectID" : string,
+		"AxoSoftSystemID" : string,
+		"AxoSoftClient" : string,
+		"CodePath" : string,
+		"TestProjectPath" : string
 	}'
 	{
 		if (cgi.content_type eq "application/json")

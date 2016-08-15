@@ -24,6 +24,7 @@
 		variables.framework.returnExceptionsAsJson = true;
 		variables.framework.docs.APIName = "CrucibleAPI";
 		variables.framework.docs.APIVersion = "1.1.0";
+		variables.framework.dashboardHeaders = {};
 
 		function onApplicationStart(){
 			return super.onApplicationStart();
@@ -34,9 +35,16 @@
 		}
 
 		// this function is called after the request has been parsed and all request details are known
-		function onTaffyRequest(verb, cfc, requestArguments, mimeExt){
+		function onTaffyRequest(verb, cfc, requestArguments, mimeExt, headers){
 			// this would be a good place for you to check API key validity and other non-resource-specific validation
-			return true;
+			authenticationObj = new authentication();
+			evaluateReq =  authenticationObj.authenticateRequest(arguments.verb, arguments.cfc, arguments.requestArguments, arguments.headers);
+			if (evaluateReq eq "true")
+			{
+				return true;
+			} else {
+				return newRepresentation().noData().withStatus(403,evaluateReq);
+			}
 		}
 	</cfscript>
 	

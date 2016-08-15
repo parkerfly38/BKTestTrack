@@ -14,6 +14,8 @@ component table="TTestProject" persistent="true"
 	property name="AxoSoftProjectID";
 	property name="AxoSoftSystemID";
 	property name="AxoSoftClient";
+	property name="CodePath" ormtype="string" notnull="false";
+	property name="TestProjectPath" ormtype="string" notnull="false";
 	
 	public TTestProject function init()
 	{

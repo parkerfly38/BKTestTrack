@@ -1,28 +1,18 @@
-<!---<cfhttp url="https://cornerops.axosoft.com/api/oauth2/token?grant_type=password&username=bkresge&password=nugget38&client_id=84a344d7-9034-4ed7-8a01-ba35f9642648&client_secret=yUNiYAek30KibBtietQVo9UktJz8gv8GLdniTvzyv7rzWW4n2Xq0cSmedoJKMB_PUX5aWUyb2y5LXimFX-1wIJeCQocZSF6HTE7Q&scope=read" method="get" result="tokenResult" />
-<cfset accessToken = DeSerializeJSON(tokenResult.filecontent).access_token>
-
-<!---<cfhttp url="https://cornerops.axosoft.com/api/v2/defects/?access_token=#accessToken#" method="get" result="bugResult" />
-
-<cfdump var="#DeserializeJSON(bugResult.fileContent)#">--->
-<cfscript>
-	objAxoSoft = new CfTestTrack.cfc.AxoSoft();
-	writeDump(objAxoSoft.getItems(3,accessToken));
-</cfscript>--->
-<<<<<<< Updated upstream
-
-<!---<cfscript>
-	objSlack = new CFTestTrack.cfc.Slack();
-	writeDump(objSlack.slackPostMessage(text="TestTrack now integrated with SlackBot.", as_user=true));
-</cfscript>--->
-<cfscript>
-	cfdbinfo(name="qrydbinfo",type="version");
-	writeDump(qrydbinfo);
-</cfscript>
-=======
 <!---
 <cfscript>
-	objSlack = new CFTestTrack.cfc.Slack();
-	writeDump(objSlack.slackPostMessage(text="TestTrack now integrated with SlackBot.", as_user=false));
-</cfscript>--->
-<cfoutput>#ListGetAt(SERVER.ColdFusion.ProductVersion,1)#</cfoutput>
->>>>>>> Stashed changes
+	objCodeCoverage = createObject("component", "cfc.CodeCoverage");
+	
+	writeDump(objCodeCoverage.GetCoverage("/CFTestTrack/cfc","/CFTestTrack/tests"));
+</cfscript>
+--->
+<!---private key 8FFFCA8F-CD07-BCB5-7370BFE1E53AC006 --->
+<!---public key  8fffca8d-d514-763f-35b01e936ce099cf --->
+
+<cfscript>
+	//objData = createObject("component","cfc.Data");
+	//writeDump(objData.generatePublicPrivateKeys(7));
+	objAuthentication = new CFTestTrack.api.authentication();
+	datenow = now();
+	writeOutput(datenow & "<br />");
+    writeOutput(objAuthentication.EncryptSignature(datenow & "8fffca8d-d514-763f-35b01e936ce099cf","8fffca8d-d514-763f-35b01e936ce099cf"));
+</cfscript>

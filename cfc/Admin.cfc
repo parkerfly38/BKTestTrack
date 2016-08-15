@@ -65,7 +65,13 @@ component
 		writeOutput("</tbody></table>");
 	}
 	
-	remote any function saveUser(required numeric userid, required string email, required string password, required boolean isApproved )
+	remote any function viewAPIByUser(int testerid) output="true" 
+	{
+		writeOutput("<script type='text/javascript'>" & chr(13));
+		writeOutput("	$(document).ready(function() { "& chr(13));	
+	}
+	
+	public array function saveUser(required numeric userid, required string email, required string password, required boolean isApproved )
 	{
 		arrUser = EntityLoadByPK("TTestTester",arguments.userid);
 		if ( arrUser.getPassword() != arguments.password) {
@@ -78,13 +84,29 @@ component
 		arrUser.setEmail(arguments.email);
 		arrUser.setIsApproved(arguments.isApproved);
 		EntitySave(arrUser);
-		//location("settings.cfm?ac=users",false);
+		return arrUser;
 	}
 	
-	remote any function deleteUser(required numeric userid) {
+	public numeric function deleteUser(required numeric userid) {
 		arrUser = EntityLoadByPK("TTestTester",arguments.userid);
 		EntityDelete(arrUser);
-		//location("settings.cfm?ac=users",false);
+		return 1;
+	}
+	
+	public any function addUser(required string email, required string password, required boolean isApproved, required string userName, required string adid)
+	{
+		arrUser = createObject("component","CFTestTrack.cfc.db.TTestTester");
+		arrUser.setEmail(arguments.email);
+		objLogon = createObject("component","CFTestTrack.cfc.Logon");
+		salt = objLogon.genSalt();
+		newpassword = objLogon.computeHash(arguments.password, salt);
+		arrUser.setPassword(newpassword);
+		arrUser.setIsApproved(arguments.isApproved);
+		arrUser.setSalt(salt);
+		arrUser.setUserName(arguments.userName);
+		arrUser.setADID(arguments.adid);
+		EntitySave(arrUser);
+		return arrUser;
 	}
 	
 	remote any function saveLink(required numeric id, required string linkhref, required string linkdesc)

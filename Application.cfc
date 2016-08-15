@@ -19,7 +19,7 @@
 	<cfset this.mappings["/db"] = "#this.directory#cfc/db/">
 	<cfset this.mappings["/style"] = "#this.directory#style/">
 	<cfset this.mappings["/taffy"] = "#this.directory#taffy/">
-	<cfset this.ormSettings.cfclocation = "db" />
+	<cfset this.ormSettings.cfclocation = "#this.directory#cfc/db/" />
 	<cfset this.wschannels = [{name="general",cfclistener="cfc.Chat"}] >
 	<!--- production only 
 	<cfsetting showdebugoutput="false" />--->
