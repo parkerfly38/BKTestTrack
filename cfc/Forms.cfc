@@ -1,17 +1,16 @@
 <cfcomponent>
 
 	<!--- form building --->
+	
 	<cffunction name="getTestEditForm" access="remote" output="true">
 		<cfargument name="testcaseid" type="numeric" required="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			login
 			<cfexit>
 		</cfif>
-		<!--- time to get our testcase ---> 
 		<cfquery name="qryTestCase" dbtype="hql">
 			FROM TTestCase where id = <cfqueryparam value="#arguments.testcaseid#">
 		</cfquery>
-		<!--- get list of all scenarios this is assigned to --->
 		<cfquery name="qryScenarios">
 			SELECT b.TestScenario, b.id as ScenarioID
 			FROM TTestScenarioCases a
@@ -245,7 +244,6 @@
 				<input type="text" class="form-control" name="txtTestDetails" id="txtTestDetails" value="#arrTestCase.getTestDetails()#"  />
 				<p class="help-block">Insert related AxoSoft ids here, ex: <em>COG00050</em>.</p>
 				<cfif arguments.testcaseid gt 0>
-					<!--- get list of all scenarios this is assigned to --->
 					<cfquery name="qryScenarios">
 						SELECT b.TestScenario, b.id as ScenarioID
 						FROM TTestScenarioCases a
@@ -375,7 +373,7 @@
 				$(document).on("click","##btnSave",function(event) {
 					event.preventDefault();
 					$.ajax({
-						url: "CFC/forms.cfc?method=saveSection",
+						url: "/CFTestTrack/cfc/forms.cfc?method=saveSection",
 						type: "POST",
 						data: {
 							id : $("##txtID").val(),
@@ -743,9 +741,6 @@
 				</div>
 			</div>
 			</cfif>
-			<div class="form-group">
-				<button id="btnSave" type="button" class="btn btn-primary">Save changes</button>
-			</div>
 		</div>
 		</div>
 		<div class="panel-footer">
@@ -753,6 +748,7 @@
 		</div>
 		</div>
 	</cffunction>
+	
 	<!--- form processing --->
 	
 	<cffunction name="removeTestCases" access="remote" returntype="void">
@@ -932,7 +928,6 @@
 		<cfargument name="IncludeAnnouncement" required="true">
 		<cfargument name="RepositoryType" required="true">
 		<cfargument name="Closed" required="false" default="false">
-		<!--- if id > 0, we're going to load an entity to modify, otherwise create new --->
 		<cfscript>
 			if ( arguments.id > 0 ) {
 				arrProject = EntityLoadByPK("TTestProject",arguments.id);
@@ -951,8 +946,13 @@
 				EntitySave(arrProject);
 				if (application.SlackIntegration == "true")
 				{
+					if ( arguments.id > 0 ) {
+						texteditcreate = "edited";
+					} else {
+						texteditcreate = "created";
+					}
 					slackObj = createObject("component","Slack");
-					slackObj.slackPostMessage(text="#arguments.ProjectTitle# created - http://#cgi.server_name#/CFTestTrack/project/#arrProject.getId()#/", as_user=false);
+					slackObj.slackPostMessage(text="#arguments.ProjectTitle# #texteditcreate# - http://#cgi.server_name#/CFTestTrack/project/#arrProject.getId()#/", as_user=false);
 				}
 				return true;
 			} catch (any ex) {
@@ -1031,7 +1031,6 @@
 		<cfargument name="reportName" required="true">
 		<cfargument name="reportOptions" type="string">
 		<cfargument name="reportAandS" type="string">
-		<!--- convert options and ands to cfml from wddx --->
 		<cfset s1 = deserializeJSON(arguments.reportOptions,false)>
 		<cfset s2 = deserializeJSON(arguments.reportAandS,false)>
 		
@@ -1082,7 +1081,6 @@
 		<cfset testcase = EntityLoadByPK("TTestCase",arguments.tcid)>
 		<cfscript>
 			EntityDelete(testcase);
-			// delete related stuff
 			arrTCScenarios = EntityLoad("TTestScenarioCases",{CaseId = arguments.tcid});
 			for (tcasescenario in arrTCScenarios) {
 				EntityDelete(tcasescenario);

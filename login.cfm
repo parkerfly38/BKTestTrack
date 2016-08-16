@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>CFTestTrack :: Login</title>
+		<title>The Crucible :: Login</title>
 		<link rel="icon" href="favicon.ico" type="image/x-icon" />
 		<link rel="stylesheet" type="text/css" href="style/style.css">
 		<link rel="stylesheet" type="text/css" href="style/bootstrap.css">

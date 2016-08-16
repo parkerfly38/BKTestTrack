@@ -147,16 +147,18 @@
 		            <span class="icon-bar"></span>
 	            	<span class="icon-bar"></span>
 	          	</button>
-	          	<cfif StructKeyExists(url,"projectid") || isNumeric(Session.projectID)>
+	          	<cfif (StructKeyExists(url,"projectid") && isNumeric(url.projectid)) || isNumeric(Session.projectID)>
+	          		<!--- get at our project title --->
+	          		<cfset projectid = (StructKeyExists(url,"projectid") ? url.projectid : Session.projectid) >
 	          		<a class="navbar-brand" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/<cfoutput>project/#session.projectID#/</cfoutput>" id="lnkHome">
-	          		&nbsp;<cfoutput>#EntityLoadByPk("TTestProject",Session.ProjectID).getProjectTitle()#</cfoutput>
+	          		&nbsp;<cfoutput>#EntityLoadByPk("TTestProject",projectid).getProjectTitle()#</cfoutput>
 	          		</a>
 	          		<cfelse><a class="navbar-brand">The Crucible</a>
 	          		</cfif>
 	          </div>
 		      <div id="navbar" class="navbar-collapse collapse">
 		      	<ul class="nav navbar-nav">
-		          <cfif StructKeyExists(url,"projectid") || isNumeric(Session.projectID)>
+		          <cfif (StructKeyExists(url,"projectid") && isNumeric(url.projectid))  || isNumeric(Session.projectID)>
 		       		<li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/"><!---<i class="fa fa-home"></i>---> Project Home</a></li>
 		          	<li class="dropdown ddmMilestones"><a href="##" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><!---<i class="fa fa-map-marker"> </i> --->Milestones</a>
 		          	<ul class="dropdown-menu" role="menu">

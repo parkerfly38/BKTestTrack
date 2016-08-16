@@ -297,7 +297,7 @@
 						</tbody>
 					</table>
 					<cfelse>
-					<div class="alert alert-warning"><h4>This project doesn't contain any test scenarios.</h4>Please add one from the actions link to the right.</div>
+					<div class="alert alert-warning"><h4>This project doesn't contain any test scenarios.</h4>Please add one from the Test Scenarios above.  You can also add Test Sections to better organize your testing.</div>
 					</cfif>
 				</div>
 			</div>
@@ -912,7 +912,7 @@
 				</ul>
 				</cfif>
 				<cfelse>
-				<div class="alert alert-warning"><h4>This project doesn't contain any test scenarios.</h4>Please add one from the actions link to the right.</div>
+				<div class="alert alert-warning"><h4>This project doesn't contain any test scenarios.</h4>Please add one from the Test Scenarios menu above.</div>
 				</cfif>				
 			</div>
 	</cffunction>
@@ -961,7 +961,7 @@
 					</tbody>
 				</table>
 				<cfelse>
-				<div class="alert alert-warning"><h4>This project doesn't contain any test cases.</h4>Please add one from the actions link to the right.</div>
+				<div class="alert alert-warning"><h4>This project doesn't contain any test cases.</h4>Please add one from the Test Cases menu above.</div>
 				</cfif>	
 			</div>
 		</div>				
@@ -1521,7 +1521,7 @@
 						</tbody>
 					</table>
 					<cfelse>
-						<div class="alert alert-warning"><h4>This project doesn't contain any milestones.</h4>Please add one from the actions link to the right.</div>
+						<div class="alert alert-warning"><h4>This project doesn't contain any milestones.</h4>Please add one from the Milestones menu above.</div>
 					</cfif>
 				</div>
 				<div class="panel-footer"><div class="btn-group"><a href="##" class="lnkAddMilestone btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Milestone</a><a href="##" class="lnkViewMilestones btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>

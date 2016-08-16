@@ -12,7 +12,7 @@
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 	    <meta name="description" content="">
 	    <meta name="author" content="">
-	    <title>CFTestTrack :: Settings</title>
+	    <title>The Crucible :: Settings</title>
 	    <link rel="icon" href="favicon.ico" type="image/x-icon" />
 		<link rel="stylesheet" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/style/bootstrap.css" />
 		<link href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -34,6 +34,7 @@
 		</style>
 	</head>
 	<body>
+		<a href="/CFTestTrack/" class="btn btn-default" style="position: fixed; top: -3px; left: -3px;z-index:9999;"><i class="fa fa-arrow-left"></i>&nbsp;Dashboard</a>
 		<nav class="navbar navbar-default navbar-fixed-top">
 		    <div class="container">
 		      <div class="navbar-header">
@@ -43,7 +44,7 @@
 		            <span class="icon-bar"></span>
 	            	<span class="icon-bar"></span>
 	          	</button>
-	          	<a class="navbar-brand" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/" id="lnkHome" style="padding:3px;"><img src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/images/TestTrack.png" border="0" style="height: 45px; width: auto;" /></a>
+	          	<a class="navbar-brand">The Crucible</a>
 	          </div>
 		      <div id="navbar" class="navbar-collapse collapse">
 		      
