@@ -95,6 +95,14 @@
 		  					</div>
 		  				</div>
 		  			</cfif>
+		  			<cfif url.ac eq "userkeys">
+		  				<div class="panel panel-default">
+		  					<div class="panel panel-heading"><h4>User API Keys</h4></div>
+		  					<div class="panel panel-body">
+		  						<cfoutput>#objAdmin.viewAPIByUser(url.user)#</cfoutput>
+		  					</div>
+		  				</div>
+		  			</cfif>
 		  		</cfif>
 		  		<div id="midrow" class="row"></div>
 		  	</div>

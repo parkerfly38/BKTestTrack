@@ -60,15 +60,72 @@ component
 			if ( arrUsers[i].getisApproved() ) {
 				writeOutput(" checked='checked'");
 			}
-			writeOutput(" /></td><td><a href='##' class='lnkSaveUserChanges btn btn-primary'>Save</a> <a href='##' class='lnkDeleteUser btn btn-danger'>Delete</a></td></tr>");
+			writeOutput(" /></td><td><a href='##' class='lnkSaveUserChanges btn btn-primary'>Save</a> <a href='##' class='lnkDeleteUser btn btn-danger'>Delete</a> <a href='settings.cfm?ac=userkeys&user=" & arrUsers[i].getId() & "' class='btn btn-primary'>API Keys</a></td></tr>");
 		}
 		writeOutput("</tbody></table>");
 	}
 	
-	remote any function viewAPIByUser(int testerid) output="true" 
+	remote any function saveUserKey(required integer id, required boolean activated)
+	{
+		userkey = EntityLoadByPk("TTestAPIUserKeys",arguments.id);
+		userkey.setActivated(arguments.activated);
+		EntitySave(userkey);
+	}
+	
+	remote any function addUserKey(required integer testerid)
+	{
+		objData = new CFTestTrack.cfc.Data();
+		objData.generatePublicPrivateKeys(arguments.testerid);
+	}
+	
+	remote any function deleteUserKey(required integer id)
+	{
+		userkey = EntityLoadByPk("TTestAPIUserKeys", arguments.id);
+		EntityDelete(userkey);
+	}
+	
+	remote any function viewAPIByUser(integer testerid) output="true" 
 	{
 		writeOutput("<script type='text/javascript'>" & chr(13));
-		writeOutput("	$(document).ready(function() { "& chr(13));	
+		writeOutput("	$(document).ready(function() { "&chr(13));
+		writeOutput("	  $(document).on('click','a.lnkSaveUserChanges',function() { "&chr(13));
+		writeOutput("		var row = $(this).closest('tr');" & chr(13));
+		writeOutput("		var id = row.find('##id').val(); " & chr(13) );
+		writeOutput("		var activated; " & chr(13) );
+		writeOutput("		if ( row.find('##activated').is(':checked') ) { " & chr(13));
+		writeOutput("			activated = true; " & chr(13));
+		writeOutput("		} else { " & chr(13));
+		writeOutput("			activated = false; " & chr(13));
+		writeOutput("		}");
+		writeOutput("		$.ajax({url:'cfc/Admin.cfc?method=saveUserKey',type:'POST',data : { id : id, activated : activated}}).done(function() { location.href = 'settings.cfm?ac=userkeys&user="&arguments.testerid&"'; });");
+		writeOutput("	  });" & chr(13));
+		writeOutput("	 $(document).on('click','a.lnkDeleteUser',function() { " & chr(13));
+		writeOutput("		var row = $(this).closest('tr');" & chr(13));
+		writeOutput("		var id = row.find('##id').val(); " & chr(13));
+		writeOutput("		$.ajax({url:'cfc/Admin.cfc?method=deleteUserKey',type:'POST',data: { id : id}");
+		writeOutput("	  }).done(function() { location.href = 'settings.cfm?ac=userkeys&user="&arguments.testerid&"'; });" & chr(13));
+		writeOutput("	 });" & chr(13));
+		writeOutput("	 $(document).on('click','a.lnkAddNewKey', function() {" & chr(13));
+		writeOutput("		var testerid = '" & arguments.testerid & "';" & chr(13));
+		writeOutput("		$.ajax({url:'cfc/Admin.cfc?method=addUserKey',type:'POST',data: {testerid:testerid}" & chr(13));
+		writeOutput("		}).done(function() { location.href = 'settings.cfm?ac=userkeys&user="&arguments.testerid&"'; });" &chr(13));
+		writeOutput("	 });" & chr(13));
+		writeOutput("	});" & chr(13));
+		writeOutput("</script>"&chr(13));
+		arrUsers = EntityLoad("TTestAPIUserKeys",{testerid=arguments.testerid});
+		writeOutput("<a href='##' class='lnkAddNewKey btn btn-primary'>Add New API Key</a><br />"&chr(13));
+		writeOutput("<table class='table table-condensed table-striped table-hover'><thead><tr><th>Public Key</th><th>Private Key</th><th>Is Approved</th><th></th></tr></thead><tbody>");
+		for (i = 1; i <= ArrayLen(arrUsers); i++)
+		{
+			writeOutput("<tr><td><input type='hidden' id='id' value='" & arrUsers[i].getId() & "' />");
+			writeOutput("<input type='text' class='form-control' id='clientid' value='" & arrUsers[i].getclientid() & "' disabled='disabled' /></td><td><input type='text' disabled='disabled' id='privatekey' class='form-control' value='" & arrUsers[i].getprivatekey() & "' /></td><td><input type='checkbox' id='activated'");
+			if ( arrUsers[i].getactivated() ) {
+				writeOutput(" checked='checked'");
+			}
+			writeOutput(" /></td><td><a href='##' class='lnkSaveUserChanges btn btn-primary'>Save</a> <a href='##' class='lnkDeleteUser btn btn-danger'>Delete</a></td></tr>");
+		}
+		writeOutput("</tbody></table>");
+			
 	}
 	
 	public array function saveUser(required numeric userid, required string email, required string password, required boolean isApproved )

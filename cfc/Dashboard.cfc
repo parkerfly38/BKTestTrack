@@ -623,7 +623,11 @@
 		<div class="panel panel-default">
 			<div class="panel-heading"><strong><i class="fa fa-bars"></i> Reporting</strong></div>
 			<div class="panel-body">
-				<cfset arrReports = EntityLoad("TTestReports",{ProjectID = Session.ProjectID},{maxresults=10})>
+				<Cfif Len(Session.ProjectID) eq 0>
+					<cfset arrReports = EntityLoad("TTestReports")>
+				<cfelse>
+					<cfset arrReports = EntityLoad("TTestReports",{ProjectID = Session.ProjectID},{maxresults=10})>
+				</Cfif>
 				<cfif ArrayLen(arrReports) GT 0>
 					<div class="well well-sm" style="font-weight:bold;">Configured Reports</div>
 					<table class="table table-striped table-condensed table-hover">
