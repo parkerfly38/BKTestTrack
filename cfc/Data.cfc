@@ -176,7 +176,7 @@ component
 		qryResult = queryExecute(
 			"SELECT a.id as TestCaseId, a.TestTitle, b.DateOfAction, c.UserName, b.DateActionClosed" &
 			" FROM TTestCaseHistory b INNER JOIN TTestCase a ON a.id = b.CaseId INNER JOIN TTestTester c on b.TesterID = c.id INNER JOIN TTestScenarioCases d ON a.id = d.CaseId" &
-			" WHERE d.ScenarioId = " & arguments.scenarioid & " and b.DateActionClosed IS NULL");
+			" WHERE d.ScenarioId = " & arguments.scenarioid & " and b.DateActionClosed IS NULL ORDER BY a.id ASC");
 		return qryResult;	
 	}
 	public query function qryTestCasesForProject(projectid)

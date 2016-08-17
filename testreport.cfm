@@ -11,8 +11,10 @@
 <cfscript>
 	//objData = createObject("component","cfc.Data");
 	//writeDump(objData.generatePublicPrivateKeys(7));
-	objAuthentication = new CFTestTrack.api.authentication();
-	datenow = now();
-	writeOutput(datenow & "<br />");
-    writeOutput(objAuthentication.EncryptSignature(datenow & "8fffca8d-d514-763f-35b01e936ce099cf","8fffca8d-d514-763f-35b01e936ce099cf"));
+	//objAuthentication = new CFTestTrack.api.authentication();
+	//datenow = now();
+	//writeOutput(datenow & "<br />");
+    //writeOutput(objAuthentication.EncryptSignature(datenow & "8fffca8d-d514-763f-35b01e936ce099cf","8fffca8d-d514-763f-35b01e936ce099cf"));
+	newthing = ORMExecuteQuery("FROM TTestCaseHistory where CaseId = :testcaseid AND DateActionClosed = null",{testcaseid = "1"}, true);
+	writeDump(newthing);
 </cfscript>

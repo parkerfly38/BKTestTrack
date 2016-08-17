@@ -982,7 +982,7 @@
 						<cfset totaltests = totaltests + StatusCount >
 					</cfloop>
 					<cfloop query="qryTestCounts">
-					<p><span class="label #returnBSLabelStyle(Status)#">#StatusCount# #Status#</span><br />#NumberFormat((StatusCount gt 0 AND totaltests gt 0) ? (StatusCount / totaltests) * 100 : 0,"0.0")#% set to #Status#</p>
+					<p><span class="label #returnBSLabelStyle(Status)#">#StatusCount#&nbsp;#Status#</span><br />#NumberFormat((StatusCount gt 0 AND totaltests gt 0) ? (StatusCount / totaltests) * 100 : 0,"0.0")#% set to #Status#</p>
 					</cfloop>
 				</div>
 				<script type="text/javascript">
@@ -1070,11 +1070,11 @@
 		<div id="scenarioreport">
 		<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
 		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-			<p><span class="label label-success">#local.TotalPassedCount# Passed</span><br />#NumberFormat(local.PassedPercent,"0.00")#% set to Passed</p>
-			<p><span class="label label-default">#local.TotalBlockedCount# Blocked</span><br />#NumberFormat(local.BlockedPercent,"0.00")#% set to Blocked</p>
-			<p><span class="label label-warning">#local.TotalRetestCount# Retest</span><br />#NumberFormat(local.RetestPercent,"0.00")#% set to Retest</p>
-			<p><span class="label label-danger">#local.TotalFailedCount# Failed</span><br />#NumberFormat(local.FailedPercent,"0.00")#% set to Failed</p>
-			<p><span class="label label-info">#local.TotalUntestedCount# Untested</span><br />#NumberFormat(local.UntestedPercent,"0.00")#% set to Untested</p>
+			<p><span class="label label-success">#local.TotalPassedCount#&nbsp;Passed</span><br />#NumberFormat(local.PassedPercent,"0.00")#% set to Passed</p>
+			<p><span class="label label-default">#local.TotalBlockedCount#&nbsp;Blocked</span><br />#NumberFormat(local.BlockedPercent,"0.00")#% set to Blocked</p>
+			<p><span class="label label-warning">#local.TotalRetestCount#&nbsp;Retest</span><br />#NumberFormat(local.RetestPercent,"0.00")#% set to Retest</p>
+			<p><span class="label label-danger">#local.TotalFailedCount#&nbsp;Failed</span><br />#NumberFormat(local.FailedPercent,"0.00")#% set to Failed</p>
+			<p><span class="label label-info">#local.TotalUntestedCount#&nbsp;Untested</span><br />#NumberFormat(local.UntestedPercent,"0.00")#% set to Untested</p>
 		</div>
 		<script type="text/javascript">
 			var barData = {

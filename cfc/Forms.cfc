@@ -788,6 +788,13 @@
 				newcasehistory.setDateOfAction(Now());
 				newcasehistory.setCaseId(i);
 				EntitySave(newcasehistory);
+				newresult = EntityNew("TTestResult");
+				newresult.setDateTested(Now());
+				newresult.setComment("Added to scenario.");
+				newresult.setTestCaseId(i);
+				newresult.setStatusID(1);
+				newresult.setTesterID(Session.UserIDInt);
+				EntitySave(newresult);
 			</cfscript>
 		</cfloop>
 		<cfreturn>
@@ -965,18 +972,27 @@
 		<cfargument name="testcaseid" type="numeric" required="true">
 		<cfargument name="testerid" type="numeric" required="true">
 		<cfset objFunc = createObject("component","Functions")>
-		<cfset newTestResult = new CFTestTrack.cfc.db.TTestResult()>
+		<!---<cfset newTestResult = new CFTestTrack.cfc.db.TTestResult()>--->
 		<cfscript>
-			newTestResult.setTestCaseID(arguments.testcaseid);
-			newTestResult.setDateTested(Now());
-			newTestResult.setComment("Assigned");
-			teststatus = EntityLoadByPK("TTestStatus",5);
+			//newTestResult.setTestCaseID(arguments.testcaseid);
+			//newTestResult.setDateTested(Now());
+			//newTestResult.setComment("Assigned");
+			//teststatus = EntityLoadByPK("TTestStatus",5);
 			tester = EntitYLoadByPK("TTestTester",arguments.testerid);
-			newTestResult.setTTestStatus(teststatus);
-			newTestResult.setVersion(0);
-			newTestResult.setElapsedTime(0);
-			newTestResult.setTTestTester(tester);
-			EntitySave(newTestResult);
+			//newTestResult.setTTestStatus(teststatus);
+			//newTestResult.setVersion(0);
+			//newTestResult.setElapsedTime(0);
+			//newTestResult.setTTestTester(tester);
+			//EntitySave(newTestResult);
+			currenttestcasehistory = ORMExecuteQuery("FROM TTestCaseHistory where CaseId = :testcaseid AND DateActionClosed = null",{testcaseid = arguments.testcaseid}, true); //EntityLoad("TTestCaseHistory",{CaseID = arguments.testcaseid, DateActionClosed = ""},true);
+			currenttestcasehistory.setDateActionClosed(now());
+			EntitySave(currenttestcasehistory);
+			newtestcasehistory = EntityNew("TTestCaseHistory");
+			newtestcasehistory.setAction(currenttestcasehistory.getAction());
+			newtestcasehistory.setTesterID(arguments.testerid);
+			newtestcasehistory.setDateofAction(Now());
+			newtestcasehistory.setCaseID(currenttestcasehistory.getCaseID());
+			EntitySave(newtestcasehistory);
 			mailbody = "You have been assigned test case <strong>TC" & arguments.testcaseid & ".</strong>  Click <a href='http://" & CGI.SERVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TC=" & arguments.testcaseid & "'>here</a> to view test case.";
 			objFunc.MailerFunction(tester.getEmail(),Application.MAILERDAEMONADDRESS,"Test Case TC" & arguments.testcaseid & " Assigned" ,mailbody);
 		</cfscript> 	
@@ -996,9 +1012,9 @@
 			<cfscript>
 				var testresult = EntityNew("TTestResult");
 				StatusObj = EntityLoadByPk("TTestStatus",arguments.statusid);
-				testresult.setTTestStatus(StatusObj);
+				testresult.setStatusID(arguments.statusid);
 				TesterObj = EntityLoadByPk("TTestTester",arguments.testerid);
-				testresult.setTTestTester(TesterObj);
+				testresult.setTesterID(arguments.testerid);
 				testresult.setVersion(arguments.version);
 				testresult.setElapsedTime(arguments.elapsedtime);
 				testresult.setComment(arguments.comment);
