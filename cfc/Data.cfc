@@ -314,6 +314,7 @@ component
 		}
 		return qryGeneralActivity;
 	}
+	
 	public query function qryCounts(numeric projectid)
 	{
 		cfdbinfo(name="dbInfo", type="version", datasource="COGData");
