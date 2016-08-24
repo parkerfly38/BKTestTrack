@@ -403,7 +403,7 @@ component extends="cfselenium.CFSeleniumTestCase"
 	
 	remote string function GetListObj() output="true" {
 		StructDelete(SESSION,"AutomationArray");
-		selenium = new cfselenium.selenium();
+		selenium = new cfselenium.SeleniumRC();
 		mds = GetMetaData(selenium);
 		SESSION.MDS = mds;
 		listOfNames = "";
