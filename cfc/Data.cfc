@@ -48,6 +48,12 @@ component
 		scenario = EntityLoad("TTestScenario",id, true);
 		return scenario;
 	}
+
+	public array function getScenarioByProjectID(numeric projectid) {
+		scenarios = EntityLoad("TTestScenario",{projectid = arguments.projectid}, false);
+		return scenarios;
+	}
+
 	public void function deleteScenario(id) {
 		scenario = getScenario(id);
 		EntityDelete(scenario);
@@ -210,6 +216,41 @@ component
 		return qryResult.getResult();
 	}
 	
+	public query function qryTestDefects(string scenarioVariables)
+	{
+		qryNew = new query();
+		qryNew.SetName("getTestDefects");
+		sqlString = "SELECT TTestCase.TestTitle, " &
+					"TTestCaseHistory.Action, " &
+					"TTestResult.DateTested, " &
+					"TTestResult.Comment, " &
+					"TTestResult.Defects, " &
+					"TTestResult.ElapsedTime, " &
+					"TTestResult.Version, " &
+					"TTestTester.UserName, " &
+					"TTestScenario.TestScenario " &
+					"FROM " &
+					"	TTestCaseHistory " &
+					"INNER JOIN " &
+					"	TTestCase on TTestCase.id = TTestCaseHistory.CaseId " &
+					"INNER JOIN " &
+					"	TTestScenarioCases on TTestScenarioCases.CaseId = TTestCaseHistory.CaseId " &
+					"INNER JOIN " &
+					"	TTestScenario on TTestScenario.id = TTestScenarioCases.ScenarioId " &
+					"INNER JOIN " &
+					"	TTestResult on TTestResult.TestCaseID = TTestCaseHistory.CaseId " & 
+					"	AND  " &
+					"		DATEADD(ms, -DATEPART(ms, TTestResult.DateTested), TTestResult.DateTested) = DATEADD(ms, -DATEPART(ms, TTestCaseHistory.DateOfAction), TTestCaseHistory.DateOfAction) " &
+					"INNER JOIN " &
+					"	TTestTester on TTestTester.id = TTestResult.TesterID " &
+					"WHERE  " &
+					"	TTestCaseHistory.DateActionClosed is null " &
+					"	AND TTestResult.StatusID IN (3,4,5) " &
+					"	AND TTestScenarioCases.ScenarioId IN (" & arguments.secnarioVariables & ")";
+		qryResult = qryNew.execute(sql = sqlString);
+		return qryResult.getResult();
+	}
+
 	public query function qryTestCaseHistoryDataForScenario(numeric scenarioid) {
 		qryResult = queryExecute("SELECT DISTINCT d.TestTitle, a.TestCaseId, a.DateTested, e.Status, c.UserName FROM TTestResult a " &
 										"INNER JOIN TTestScenarioCases b on a.TestCaseId = b.CaseId " &
@@ -242,8 +283,9 @@ component
 										"WHERE a.ScenarioId = " & arguments.scenarioid & " AND c.Action = 'Assigned'");
 		return qryResult;
 	}
+
 	public query function qryGetCurrentTestStatus(numeric caseid) {
-		cfdbinfo(name="dbInfo",type="version",datasource="COGData");
+		cfdbinfo(name="dbInfo",type="version");
 		
 		if (dbinfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
 		{
@@ -265,7 +307,7 @@ component
 	
 	public query function qryGetChatLog()
 	{
-		cfdbinfo(name="dbInfo",type="version",datasource="COGData");
+		cfdbinfo(name="dbInfo",type="version");
 		
 		if (dbinfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
 		{
@@ -293,7 +335,7 @@ component
 	
 	public query function qryGeneralActivity()
 	{
-		cfdbinfo(name="dbInfo", type="version", datasource="COGData");
+		cfdbinfo(name="dbInfo", type="version");
 		if (dbinfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
 		{
 			qryGeneralActivity = queryExecute(
@@ -317,7 +359,7 @@ component
 	
 	public query function qryCounts(numeric projectid)
 	{
-		cfdbinfo(name="dbInfo", type="version", datasource="COGData");
+		cfdbinfo(name="dbInfo", type="version");
 		if (dbInfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
 		{
 			qryCounts = queryExecute(

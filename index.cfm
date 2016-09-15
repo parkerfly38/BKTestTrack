@@ -333,6 +333,6 @@
 		    </div>
   	   	</div> 
 	 </div>
-	 
+	 <cfdump var="#session#">
 </body>
 </html>

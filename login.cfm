@@ -71,7 +71,7 @@
 	</div>
 </cfif>
 <div class="gradient"></div>
-
+		<cfdump var="#session#">
 		 <div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
 		  <div class="modal-dialog modal-lg" style="background-color:#FFF;">
 		    <div class="modal-content" style="background-color:#FFF;">

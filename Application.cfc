@@ -1,12 +1,12 @@
 <cfcomponent>
 
-	<cfset this.Name = "TheCrucible" />
+	<cfset this.Name = "CFTestTrack" />
 	<cfset this.sessionManagement = true />
 	<cfset this.applicationTimeout = createTimeSpan(1,0,0,0)>
 	<cfset this.sessionTimeout = createTimeSpan(0,0,30,0)>
 	<cfset this.ormEnabled = true />
-	<cfset this.datasource = "COGData" />
-	<cfset this.ormSettings.datasource = "COGData" />
+	<cfset this.datasource = "voterdb" />
+	<cfset this.ormSettings.datasource = "voterdb" />
 	<cfset this.ormSettings.eventhandling = true />
 	<cfset this.ormSettings.dbCreate = "update" />
 	<cfset this.ormSettings.dialect = "MicrosoftSQLServer" />
@@ -24,7 +24,7 @@
 	<!--- production only 
 	<cfsetting showdebugoutput="false" />--->
 	
-	<cffunction name="onRequestStart" returntype="void" output="true">
+	<cffunction name="onRequestStart" returntype="any" output="true">
 		<!--- debug only, remove otherwise --->
 		<cfif StructKeyExists(URL, "reload")> 
         	<cfset ApplicationStop() />
@@ -61,6 +61,10 @@
     			</cfif>
     		</cfif>
     	</cfif>
+		<cfif !StructKeyExists(SESSION, "LoggedIn")  && FindNoCase(CGI.SCRIPT_NAME, ".cfc")>
+			<cfoutput><script>location.href="/CFTestTrack/login.cfm";</script></cfoutput>
+			<cfreturn false />
+		</cfif>
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin) && !FindNoCase("logon.cfc",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport.cfm",CGI.SCRIPT_NAME) && !FindNoCase("AxoSoftRedirect.cfm",CGI.SCRIPT_NAME) && !FindNoCase(".cfr",CGI.SCRIPT_NAME) && !FindNoCase("report",CGI.SCRIPT_NAME) && !FindNoCase("skedtasks",CGI.SCRIPT_NAME) && !FindNoCase("chat.cfm", CGI.SCRIPT_NAME)>
 			<cfset Session.OrigURL = CGI.SERVER_NAME & "/" & CGI.SCRIPT_NAME & "?" & CGI.QUERY_STRING>
 			<cflocation url="/CFTestTrack/login.cfm" addtoken="false" />
