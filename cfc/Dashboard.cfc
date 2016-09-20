@@ -1609,10 +1609,10 @@
 				<table class="table table-condensed table-hover">
 					<tbody>
 						<tr>
-							<td><a href="##" class="lnkCreateReport" reporttype="DefectsSummary" data-toggle="tooltip" dataplacement="left" title="Displays defect summary for selected test scenarios."><i class="fa fa-plus-circle" style="color:green;"></i> Defect Summary</a></td>
+							<td><a href="##" class="lnkCreateReport" reporttype="DefectsSummary" data-toggle="tooltip" data-placement="left" title="Displays defect summary for selected test scenarios."><i class="fa fa-plus-circle" style="color:green;"></i> Defect Summary</a></td>
 						</tr>
 						<tr>
-							<td><i class="fa fa-plus-circle" style="color:green;"></i> Summary for Test Cases</td>
+							<td><a href="##" class="lnkCreateReport" reporttype="TestCaseDefectsSummary" data-toggle="tooltip" data-placement="left" title="Displays test case defect summaries for project."><i class="fa fa-plus-circle" style="color:green;"></i> Summary for Test Cases</a></td>
 						</tr>
 					</tbody>
 				</table>

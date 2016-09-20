@@ -246,7 +246,34 @@ component
 					"WHERE  " &
 					"	TTestCaseHistory.DateActionClosed is null " &
 					"	AND TTestResult.StatusID IN (3,4,5) " &
-					"	AND TTestScenarioCases.ScenarioId IN (" & arguments.secnarioVariables & ")";
+					"	AND TTestScenarioCases.ScenarioId IN (" & arguments.scenarioVariables & ")";
+		qryResult = qryNew.execute(sql = sqlString);
+		return qryResult.getResult();
+	}
+
+	public query function qryTestCaseDefectsSummary(string projectid)
+	{
+		qryNew = new query();
+		qryNew.SetName("getTestCaseDefectSummary");
+		sqlString =	"SELECT TTestCase.TestTitle, " &
+					"TTestCaseHistory.ACtion, " &
+					"TTestResult.DateTested, " &
+					"TTestResult.Defects," &
+					"TTestResult.ElapsedTime, " &
+					"TTestResult.Version, " &
+					"TTestTester.UserName " &
+					"FROM " &
+					"	TTestCaseHistory " &
+					"INNER JOIN " &
+					"	TTestCase on TTestCase.id = TTestCaseHistory.CaseId " &
+					"INNER JOIN " &
+					"	TTestResult on TTestResult.TestCaseID = TTestCaseHistory.CaseId " & 
+					"	AND  " &
+					"		DATEADD(ms, -DATEPART(ms, TTestResult.DateTested), TTestResult.DateTested) = DATEADD(ms, -DATEPART(ms, TTestCaseHistory.DateOfAction), TTestCaseHistory.DateOfAction) " &
+					"INNER JOIN " &
+					"	TTestTester on TTestTester.id = TTestResult.TesterID " &
+					"WHERE " &
+					"	TTestCase.ProjectID = " & arguments.projectid;
 		qryResult = qryNew.execute(sql = sqlString);
 		return qryResult.getResult();
 	}
