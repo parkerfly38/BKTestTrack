@@ -61,7 +61,7 @@
     			</cfif>
     		</cfif>
     	</cfif>
-		<cfif !StructKeyExists(SESSION, "LoggedIn")  && FindNoCase(CGI.SCRIPT_NAME, ".cfc")>
+		<cfif FindNoCase(".cfc", CGI.SCRIPT_NAME) && (!StructKeyExists(SESSION,"LoggedIn") || Session.Loggedin neq "true")>
 			<cfoutput><script>location.href="/CFTestTrack/login.cfm";</script></cfoutput>
 			<cfreturn false />
 		</cfif>
