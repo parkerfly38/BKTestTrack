@@ -343,7 +343,24 @@ component
 			);
 		} else {
 			qryChatLog = queryExecute(
-				"SELECT a.* FROM (SELECT TOP 100 username, messageDate, messageBody FROM TTestMessageLog ORDER BY messageDate DESC) a order by a.MessageDate"
+				"SELECT a.* FROM (SELECT TOP 100 username, messageDate, messageBody FROM TTestMessageLog ORDER BY messageDate desc) a order by a.MessageDate"
+			);
+		}
+		return qryChatLog;
+	}
+	
+	public query function qryGetChatLogMini()
+	{
+		cfdbinfo(name="dbInfo",type="version");
+		
+		if (dbinfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
+		{
+			qryChatLog = queryExecute(
+				"SELECT a.* FROM (SELECT username, messageDate, messageBody FROM TTestMessageLog ORDER BY messageDate DESC LIMIT 100) a order by a.MessageDate"
+			);
+		} else {
+			qryChatLog = queryExecute(
+				"SELECT a.* FROM (SELECT TOP 100 username, messageDate, messageBody FROM TTestMessageLog WHERE username <> 'System' ORDER BY messageDate desc) a order by a.MessageDate desc"
 			);
 		}
 		return qryChatLog;

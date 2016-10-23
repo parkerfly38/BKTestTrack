@@ -125,6 +125,15 @@ $(document).ready(function() {
 		$("#largeModal").modal("show");
 		$(document).trigger("eventLoadForm");
 	});
+	
+	$(document).on("click","a#readAllMessages", function(event) {
+		event.preventDefault();
+		$("#largeModal .modal-title").text("Messages");
+		$("#largeModal .modal-body").load("/CFTestTrack/chat.cfm");
+		$("#largeModal").modal("show");
+		$(document).trigger("eventLoadForm");
+	});
+	
 	$(document).on("click","a.lnkEditProject",function(event) {
 		event.preventDefault();
 		var pjid = $(this).attr("projectid");

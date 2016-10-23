@@ -164,68 +164,69 @@
 	</cffunction>
 	
 	<cffunction name="listProjects" access="public" output="true">
-		<div id="panelaxosoftprojects" class="panel panel-default">
-			<div class="panel-heading"><i class="fa fa-wrench"></i> Projects</div>
-			<div class="panel-body">
 				<cfset objData = new CFTestTrack.cfc.Data()>
 				<cfset arrProjects = objData.getAllProjects()>
-				<table class="table table-condensed table-striped">
-					<tr>
-						<td colspan="2">
-							<a href="http://#cgi.server_name#/CFTestTrack/project/add/"><i class="fa fa-plus-circle"></i> Add Project</a>
-						</td>
-					</tr>
-					<cfif ArrayLen(arrProjects) gt 0>
-					<cfloop array="#arrProjects#" index="i">
-					<tr>
-						<td><a href="http://#cgi.server_name#/CFTestTrack/project/#i.getId()#/">#i.getProjectTitle()#</a></td>
-						<td>
-							<a class="btn btn-xs btn-default" href="/CFTestTrack/project/#i.getId()#&edit=true/" ><i class="fa fa-pencil"> </i></a>
-							<button class="btn btn-xs btn-danger lnkDeleteProject" projectid="#i.getId()#"><i class="fa fa-trash"> </i></button>
-					</tr>
-					</cfloop>
-					</cfif>
-				</table>
-			</div>
-		</div>
+				<li>
+	                <a href="##"><i class="fa fa-wrench fa-fw"></i> Projects<span class="fa arrow"></span></a>
+	                <ul class="nav nav-second-level">
+	                    <li>
+	                        <a href="http://#cgi.server_name#/CFTestTrack/project/add/"><i class="fa fa-plus-circle"></i> Add Project</a>
+	                    </li>
+	                    <cfif ArrayLen(arrProjects) gt 0>
+						<cfloop array="#arrProjects#" index="i">
+						<li>							
+							<div style="right:5px;bottom:10px;position:absolute; z-index:2;"><a class="btn btn-xs btn-default" href="/CFTestTrack/project/#i.getId()#&edit=true/" style="padding-left:5px;" ><i class="fa fa-pencil"> </i></a>
+							<button class="btn btn-xs btn-danger lnkDeleteProject" projectid="#i.getId()#"><i class="fa fa-trash"> </i></button></div>
+							<a href="http://#cgi.server_name#/CFTestTrack/project/#i.getId()#/">#i.getProjectTitle()#</a>
+							
+						</li>
+						</cfloop>
+						</cfif>
+	                </ul>
+                            <!-- /.nav-second-level -->
+                </li>
 	</cffunction>					
 	
 	<cffunction name="listAxoSoftProjects" access="public" output="true">
 		<cfargument name="axosoftprojects" type="struct">
-		<div id="panelaxosoftprojects" class="panel panel-default">
-			<div class="panel-heading"><i class="fa fa-wrench"></i> Projects</div>
-			<div class="panel-body">
 				<cfif StructKeyExists(arguments.axosoftprojects,"error") or !Application.AxoSoftUseAPI>
 					<!--- pull from database record instead --->
 					<cfquery name="qryProjects">
 						SELECT AxoSoftPId, Name, ParentId
 						FROM TTestAxoSoftProject
 					</cfquery>
-					<table class="table table-condensed table-striped">
-						<tr><td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/project/add/"><i class="fa fa-plus-circle"></i> Add Project</a></td>
-						</tr>
+					<li>
+	                <a href="##"><i class="fa fa-wrench fa-fw"></i> Projects<span class="fa arrow"></span></a>
+	                <ul class="nav nav-second-level">
+	                    <li>
+							<a href="http://#cgi.server_name#/CFTestTrack/project/add/"><i class="fa fa-plus-circle"></i> Add Project</a>
+						</li>
 						<cfloop query="qryProjects">
-						<tr>
-							<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/project/#AxoSoftPid#/">#Name#</a></td>
-						</tr>
+						<li>
+							<a href="http://#cgi.server_name#/CFTestTrack/project/#AxoSoftPid#/">#Name#</a>
+						
 						<cfquery name="qryChildren" dbtype="query">
 							SELECT AxoSoftPId, Name, ParentId
 							FROM qryProjects
 							WHERE ParentId = #AxoSoftPId#
 						</cfquery>
 						<cfif qryChildren.RecordCount gt 0>
+						<ul class="nav nav-third-level">
 						<cfloop query="qryChildren">
-							<tr>
-								<td>&nbsp;</td>
-								<td><a href="http://#cgi.server_name#/CFTestTrack/project/#qryChildren.AxoSoftPId#/">#qryChildren.Name#</a></td>
-							</tr>
+							<li>
+								<a href="http://#cgi.server_name#/CFTestTrack/project/#qryChildren.AxoSoftPId#/">#qryChildren.Name#</a>
+							</li>
 						</cfloop>
+						</ul>
 						</cfif>
 						</cfloop>
-					</table>					
+						</li>
+					</li>					
 				<cfelse>
-				<table class="table table-condensed table-striped">
-				<cfloop array="#arguments.axosoftprojects["data"]#" index="i">
+				<li>
+					<a href="##"><i class="fa fa-wrench fa-fw"></i> Projects<span class="fa arrow"></span></a>
+	                <ul class="nav nav-second-level">					
+					<cfloop array="#arguments.axosoftprojects["data"]#" index="i">
 					<!--- check and see if it's not new and in the table --->
 					<cfscript>
 						if ( ArrayLen(EntityLoad("TTestAxoSoftProject",{AxoSoftPId = i.id})) lte 0 ) {
@@ -235,10 +236,10 @@
 						 	EntitySave(newAxoSoftProject);
 						 }							
 					</cfscript>
-					<tr>
-						<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/project/#i.id#/">#i.name#</a></td>
-					</tr>
+					<li>
+						<a href="http://#cgi.server_name#/CFTestTrack/project/#i.id#/">#i.name#</a>
 					<cfif StructKeyExists(i,"children")>
+						<ul class="nav nav-third-level">
 					<cfloop array="#i.children#" index="c">
 						<cfscript>
 						if ( ArrayLen(EntityLoad("TTestAxoSoftProject",{AxoSoftPId = c.id})) lte 0) {
@@ -255,17 +256,18 @@
 						 	}
 						 }
 						</cfscript>
-					<tr>
-						<td>&nbsp;</td>
-						<td><a href="http://#cgi.server_name#/CFTestTrack/project/#c.id#/">#c.name#</td>
-					</tr>
+					<li>
+						<a href="http://#cgi.server_name#/CFTestTrack/project/#c.id#/">#c.name#</a>
+					</li>
 					</cfloop>
+					</ul>
 					</cfif>
+					</li>
+					
 				</cfloop>
-				</table>
+				</ul>
+				</li>
 				</cfif>
-			</div>
-		</div>
 	</cffunction>
 	
 	<cffunction name="listTestScenarios" access="remote" output="true">
