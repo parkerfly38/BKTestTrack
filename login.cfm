@@ -1,3 +1,10 @@
+<cftry>
+	<cfset Local.UserName = Decrypt(COOKIE.CRUCIBLEREMEMBER, APPLICATION.EncryptionKey, "CFMX_COMPAT", "hex") />
+	<cfset Local.UserName = ListGetAt(Local.UserName, 2, ":") />
+	<cfcatch>
+		<cfset Local.Username = "" />
+	</cfcatch>
+</cftry>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -62,6 +69,9 @@
 	</head>
 	<body>
 <div class="container">
+        <div class="jumbotron">
+        	<h1><img src="images/TestTrack.png" alt="The Crucible">The Crucible Test Suite</h1>
+        </div>
         <div class="row">
             <div class="col-md-4 col-md-offset-4">
                 <div class="login-panel panel panel-default">
@@ -69,22 +79,23 @@
                         <h3 class="panel-title">Please Sign In</h3>
                     </div>
                     <div class="panel-body">
-                        <form role="form" name="login-form" class="login-form" action="index.cfm" method="post">
+                        <form role="form" autocomplete="false" name="login-form" class="login-form" action="index.cfm" method="post">
                             <fieldset>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="Username" name="username" type="text" autofocus>
+                                    <input class="form-control" autocomplete="off" placeholder="Username" name="username" type="text" value="<cfoutput>#Local.UserName#</cfoutput>" autofocus>
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="Password" name="password" type="password" value="">
+                                    <input class="form-control" autocomplete="new-password" placeholder="Password" name="password" type="password" value="">
                                 </div>
                                 <div class="checkbox">
                                     <label>
-                                        <input name="remember" type="checkbox" value="Remember Me">Remember Me
+                                        <input name="remember" id="remember" type="checkbox" value="Remember Me"
+                                        <cfif len(local.username) gt 0> checked</cfif> />Remember Me
                                     </label>
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
                                 <!--<a href="index.html" class="btn btn-lg btn-success btn-block">Login</a>-->
-                                <cfif !Application.useLDAP><input type="button" class="btn btn-lg btn-success btn-block" data-toggle="modal" data-target="#largeModal" value="New User" /></cfif> <input type="submit" name="submit" value="Login" class="btn btn-lg btn-success btn-block" />
+                                <input type="submit" name="submit" value="Login" class="btn btn-lg btn-default btn-block" /><cfif !Application.useLDAP><input type="button" class="btn btn-lg btn-default btn-block" data-toggle="modal" data-target="#largeModal" value="New User" /></cfif> 
                             </fieldset>
                         </form>
                         <cfif !Application.UseLDAP>
@@ -94,6 +105,15 @@
 			    </div>
 	</div>
 </cfif>
+	<div class="panel-footer">
+		<div class="row">
+			<div class="col-md-12">Copyright 2016 Cove Brook Coders</div>
+		</div>
+		<div class="row">
+        	<div class="col-md-6" style="height:100px"><small style="margin:0;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">104 Baker Road<br />Winterport, ME 04496<br /><a href="mailto:crucible@covebrookcode.com?subject=Crucible%20Support">crucible@covebrookcode.com</a></small></div>
+        	<div class="col-md-6">
+        	<img src="http://covebrookcode.com/img/covebrookcoders.png" border="0" style="height:100px; width:100px; display:block; margin:auto;" /></div>
+    	</div>
                     </div>
                 </div>
             </div>

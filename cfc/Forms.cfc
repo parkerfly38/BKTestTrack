@@ -192,7 +192,7 @@
 						if ( data == "true" )
 						{
 							$("##largeModal").modal('hide');
-							$("##featurecontent").load("http://#cgi.server_NAME#/CFTestTrack/CFC/Dashboard.cfc?method=AllTests");
+							$("##panelalltestcases").parent().load("http://#cgi.server_NAME#/CFTestTrack/CFC/Dashboard.cfc?method=AllTests&projectid=#arguments.projectid#");
 							restoreSpinner();
 							
 						} else {
@@ -309,11 +309,10 @@
 							$("##largeModal").modal('hide');
 							if ( $("##allmilestonespanel").length == 0)
 							{
-								$("##panelmilestones").remove();
+								/*$("##panelmilestones").parent.remove();*/
 								insertMilestones();
 							} else {
-								$("##allmilestonespanel").remove();
-								$("##featurecontent").load("http://#cgi.server_NAME#/CFTestTrack/CFC/Dashboard.cfc?method=AllMilestones");
+								$("##allmilestonespanel").parent().load("http://#cgi.server_NAME#/CFTestTrack/CFC/Dashboard.cfc?method=AllMilestones&projectid=#arguments.projectid#");
 							}
 							restoreSpinner();
 						} else {
@@ -538,8 +537,7 @@
 								$("##paneltestscenarios").remove();
 								insertScenarios();
 							} else {
-								$("##scenariospanel").remove();
-								$("##featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios");
+								$("##scenariospanel").parent().load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios&projectid=#arguments.ProjectID#");
 							}
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");

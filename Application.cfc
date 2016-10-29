@@ -43,6 +43,12 @@
     				<cfif Application.AxoSoftIntegration and !StructKeyExists(SESSION,"AxoSoftToken")>
     					<cfscript>objAxoSoft.getAxoSoftToken();</cfscript>
     				<cfelse>
+    					<!--- if remember me checked do this first --->
+    					<cfif StructKeyExists(FORM,"remember")>
+    						<cfset strRememberMe = (CreateUUID() & ":" & form.username & ":" & CreateUUID()) />
+    						<cfset strRememberMe = Encrypt(strRememberMe, APPLICATION.EncryptionKey, "CFMX_COMPAT", "hex") />
+    						<cfcookie name="CrucibleRemember" value="#strRememberMe#" expires="never" />
+    					</cfif>
     					<cflocation url="index.cfm" addtoken="false" >
     				</cfif>
     			</cfif>
@@ -56,6 +62,12 @@
     				<cfif Application.AxoSoftIntegration and !StructKeyExists(SESSION,"AxoSoftToken")>
     					<cfscript>objAxoSoft.getAxoSoftToken();</cfscript>
     				<cfelse>
+    					<!--- if remember me checked do this first --->
+    					<cfif StructKeyExists(FORM,"remember")>
+    						<cfset strRememberMe = (CreateUUID() & ":" & form.username & ":" & CreateUUID()) />
+    						<cfset strRememberMe = Encrypt(strRememberMe, APPLICATION.EncryptionKey, "CFMX_COMPAT", "hex") />
+    						<cfcookie name="CrucibleRemember" value="#strRememberMe#" expires="never" />
+    					</cfif>
     					<cflocation url="index.cfm" addtoken="false" >
     				</cfif>
     			</cfif>
@@ -133,6 +145,7 @@
         <cfset Application.SlackAPIToken = EntityLoad("TTestSettings", {Setting="SlackAPIToken"},true).getSettingValue() />
         <cfset Application.SlackBotChannel = EntityLoad("TTestSettings", {Setting="SlackBotChannel"},true).getSettingValue() />
         <cfset Application.SlackBotURL = EntityLoad("TTestSettings", {Setting="SlackBotURL"},true) />
+        <cfset Application.EncryptionKey = "Aw3s0m3S@uc3" />
 	</cffunction>
 	
 	<cffunction name="onMissingTemplate" output="true">

@@ -277,7 +277,7 @@
 			WHERE ProjectID = <cfqueryparam value="#arguments.ProjectID#">
 		</cfquery>
 		<div class="panel panel-default">
-				<div class="panel-heading">Test Scenario Status<div class="btn-group" style="float:right;margin-top:-5px;"><a href="##" class="lnkAddScenario btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Scenario</a><a href="##" class="lnkViewScenarios btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
+				<div class="panel-heading">Test Scenario Status<div class="btn-group" style="float:right;margin-top:-5px;"><a href="##" class="lnkAddScenario btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Scenario</a><a href="http://#cgi.server_name#/CFTestTrack/project/#arguments.projectid#/allscenarios/" class="btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
 				<div class="panel-body">
 					<cfif ArrayLen(qryTestScenarios) gt 0>
 					<table class="table table-striped table-condensed">
@@ -324,6 +324,7 @@
 			FROM TTestProject
 			WHERE id = <cfqueryparam value="#arguments.projectid#">
 		</cfquery>
+		<h1 class="page-header">#qryName[1].getProjectTitle()#</h1>
 		<div id="topcontent" class="panel panel-default">
 		<div class="panel-heading" id="activitytitle"><span class="label label-info">P#qryName[1].getId()#</span> #qryName[1].getProjectTitle()#</div>
 		<div class="panel-body">
@@ -690,13 +691,12 @@
 	</cffunction>
 	
 	<cffunction name="AllMilestones" access="remote" output="true">
+		<cfargument name="projectid">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfreturn>
-		</cfif>
-		<cfif !StructKeyExists(SESSION,"ProjectID")>
-			<cfreturn>
-		</cfif>
-		<cfset arrMilestones = EntityLoad("TTestMilestones",{ProjectID = SESSION.ProjectID},"DueOn ASC")>
+		</cfif>		
+		<cfset arrMilestones = EntityLoad("TTestMilestones",{ProjectID = arguments.ProjectID},"DueOn ASC")>
+		<h1 class="page-header">Project Milestones</h1>
 		<div id="allmilestonespanel" class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-map-marker"></i> <strong>Milestones</strong></div>
 			<div class="panel-body">
@@ -712,7 +712,7 @@
 						<td>
 							<h5>#milestone.getMilestone()#</h5>Due on #DateFormat(milestone.getDueon(),"m/d/yyyy")#
 						</td>
-						<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteMilestone btn btn-danger btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-trash"></i> Delete</a>
+						<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteMilestone btn btn-danger btn-xs" projectid="#arguments.projectid#"  milestoneid="#milestone.getId()#"><i class="fa fa-trash"></i> Delete</a>
 							<cfif overdueCount eq 1>
 								<script type="text/javascript">
 									$(document).ready(function() {
@@ -787,15 +787,14 @@
 	</cffunction>						
 	
 	<cffunction name="AllScenarios" access="remote" output="true">
+		<cfargument name="projectid">
 		<cfargument name="start" default="1">
 		<cfargument name="searchstring" default="">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfreturn>
 		</cfif>
-		<cfif !StructKeyExists(SESSION,"ProjectID")>
-			<cfreturn>
-		</cfif>
-		<cfset qryCount = "SELECT count(*) FROM TTestScenario WHERE ProjectID = #Session.ProjectID#">
+		
+		<cfset qryCount = "SELECT count(*) FROM TTestScenario WHERE ProjectID = #arguments.ProjectID#">
 		<cfset countresults = ORMExecuteQuery(qryCount)[1]>
 		<script type="text/javascript">
 			$(document).ready(function() {
@@ -803,16 +802,16 @@
 				$(document).on("click",".pagination li a",function() {
 					var pagenum = $(this).text();
 					<cfif Len(arguments.searchstring) gt 0>
-						$.ajax({url:"/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios",type:"POST",data : { start: pagenum, searchstring : "#arguments.searchstring#"  } }).done(function(data) { $("##topcontent").html(data); });
+						$.ajax({url:"/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios",type:"POST",data : { projectid: #arguments.projectid#, start: pagenum, searchstring : "#arguments.searchstring#"  } }).done(function(data) { $("##topcontent").html(data); });
 					<cfelse>
-					$("##topcontent").load("/CFTestTrack/ccfc/Dashboard.cfc?method=AllScenarios&start="+pagenum);
+					$("##scenariospanel").parent().load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios&projectid=#arguments.projectid#&start="+pagenum);
 					</cfif>
 				});
 				$(document).off("click","##btnsearch");
 				$(document).on("click","##btnsearch", function() {
-					$.ajax({url:"/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios", type: "POST", data: {searchstring : $("##searchstring").val() 
+					$.ajax({url:"/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios", type: "POST", data: { projectid: #arguments.projectid#, searchstring : $("##searchstring").val() 
 					}}).done(function(data) {
-						$("##topcontent").html(data);
+						$("##scenariospanel").parent().html(data);
 					});
 				});
 			});
@@ -826,10 +825,11 @@
 			<cfset arrTestScenarios = EntityLoad("TTestScenario",{ProjectID = Session.ProjectID},"AxoSoftNumber Desc, ProjectID Desc",{maxresults=20,offset=(arguments.start-1)*20})>
 		</cfif>
 		<cfset objData = createObject("component","Data")>
+		<h1 class="page-header">All Test Scenarios</h1>
 		<div id="scenariospanel" class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-tachometer"></i> <strong>Test Scenarios</strong></div>
 			<div class="panel-body">
-				<div class="well well-sm" style="font-weight:bold;">Active<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 input-group" style="float:right;margin-top:-7px;"><input type='text' class='form-control' id='searchstring' name='searchstring' placeholder="Search for..." /><span class="input-group-btn"><button id='btnsearch' class='btn btn-primary'><i class='fa fa-search'></i></button></span></div></div>
+				<div class="well well-sm" style="font-weight:bold;">Active<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 input-group" style="float:right;margin-top:-7px;"><input type='text' class='form-control' id='searchstring' name='searchstring' placeholder="Search for..." <cfif len(arguments.searchstring) gt 0>value="#arguments.searchstring#"</cfif> /><span class="input-group-btn"><button id='btnsearch' class='btn btn-primary'><i class='fa fa-search'></i></button></span></div></div>
 				<cfset numPages = ceiling(countresults / 20)>
 				<cfif ArrayLen(arrTestScenarios) gt 0>
 				<cfif numPages gt 1>
@@ -872,8 +872,8 @@
 									<strong>#StatusCount#</strong> #Status#<cfif currentRow lt qryTestCounts.RecordCount>,</cfif>
 								</cfloop>
 							</td>
-							<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteScenario btn btn-danger btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-trash"></i> Delete</a></td>
-							<td style="width:33%"><div class="progress">
+							<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteScenario btn btn-danger btn-xs" scenarioid="#scenario.getId()#" projectid="#arguments.projectid#"><i class="fa fa-trash"></i> Delete</a></td>
+							<td style="width:33%"><div class="progress active">
 									<cfif passedPercent gt 0>
 									<div class="progress-bar progress-bar-success progress-bar-striped" style="width:#passedPercent#%;">
 										<span class="sr-only">#passedPercent#% Passed</span>
@@ -914,17 +914,20 @@
 				</ul>
 				</cfif>
 				<cfelse>
+				<cfif len(arguments.searchstring) lte 0>
 				<div class="alert alert-warning"><h4>This project doesn't contain any test scenarios.</h4>Please add one from the Test Scenarios menu above.</div>
+				<cfelse>
+				<div class="alert alert-warning"><h4>No results found.</h4>Refine your search and try again.</div>
+				</cfif>
 				</cfif>				
 			</div>
 	</cffunction>
 	
 	<cffunction name="AllTests" access="remote" output="true">
-		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfreturn>
-		</cfif>
+		<cfargument name="projectid">
 		<cfset objData = createObject("component","Data")>
-		<cfset arrTestCases = objData.getTestCasesByProject(Session.ProjectID)>
+		<cfset arrTestCases = objData.getTestCasesByProject(arguments.ProjectID)>
+		<h1 class="page-header">All Test Cases</h1>
 		<div id="panelalltestcases" class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-tachometer"></i> <strong>Test Cases</strong></div>
 			<div class="panel-body">
@@ -957,7 +960,7 @@
 							<td><span class="label label-info">TC#case.getId()#</label></td>
 							<td>#case.getTestTitle()#</td>
 							<td><a href="##" class="testcaseeditlink btn btn-default btn-xs" editid="#case.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
-							<td><cfif Application.AllowCaseDelete eq "true"><a href="##" class="testcasedeletelink btn btn-danger btn-xs" editid="#case.getId()#"><i class="fa fa-trash"></i> Delete</a></cfif></td>
+							<td><cfif Application.AllowCaseDelete eq "true"><a href="##" class="testcasedeletelink btn btn-danger btn-xs" editid="#case.getId()#" projectid="#arguments.projectid#"><i class="fa fa-trash"></i> Delete</a></cfif></td>
 						</tr>
 						</cfloop>
 					</tbody>
@@ -1294,6 +1297,7 @@
 				}
 			}
 		</script>
+		<h1 class="page-header">#arrScenarioData.getTestScenario()#</h1>
 		<div class="panel panel-default">
 			<div class="panel-heading"><span class="label label-info">S#arrScenarioData.getId()#</span> #arrScenarioData.getTestScenario()#
 			<div class="btn-group" style="float:right;margin-top:-5px;">

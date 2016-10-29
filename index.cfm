@@ -155,11 +155,9 @@
     		}
 		</style>
 	</head>
-	<body style="background-color: #9F5F9F;">
+	<body>
 	
-      	<cfif StructKeyExists(url,"projectid") || isNumeric(Session.projectID)>
-  		<a href="/CFTestTrack/" class="btn btn-default" style="position: fixed; top: -3px; left: -3px;z-index:9999;"><i class="fa fa-arrow-left"></i>&nbsp;Dashboard</a>
-      	</cfif>
+      	
 	    <div id="wrapper">
 	    	
 	    <!-- Navigation -->
@@ -183,7 +181,7 @@
 		      <ul class="nav navbar-top-links navbar-right">
                 <cfif Application.EnableChat>
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <a id="ddmess" class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="fa fa-envelope fa-fw"></i> <i class="fa fa-caret-down"></i>
                     </a>
                     <ul id="messagesdd" class="dropdown-menu dropdown-messages">
@@ -339,10 +337,10 @@
                     <ul class="dropdown-menu dropdown-user">
                         <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
                         </li>
-                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings/"><i class="fa fa-gear fa-fw"></i> Settings</a>
                         </li>
                         <li class="divider"></li>
-                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>
                     </ul>
                     <!-- /.dropdown-user -->
@@ -353,6 +351,9 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
+                    	<cfif StructKeyExists(url,"projectid") || isNumeric(Session.projectID)>
+  		<li><a href="/CFTestTrack/" <!---class="btn btn-default" style="position: fixed; top: -3px; left: -3px;z-index:9999;"--->><i class="fa fa-arrow-left"></i>&nbsp;Main Dashboard</a></li>
+      	</cfif>
                     	<cfif Application.AxoSoftIntegration>
 		  				<cfoutput>#objDashboard.listAxoSoftProjects(objAxoSoft.getProjects(Session.AxoSoftToken))#</cfoutput>
 		  				<cfelse>
@@ -363,20 +364,20 @@
 		          	<li>
 		          	<a href="#"><i class="fa fa-map-marker fa-fw"> </i> Milestones<span class="fa arrow"></span></a>
 		          	<ul class="nav nav-second-level">
-		          		<li><a class="lnkViewMilestones" href="milestones">View All</a></li>
+		          		<li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/allmilestones/">View All</a></li>
 		          		<li><a class="lnkAddMilestone" href="##">Add</a></li>
 		          	</ul>
 		          </li>
 		          <li><a href="#"><i class="fa fa-suitcase fa-fw"> </i> Test Scenarios<span class="fa arrow"></span></a>
 		          	<ul class="nav nav-second-level">
-		          		<li><a class="lnkViewScenarios" href="##">View All</a></li>
+		          		<li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/allscenarios/">View All</a></li>
 		          		<li><a class="lnkAddScenario" href="##">Add</a></li>
 		          		<li><a class="lnkAddSections" href="##">Add Test Sections</a></li>
 		          	</ul>
 		          </li>
 		          <li><a href="#"><i class="fa fa-tachometer fa-fw"> </i> Test Cases<span class="fa arrow"></span></a>
 		          	<ul class="nav nav-second-level">
-		          		<li><a class="lnkViewTests" href="#">View All</a></li>
+		          		<li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/alltests/">View All</a></li>
 		          		<li><a class="lnkAddTest" href="#">Add</a></li>
 		          		<li class="divider"></li>
 		          		<li class="dropdown-header">Bulk Actions</li>
@@ -398,9 +399,6 @@
 		          	<a class="lnkViewReports" href="#"><i class="fa fa-bars fa-fw"> </i> Reporting</a>
 		          </li>
 		          </cfif>
-		          
-		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings/"> <i class="fa fa-gear"></i> Settings</a></li>
-		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/logout/"> <i class="fa fa-power-off"></i> Log out</a></li>
 		        </ul>
 		      </div><!--/.nav-collapse -->
 		      </div>
@@ -423,45 +421,51 @@
 		  		</div>
 		  	</div>
             </cfif>
-     </div>
-		  	
-		  	
-		  		<cfif StructKeyExists(url,"scenarioid")>
-		  			<cfif isNumeric(url.scenarioid)>
-		  				<cfoutput>#objDashboard.TestScenarioHub(url.scenarioid)#</cfoutput>
-		  			</cfif>
+            <cfif StructKeyExists(url,"scenarioid")>
+            <div class="row">
+            	<div class="col-lg-12">
+            	<cfif isNumeric(url.scenarioid)>
+		  			<cfoutput>#objDashboard.TestScenarioHub(url.scenarioid)#</cfoutput>
 		  		</cfif>
-		  		<cfif StructKeyExists(url, "testcase")>
-		  			<cfif isNumeric(url.testcase)>
-		  				<cfoutput>#objForm.TestCaseForm(url.testcase)#</cfoutput>
-		  			</cfif>
-		  		</cfif>
-		  		<cfif StructKeyExists(url,"projectid")>
+		  		</div>
+		  	</div>
+		  	</cfif>
+		  	<cfif StructKeyExists(url,"projectid")>
+		  	<div class="row">
+		  		<div class="col-lg-12">
 		  			<cfif isNumeric(url.projectid) && !StructKeyExists(url,"edit")>
-		  				<cfoutput>#objDashboard.HubChart(url.projectid)#</cfoutput>
-						<cfif StructKeyExists(url,"ppage")>
-							<cfset local.ppaging = url.ppage>
-						<cfelse>
-							<cfif StructKeyExists(url,"bpage")>
-								<cfset local.ppaging = 0>
-							<cfelse>
-								<cfset local.ppaging = 1>
-							</cfif>
-						</cfif>
-						<cfif StructKeyExists(url,"bpage")>
-							<cfset local.bpaging = url.bpage>
-						<cfelse>
-							<cfif StructKeyExists(url,"ppage")>
-								<cfset local.bpaging = 0>
-							<cfelse>
-								<cfset local.bpaging = 0>
-							</cfif>
-						</cfif>
-		  				<cfif Application.AxoSoftIntegration>
-		  				<cfoutput>#objDashboard.listAxoSoftItems(objAxoSoft.getItems(url.projectid,Session.AxoSoftToken),url.projectid,local.ppaging,local.bpaging)#</cfoutput>
+		  				<cfif StructKeyExists(url, "allmilestones")>
+		  					<cfoutput>#objDashboard.AllMilestones(session.ProjectID)#</cfoutput>
+		  				<cfelseif StructKeyExists(url, "allscenarios")>
+		  					<cfoutput>#objDashboard.AllScenarios(session.ProjectID)#</cfoutput>
+		  				<cfelseif StructKeyExists(url, "alltests")>
+		  					<cfoutput>#objDashboard.AllTests(session.ProjectID)#</cfoutput>
 		  				<cfelse>
-		  					<cfoutput>#objDashboard.listTestScenarios(url.projectid)#</cfoutput>
-		  				</cfif>
+			  				<cfoutput>#objDashboard.HubChart(url.projectid)#</cfoutput>
+							<cfif StructKeyExists(url,"ppage")>
+								<cfset local.ppaging = url.ppage>
+							<cfelse>
+								<cfif StructKeyExists(url,"bpage")>
+									<cfset local.ppaging = 0>
+								<cfelse>
+									<cfset local.ppaging = 1>
+								</cfif>
+							</cfif>
+							<cfif StructKeyExists(url,"bpage")>
+								<cfset local.bpaging = url.bpage>
+							<cfelse>
+								<cfif StructKeyExists(url,"ppage")>
+									<cfset local.bpaging = 0>
+								<cfelse>
+									<cfset local.bpaging = 0>
+								</cfif>
+							</cfif>
+			  				<cfif Application.AxoSoftIntegration>
+			  				<cfoutput>#objDashboard.listAxoSoftItems(objAxoSoft.getItems(url.projectid,Session.AxoSoftToken),url.projectid,local.ppaging,local.bpaging)#</cfoutput>
+			  				<cfelse>
+			  					<cfoutput>#objDashboard.listTestScenarios(url.projectid)#</cfoutput>
+			  				</cfif>
+			  			</cfif>
 		  			<cfelse>
 					  	<cfif isNumeric(url.projectid)>
 						  	<cfoutput>#objForm.ProjectForm(url.projectid)#</cfoutput>
@@ -469,18 +473,25 @@
 		  					<cfoutput>#objForm.ProjectForm()#</cfoutput>
 						</cfif>
 		  			</cfif>
+		  			</div>
+		  			</div>
 		  		</cfif>
+     </div>
+		  	
+		  	
+		  		
+		  		<cfif StructKeyExists(url, "testcase")>
+		  			<cfif isNumeric(url.testcase)>
+		  				<cfoutput>#objForm.TestCaseForm(url.testcase)#</cfoutput>
+		  			</cfif>
+		  		</cfif>
+		  		
 		  		
 		  		<cfif StructKeyExists(url,"item")>
 		  			<cfoutput>#objDashboard.TestCaseHub(url.item)#</cfoutput>
 		  		</cfif>
 		  		<div id="midrow" class="row"></div>
 		  	</div>
-		  	<div id="actioncontent" class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-		  		
-		  		<cfif !StructKeyExists(url,"reports")>
-		  			<cfoutput>#objDashboard.GetLinks()#</cfoutput>
-		  		</cfif>
 		  		<!---<cfif StructKeyExists(url,"projectid") && IsNumeric(url.projectId)>
 		  			<cfoutput>#objDashboard.getMilestones(url.projectid)#</cfoutput>
 		  		</cfif>	  		--->

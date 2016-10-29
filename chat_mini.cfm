@@ -18,6 +18,7 @@ var msgHandler = function(message)
 	    //txt.innerHTML+= data + "<br>";
 	    txt.innerHTML += '<h6 class="text-center"><small>' + data.TIME + '</small></h6><span class="label label-primary">' + data.USERNAME + '</span> : <em>' + data.MESSAGE + '</em><br />';
 	    $('#myDiv').scrollTop($('#myDiv')[0].scrollHeight);
+	    $('<span class="badge progress-bar-danger">!</span>').insertAfter('#ddmess i.fa-envelope');
 	 }
 }
 var msgHandlerMini = function(message)
