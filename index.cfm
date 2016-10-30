@@ -1,4 +1,5 @@
 <cfscript>
+	Session.PageActivity = Now();
 	if ( StructKeyExists(url,"logout") ) {
 		objLogon = createObject("component","cfc.Logon");
 		objLogon.Logout();
@@ -335,11 +336,11 @@
                         <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-user">
-                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        <!---<li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>--->
+                        <cfif STructKeyExists(Session, "isadmin") AND SESSION.IsAdmin eq "true"><li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings/"><i class="fa fa-gear fa-fw"></i> Settings</a>
                         </li>
-                        <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings/"><i class="fa fa-gear fa-fw"></i> Settings</a>
-                        </li>
-                        <li class="divider"></li>
+                        <li class="divider"></li></cfif>
                         <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>
                     </ul>

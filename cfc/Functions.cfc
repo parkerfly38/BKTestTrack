@@ -190,4 +190,11 @@
 		<cfimage action="writeToBrowser" source="#imgnew#">
 	</cffunction>
 	
+	<cffunction name="jsDateformat" access="public" returntype="string">
+		<cfargument name="date" required="true">
+		<cfscript>
+    	if( isDate(date))    return 'new Date(#year(date)#, #(month(date)-1)#, #day(date)#, #hour(date)#, #minute(date)#, #second(date)#)'; 
+    	else return "null"; 
+		</cfscript>
+	</cffunction>
 </cfcomponent>

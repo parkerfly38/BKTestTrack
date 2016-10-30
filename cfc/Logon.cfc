@@ -31,6 +31,7 @@
     		<cfset Session.Email = results.mail[1] />
     		<cfset Session.Name = results.cn[1] />
     		<cfset Session.UserId = results.samaccountname[1] />
+    		<cfset Session.IsAdmin = false />
     		<cfif arrUser.getIsAdmin() gt 0>
     			<cfset Session.IsAdmin = true />
     		<cfelse>
@@ -45,7 +46,7 @@
 				<cfset Session.LoggedIn = false />
 			</cfcatch>
 		</cftry>
-		<cfset wsPublish("general",Session.Name + "has logged in.") />
+		<!---<cfset wsPublish("general",Session.Name + "has logged in.") /> don't know that we need system messages --->
 		<cfreturn isAuthenticated />
 	</cffunction>
 	
@@ -71,6 +72,12 @@
 	  		<cfset Session.Email = qryLogin.getEmail()>
 	  		<cfset Session.Name = qryLogin.getUserName()>
 	  		<cfset Session.UserID = qryLogin.getADID()>
+	  		<cfset Session.IsAdmin = false />
+    		<cfif qryLogin.getIsAdmin() gt 0>
+    			<cfset Session.IsAdmin = true />
+    		<cfelse>
+    			<cfset Session.IsAdmin = false />
+    		</cfif>
 	  		<!--- adding new token routine, get one per session instead of reusing one --->
 	  		<cfif Application.AxoSoftIntegration>
 	  			<!--- todo:  please change to variables for axosoft --->
