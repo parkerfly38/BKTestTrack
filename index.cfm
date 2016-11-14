@@ -417,6 +417,7 @@
             <div class="row">
             	<div class="col-lg-12">
             		<cfif !Application.AxoSoftIntegration>
+            			<cfoutput>#objDashboard.UserDashPart()#</cfoutput>
 		  				<cfoutput>#objDashboard.AllProjectsChart()#</cfoutput>
 		  			</cfif>
 		  		</div>

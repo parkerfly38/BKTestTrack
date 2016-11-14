@@ -483,6 +483,36 @@
 			</div>
 	</cffunction>
 	
+	<cffunction name="mileStoneTimeline" access="remote" output="true">
+		<cfargument name="projectid" required="true" />
+	
+	</cffunction>
+	
+	<cffunction name="UserDashPart" access="remote" output="true">
+			<div class="row">
+				<div class="col-lg-3 col-md-6">
+				<div class="panel panel-primary">
+            		<div class="panel-heading">
+            			<div class="row">
+	                		<div class="col-xs-3">
+    	            		<img src="https://www.gravatar.com/avatar/#lcase(Hash(lcase(Session.Email)))#?r=R" alt="#Session.Name#'s Gravatar" class="img-responsive img-circle img-thumbnail center-block" />
+        	        		</div>
+        	        		<div class="col-xs-9 text-right">
+        	        			<div class="huge">#Session.Name#</div>
+        	        		</div>
+            			</div>
+            		</div>
+            		<a href="##">
+	            	<div class="panel-footer">
+                        <span class="pull-left">View Profile</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+        		</div>
+        		</div>
+        	</div>
+	</cffunction>
+	
 	<cffunction name="AllProjectsChart" access="remote" output="true">
 		<cfdbinfo type="version" name="dbInfo">
 		<cfset qryGeneralActivity = objData.qryGeneralActivity()>
