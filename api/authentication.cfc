@@ -9,8 +9,14 @@ component persistent="false" accessors="true" output="false" {
   		if(!checkRequiredArguments(arguments.requestHeaders)) {
   			return "Authentication Required: Missing request arguments.";
   		}
+  		qryToken = EntityLoad("TTestTokens",{access_token = arguments.requestHeaders.access_token}, true);
+  		if (isnull(qryToken))
+  			return "Authentication: Token not found.";
+  		
+  		if(qryToken.getDateExpires() LT Now())
+  			return "Authentication: Token expired.";
   	
-  		if(!havePrivateKey(arguments.requestHeaders.publicKey)) {
+  		/*if(!havePrivateKey(arguments.requestHeaders.publicKey)) {
   			return "Authentication Required: No API user by the key.";
   		}
   		
@@ -26,7 +32,7 @@ component persistent="false" accessors="true" output="false" {
   		    areSign=EncryptSignature(argValue=createSignString(arguments.requestHeaders),
   		    publicKey=arguments.requestHeaders.publicKey))) {
   			return "Authentication required: signature is not recognized.";
-  		}
+  		}*/
   		
   		return true;
   	}
@@ -87,9 +93,7 @@ component persistent="false" accessors="true" output="false" {
   	
   	public any function checkRequiredArguments(required requestArguments) 
   	hint="I check we have the required arguments to authenticate this request." {
-  		if(structkeyexists(arguments.requestArguments,"publicKey") 
-  		AND structkeyexists(arguments.requestArguments,"signature") 
-  		AND structkeyexists(arguments.requestArguments,"timestamp")) {
+  		if(structkeyexists(arguments.requestArguments,"access_token")) {
   			return true;
   		}
   		return false;

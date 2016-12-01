@@ -1,5 +1,5 @@
 <cfif !StructKeyExists(FORM,"reporttype")>
-	<form method="post" action="http://<cfoutput>#CGI.SERVER_NAME#</cfoutput>/CFTestTrack/report/AllOpenItems.cfm" target="_blank">
+	<form method="post" action="https://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/report/AllOpenItems.cfm" target="_blank">
 		Select report type:<br />
 		<select name="reporttype" id="reportype" class="form-control">
 			<option>PDF</option>

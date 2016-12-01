@@ -34,49 +34,49 @@
 	    <meta name="author" content="">
 	    <title>The Crucible Test Suite</title>
 	    <!-- Bootstrap Core CSS -->
-	    <link href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	    <link href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 	    <!-- MetisMenu CSS -->
-	    <link href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+	    <link href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
 	    <!-- Custom CSS -->
-	    <link href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/dist/css/sb-admin-2.css" rel="stylesheet">
+	    <link href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/dist/css/sb-admin-2.css" rel="stylesheet">
 	    <!-- Morris Charts CSS -->
-	    <link href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/vendor/morrisjs/morris.css" rel="stylesheet">
+	    <link href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/vendor/morrisjs/morris.css" rel="stylesheet">
 	    <!-- Custom Fonts -->
-	    <link href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	    <link href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 	    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	    <!--[if lt IE 9]>
-	        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-	        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	        <script src="http://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	        <script src="http://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 	    <![endif]-->
-	    <link rel="icon" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/favicon.ico" type="image/x-icon" />
-		<link rel="stylesheet" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/style/datepicker3.css" />
-		<link rel="stylesheet" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/style/bootstrap-select.min.css" />
+	    <link rel="icon" href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/favicon.ico" type="image/x-icon" />
+		<link rel="stylesheet" href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/style/datepicker3.css" />
+		<link rel="stylesheet" href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/style/bootstrap-select.min.css" />
 	    <!-- jQuery -->
-    	<script src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/vendor/jquery/jquery.min.js"></script>
+    	<script src="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/vendor/jquery/jquery.min.js"></script>
 	    <!-- Bootstrap Core JavaScript -->
-	    <script src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/vendor/bootstrap/js/bootstrap.min.js"></script>
+	    <script src="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/vendor/bootstrap/js/bootstrap.min.js"></script>
 	    <!-- Metis Menu Plugin JavaScript -->
-	    <script src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/vendor/metisMenu/metisMenu.min.js"></script>
+	    <script src="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/vendor/metisMenu/metisMenu.min.js"></script>
 	    <!-- Morris Charts JavaScript -->
 	    <!---<script src="../vendor/raphael/raphael.min.js"></script>
 	    <script src="../vendor/morrisjs/morris.min.js"></script>
 	    <script src="../data/morris-data.js"></script>--->
 	    <!-- Custom Theme JavaScript -->
-	    <script src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/dist/js/sb-admin-2.js"></script>
+	    <script src="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/dist/js/sb-admin-2.js"></script>
 		<cfoutput>
 		<script type="text/javascript">
 			var projectid;
 			<cfif StructKeyExists(url,"ProjectID")>projectid = #url.ProjectID#;</cfif>
 		</script>
 		</cfoutput>
-		<script type="text/javascript" src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/scripts/cftracker.js"></script>
+		<script type="text/javascript" src="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/scripts/cftracker.js"></script>
 		<cfif StructKeyExists(URL,"TR")>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				var trid = <cfoutput>#URL.TR#</cfoutput>;
 				$("#largeModal .modal-title").text("Test Result");
-				$("#largeModal .modal-body").load("http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/cfc/dashboard.cfc?method=getTestResult&testresultid="+trid);
+				$("#largeModal .modal-body").load("http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/cfc/dashboard.cfc?method=getTestResult&testresultid="+trid);
 				$("#largeModal").modal("show");
 			});
 		</script>
@@ -88,9 +88,9 @@
 			});
 		</script>
 		</cfif>
-		<script type="text/javascript" src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/scripts/ChartNew.js"></script>
-		<script type="text/javascript" src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/scripts/bootstrap-datepicker.js"></script>
-		<script type="text/javascript" src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/scripts/bootstrap-select.min.js"></script>
+		<script type="text/javascript" src="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/scripts/ChartNew.js"></script>
+		<script type="text/javascript" src="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/scripts/bootstrap-datepicker.js"></script>
+		<script type="text/javascript" src="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/scripts/bootstrap-select.min.js"></script>
 		<cfif StructKeyExists(URL,"TC")>
 		<script type="text/javascript">
 			$(document).ready(function() {
@@ -173,7 +173,7 @@
 	          	<cfif (StructKeyExists(url,"projectid") && isNumeric(url.projectid)) || isNumeric(Session.projectID)>
 	          		<!--- get at our project title --->
 	          		<cfset projectid = (StructKeyExists(url,"projectid") ? url.projectid : Session.projectid) >
-	          		<a class="navbar-brand" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/<cfoutput>project/#session.projectID#/</cfoutput>" id="lnkHome">
+	          		<a class="navbar-brand" href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/<cfoutput>project/#session.projectID#/</cfoutput>" id="lnkHome">
 	          		&nbsp;<cfoutput>#EntityLoadByPk("TTestProject",projectid).getProjectTitle()#</cfoutput>
 	          		</a>
 	          		<cfelse><a class="navbar-brand">The Crucible</a>
@@ -191,146 +191,6 @@
                     <!-- /.dropdown-messages -->
                 </li>
                 </cfif>
-                <!-- /.dropdown -->
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="fa fa-tasks fa-fw"></i> <i class="fa fa-caret-down"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-tasks">
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <p>
-                                        <strong>Task 1</strong>
-                                        <span class="pull-right text-muted">40% Complete</span>
-                                    </p>
-                                    <div class="progress progress-striped active">
-                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-                                            <span class="sr-only">40% Complete (success)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <p>
-                                        <strong>Task 2</strong>
-                                        <span class="pull-right text-muted">20% Complete</span>
-                                    </p>
-                                    <div class="progress progress-striped active">
-                                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
-                                            <span class="sr-only">20% Complete</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <p>
-                                        <strong>Task 3</strong>
-                                        <span class="pull-right text-muted">60% Complete</span>
-                                    </p>
-                                    <div class="progress progress-striped active">
-                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
-                                            <span class="sr-only">60% Complete (warning)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <p>
-                                        <strong>Task 4</strong>
-                                        <span class="pull-right text-muted">80% Complete</span>
-                                    </p>
-                                    <div class="progress progress-striped active">
-                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
-                                            <span class="sr-only">80% Complete (danger)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a class="text-center" href="#">
-                                <strong>See All Tasks</strong>
-                                <i class="fa fa-angle-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                    <!-- /.dropdown-tasks -->
-                </li>
-                <!-- /.dropdown -->
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="fa fa-bell fa-fw"></i> <i class="fa fa-caret-down"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-alerts">
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <i class="fa fa-comment fa-fw"></i> New Comment
-                                    <span class="pull-right text-muted small">4 minutes ago</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <i class="fa fa-twitter fa-fw"></i> 3 New Followers
-                                    <span class="pull-right text-muted small">12 minutes ago</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <i class="fa fa-envelope fa-fw"></i> Message Sent
-                                    <span class="pull-right text-muted small">4 minutes ago</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <i class="fa fa-tasks fa-fw"></i> New Task
-                                    <span class="pull-right text-muted small">4 minutes ago</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <i class="fa fa-upload fa-fw"></i> Server Rebooted
-                                    <span class="pull-right text-muted small">4 minutes ago</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a class="text-center" href="#">
-                                <strong>See All Alerts</strong>
-                                <i class="fa fa-angle-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                    <!-- /.dropdown-alerts -->
-                </li>
-                <!-- /.dropdown -->
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
@@ -338,10 +198,10 @@
                     <ul class="dropdown-menu dropdown-user">
                         <!---<li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
                         </li>--->
-                        <cfif STructKeyExists(Session, "isadmin") AND SESSION.IsAdmin eq "true"><li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings/"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        <cfif STructKeyExists(Session, "isadmin") AND SESSION.IsAdmin eq "true"><li><a href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/settings/"><i class="fa fa-gear fa-fw"></i> Settings</a>
                         </li>
                         <li class="divider"></li></cfif>
-                        <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        <li><a href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>
                     </ul>
                     <!-- /.dropdown-user -->
@@ -361,24 +221,24 @@
 		  				<cfoutput>#objDashboard.listProjects()#</cfoutput>
 		  				</cfif>
 		          <cfif (StructKeyExists(url,"projectid") && isNumeric(url.projectid))  || isNumeric(Session.projectID)>
-		       		<!---<li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/"><!---<i class="fa fa-home"></i>---> Project Home</a></li>--->
+		       		<!---<li><a href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/"><!---<i class="fa fa-home"></i>---> Project Home</a></li>--->
 		          	<li>
 		          	<a href="#"><i class="fa fa-map-marker fa-fw"> </i> Milestones<span class="fa arrow"></span></a>
 		          	<ul class="nav nav-second-level">
-		          		<li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/allmilestones/">View All</a></li>
+		          		<li><a href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/allmilestones/">View All</a></li>
 		          		<li><a class="lnkAddMilestone" href="##">Add</a></li>
 		          	</ul>
 		          </li>
 		          <li><a href="#"><i class="fa fa-suitcase fa-fw"> </i> Test Scenarios<span class="fa arrow"></span></a>
 		          	<ul class="nav nav-second-level">
-		          		<li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/allscenarios/">View All</a></li>
+		          		<li><a href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/allscenarios/">View All</a></li>
 		          		<li><a class="lnkAddScenario" href="##">Add</a></li>
 		          		<li><a class="lnkAddSections" href="##">Add Test Sections</a></li>
 		          	</ul>
 		          </li>
 		          <li><a href="#"><i class="fa fa-tachometer fa-fw"> </i> Test Cases<span class="fa arrow"></span></a>
 		          	<ul class="nav nav-second-level">
-		          		<li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/alltests/">View All</a></li>
+		          		<li><a href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/alltests/">View All</a></li>
 		          		<li><a class="lnkAddTest" href="#">Add</a></li>
 		          		<li class="divider"></li>
 		          		<li class="dropdown-header">Bulk Actions</li>
@@ -444,6 +304,7 @@
 		  					<cfoutput>#objDashboard.AllTests(session.ProjectID)#</cfoutput>
 		  				<cfelse>
 			  				<cfoutput>#objDashboard.HubChart(url.projectid)#</cfoutput>
+			  				<cfoutput>#objDashboard.mileStoneTimeline(url.projectid)#</cfoutput>
 							<cfif StructKeyExists(url,"ppage")>
 								<cfset local.ppaging = url.ppage>
 							<cfelse>
@@ -544,7 +405,7 @@
 		    </div>
   	   	</div> 
 	 </div>
-	 <cfdump var="#session#">
+	 <!---<cfdump var="#session#">--->
 	 </div>
 </body>
 </html>
