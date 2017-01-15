@@ -483,8 +483,6 @@
 			</div>
 	</cffunction>
 	
-<<<<<<< HEAD
-=======
 	<cffunction name="mileStoneTimeline" access="remote" output="true">
 		<cfargument name="projectid" required="true" />
 		<cfset objMilestones = EntityLoad("TTestMilestones",{ProjectID = arguments.projectid}, false) />
@@ -531,7 +529,6 @@
                     	</div>
 	</cffunction>
 	
->>>>>>> e62cd13af24ed28846ea48c350623191aa10222b
 	<cffunction name="UserDashPart" access="remote" output="true">
 			<div class="row">
 				<div class="col-lg-3 col-md-6">
