@@ -207,7 +207,7 @@ component implements="CFTestTrack.cfc.IReports"
 		//objFunctions = createObject("component","cfc.Functions");
 		if ( variables.AccessAndScheduling.Email.NotifyMe gt 0) {
 			arruser = EntityLoadByPK("TTestTester",variables.AccessAndScheduling.Email.NotifyMe);
-			emailbody = "<h1>" & variables.ReportName & "</h1><p>Your report is available <a href='http://" & cgi.SERVER_NAME & "/" & Application.applicationname & "/reportpdfs/" & variables.reportid & ".pdf'>here</a>.</p>";
+			emailbody = "<h1>" & variables.ReportName & "</h1><p>Your report is available <a href='https://" & Application.HttpsUrl & "/" & Application.applicationname & "/reportpdfs/" & variables.reportid & ".pdf'>here</a>.</p>";
 			objFunctions.MailerFunction(arruser.getEmail(),application.MailerDaemonAddress,variables.ReportName & " Available",emailbody);
 		}
 		if ( len(variables.AccessAndScheduling.Email.sendlinktouserids) gt 0 && IsValid("email",ListGetat(variables.AccessAndScheduling.Email.sendlinktouserids,1))) {

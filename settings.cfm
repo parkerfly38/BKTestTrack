@@ -14,10 +14,10 @@
 	    <meta name="author" content="">
 	    <title>The Crucible :: Settings</title>
 	    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-		<link rel="stylesheet" href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/style/bootstrap.css" />
-		<link href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" />
-		<script type="text/javascript" src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/scripts/jquery-1.10.2.min.js"></script>
-		<script type="text/javascript" src="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/scripts/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="https://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/style/bootstrap.css" />
+		<link href="https://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" />
+		<script type="text/javascript" src="https://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/scripts/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="https://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/scripts/bootstrap.min.js"></script>
 		<style>
 			body { padding-top: 60px; background-color: #9F5F9F; }
 			.rowoffset { margin-bottom: 20px; }
@@ -50,11 +50,11 @@
 		      
 		        <ul class="nav navbar-nav">
 		          <li><a id="lnkReturnToProject" class="pjlink" style="display:none;" href="index.cfm"><i class="fa fa-home"></i> Home</a></li>
-		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings.cfm?ac=users">Users</a></li>
-		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings.cfm?ac=settings">System Settings</a></li>
-		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings.cfm?ac=sked">Scheduled Tasks</a></li>
-		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/settings.cfm?ac=links">Links</a></li>
-		          <li><a href="http://<cfoutput>#cgi.server_name#</cfoutput>/CFTestTrack/logout/"> <i class="fa fa-power-off"></i> Log out</a></li>
+		          <li><a href="https://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/settings.cfm?ac=users">Users</a></li>
+		          <li><a href="https://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/settings.cfm?ac=settings">System Settings</a></li>
+		          <li><a href="https://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/settings.cfm?ac=sked">Scheduled Tasks</a></li>
+		          <li><a href="https://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/settings.cfm?ac=links">Links</a></li>
+		          <li><a href="https://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/logout/"> <i class="fa fa-power-off"></i> Log out</a></li>
 		        </ul>
 		      </div><!--/.nav-collapse -->
 		    </div>

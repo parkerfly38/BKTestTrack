@@ -50,6 +50,44 @@
 		<cfreturn isAuthenticated />
 	</cffunction>
 	
+	<cffunction access="public" name="tokenAuthenticate" returntype="struct" >
+		<cfargument name="username" required="true">
+		<cfargument name="password" required="true">
+		<cfargument name="deviceuuid" default="" />
+		<cfargument name="deviceos" default="" />
+				
+		<cfset qryLogin = EntityLoad("TTestTester",{ADID=arguments.username},true) >
+		
+		<cfif isnull(qryLogin)>
+			<cfreturn structnew() />
+		</cfif>
+		
+			
+		<!--- testing code only --->
+		<cfif Len(qryLogin.getSalt()) gt 0>
+	 	<cfset hashedFormPassword = computeHash(arguments.password, qryLogin.getSalt()) ><!--- this is the only part that stays in production --->
+		<cfelse>
+		<cfset hashedFormPassword = "">
+		</cfif> 
+		
+	  	<cfif qryLogin.getPassword() eq hashedFormPassword>
+	  		<cfif len(arguments.deviceuuid) gt 0 AND len(arguments.deviceos) gt 0>
+	  			<cfset qryDevices = EntityLoad("TTestDevices",{TesterID = qryLogin.getId(), DeviceUUID = arguments.deviceuuid, DeviceOS = arguments.Deviceos}, true) />
+	  			<cfif isnull(qryDevices)>
+	  				<cfset objDevice = EntityNew("TTestDevices",{DeviceUUID = arguments.deviceuuid, DeviceOS = arguments.deviceos, TesterID = qryLogin.getId()}) />
+	  				<cfset EntitySave(objDevice) />
+	  				<cfset ormflush() />
+	  			</cfif>
+	  		</cfif>
+	  		<cfset returnstruct = structnew() />
+	  		<cfset returnstruct.access_token = CSRFGenerateToken() />
+	  		<cfset returnstruct.testerid = qryLogin.getId() />
+	  		<cfreturn returnstruct />
+		<cfelse>
+			<cfreturn structnew() />
+		</cfif> 
+	</cffunction>
+	
 	<cffunction access="public" name="formAuthenticate" returntype="boolean" >
 		<cfargument name="username" required="true">
 		<cfargument name="password" required="true">

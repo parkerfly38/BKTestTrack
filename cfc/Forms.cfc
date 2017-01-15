@@ -173,7 +173,7 @@
 				$(document).on("click","##btnSave",function(event) {
 					event.preventDefault();
 					$.ajax({
-						url: "http://#cgi.server_NAME#/CFTestTrack/CFC/forms.cfc?method=saveTestCase",
+						url: "http://#Application.HttpsUrl#/CFTestTrack/CFC/forms.cfc?method=saveTestCase",
 						type: "POST",
 						data: {
 							id : $("##txtId").val(),
@@ -192,7 +192,7 @@
 						if ( data == "true" )
 						{
 							$("##largeModal").modal('hide');
-							$("##panelalltestcases").parent().load("http://#cgi.server_NAME#/CFTestTrack/CFC/Dashboard.cfc?method=AllTests&projectid=#arguments.projectid#");
+							$("##panelalltestcases").parent().load("http://#Application.HttpsUrl#/CFTestTrack/CFC/Dashboard.cfc?method=AllTests&projectid=#arguments.projectid#");
 							restoreSpinner();
 							
 						} else {
@@ -293,7 +293,7 @@
 				$(document).on("click","##btnSave",function(event) {
 					event.preventDefault();
 					$.ajax({
-						url: "http://#cgi.server_NAME#/CFTestTrack/CFC/forms.cfc?method=saveMilestone",
+						url: "http://#Application.HttpsUrl#/CFTestTrack/CFC/forms.cfc?method=saveMilestone",
 						type: "POST",
 						data: {
 							id : $("##txtID").val(),
@@ -312,7 +312,7 @@
 								/*$("##panelmilestones").parent.remove();*/
 								insertMilestones();
 							} else {
-								$("##allmilestonespanel").parent().load("http://#cgi.server_NAME#/CFTestTrack/CFC/Dashboard.cfc?method=AllMilestones&projectid=#arguments.projectid#");
+								$("##allmilestonespanel").parent().load("http://#Application.HttpsUrl#/CFTestTrack/CFC/Dashboard.cfc?method=AllMilestones&projectid=#arguments.projectid#");
 							}
 							restoreSpinner();
 						} else {
@@ -841,7 +841,7 @@
 				EntitySave(arrMilestone);
 				if (Application.SlackIntegration eq "true") {
 					objSlack = createObject("component","Slack");
-					objSlack.slackPostMessage(text="#arrMilestone.GetMilestone()# added to http://#cgi.server_name#/CFTestTrack/project/#arrMilestone.getProjectID()#",as_user=false);
+					objSlack.slackPostMessage(text="#arrMilestone.GetMilestone()# added to http://#Application.HttpsUrl#/CFTestTrack/project/#arrMilestone.getProjectID()#",as_user=false);
 				}
 				return true;
 			} catch (any ex) {
@@ -883,7 +883,7 @@
 				if (application.SlackIntegration == "true") 
 				{
 					slackObj = createObject("component","Slack");
-					slackObj.slackPostMessage(text="#arrTestCase.GetTestTitle()# created - http://#cgi.server_name#/CFTestTrack/testcase/#arrTestCase.getId()#/", as_user=false);
+					slackObj.slackPostMessage(text="#arrTestCase.GetTestTitle()# created - http://#Application.HttpsUrl#/CFTestTrack/testcase/#arrTestCase.getId()#/", as_user=false);
 				}
 				return true;
 			} catch (any ex) {
@@ -957,7 +957,7 @@
 						texteditcreate = "created";
 					}
 					slackObj = createObject("component","Slack");
-					slackObj.slackPostMessage(text="#arguments.ProjectTitle# #texteditcreate# - http://#cgi.server_name#/CFTestTrack/project/#arrProject.getId()#/", as_user=false);
+					slackObj.slackPostMessage(text="#arguments.ProjectTitle# #texteditcreate# - http://#Application.HttpsUrl#/CFTestTrack/project/#arrProject.getId()#/", as_user=false);
 				}
 				return true;
 			} catch (any ex) {
@@ -991,7 +991,7 @@
 			newtestcasehistory.setDateofAction(Now());
 			newtestcasehistory.setCaseID(currenttestcasehistory.getCaseID());
 			EntitySave(newtestcasehistory);
-			mailbody = "You have been assigned test case <strong>TC" & arguments.testcaseid & ".</strong>  Click <a href='http://" & CGI.SERVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TC=" & arguments.testcaseid & "'>here</a> to view test case.";
+			mailbody = "You have been assigned test case <strong>TC" & arguments.testcaseid & ".</strong>  Click <a href='http://" & Application.HttpsUrl & "/" & Application.ApplicationName & "/index.cfm?TC=" & arguments.testcaseid & "'>here</a> to view test case.";
 			objFunc.MailerFunction(tester.getEmail(),Application.MAILERDAEMONADDRESS,"Test Case TC" & arguments.testcaseid & " Assigned" ,mailbody);
 		</cfscript> 	
 	</cffunction>
@@ -1022,7 +1022,7 @@
 				testresult.setTestCaseID(ListElement);
 				EntitySave(testresult);
 				arrTestDetail = EntityLoadByPK("TTestCase",ListElement);
-				/*mailbody = "There is an update on test case <strong>TC" & arrTestDetail.getId() & " - " & arrTestDetail.getTestTitle() & ".</strong>  Click <a href='http://" & CGI.SERVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TC=" & arrTestDetail.getId() & "'>here</a> to view test case.";
+				/*mailbody = "There is an update on test case <strong>TC" & arrTestDetail.getId() & " - " & arrTestDetail.getTestTitle() & ".</strong>  Click <a href='http://" & Application.HttpsUrl & "/" & Application.ApplicationName & "/index.cfm?TC=" & arrTestDetail.getId() & "'>here</a> to view test case.";
 				objFunc.MailerFunction(TesterObj.getEmail(),Application.MAILERDAEMONADDRESS,"Test Case Update - TC" & arrTestDetail.getid(), mailbody);
 				if ( Application.AxoSoftIntegration && StructKeyExists(Session,"AxoSoftToken") ) {
 					objAxoSoft = new CFTestTrack.cfc.AxoSoft();
@@ -1031,7 +1031,7 @@
 					{
 						arrScenario = EntityLoadByPK("TTestScenario",arrScenarioLink[i].getScenarioId());
 						if ( len(arrScenario.getAxoSoftNumber()) > 1) {
-							objAxoSoft.updateIncident(arrScenario.getAxoSoftNumber(),"http://" & cgi.serVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TR="  & arrScenario.getId(),Session.AxoSoftToken);
+							objAxoSoft.updateIncident(arrScenario.getAxoSoftNumber(),"http://" & Application.HttpsUrl & "/" & Application.ApplicationName & "/index.cfm?TR="  & arrScenario.getId(),Session.AxoSoftToken);
 						}
 					}
 				}*/

@@ -47,7 +47,7 @@
 								</cfif>
 								<cfloop query="qryIncidents" startrow="#((ppage-1)*20)+1#" endrow="#((ppage)*20)#">
 									<tr>
-										<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#id#/">#AxoSoftID#</a></td>
+										<td colspan="2"><a href="http://#Application.HttpsUrl#/CFTestTrack/item/#id#/">#AxoSoftID#</a></td>
 										<td>#ProjectTitle#</td>
 									</tr>
 								</cfloop>
@@ -87,7 +87,7 @@
 								</cfif>
 								<cfloop query="qryBugs" startrow="#((bpage-1)*20)+1#" endrow="#((bpage)*20)#">
 									<tr>
-										<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#id#/">#AxoSoftID#</a></td>
+										<td colspan="2"><a href="http://#Application.HttpsUrl#/CFTestTrack/item/#id#/">#AxoSoftID#</a></td>
 										<td>#ProjectTitle#</td>
 									</tr>
 								</cfloop>
@@ -123,7 +123,7 @@
 								 }							
 							</cfscript>
 							<tr>
-								<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#i.id#/">#i.number#</a></td>
+								<td colspan="2"><a href="http://#Application.HttpsUrl#/CFTestTrack/item/#i.id#/">#i.number#</a></td>
 								<td>#i.name#</td>
 							</tr>
 							</cfif>
@@ -151,7 +151,7 @@
 								 }							
 							</cfscript>
 							<tr>
-								<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#i.id#/">#i.number#</a></td>
+								<td colspan="2"><a href="http://#Application.HttpsUrl#/CFTestTrack/item/#i.id#/">#i.number#</a></td>
 								<td>#i.name#</td>
 							</tr>
 							</cfif>
@@ -170,14 +170,14 @@
 	                <a href="##"><i class="fa fa-wrench fa-fw"></i> Projects<span class="fa arrow"></span></a>
 	                <ul class="nav nav-second-level">
 	                    <li>
-	                        <a href="http://#cgi.server_name#/CFTestTrack/project/add/"><i class="fa fa-plus-circle"></i> Add Project</a>
+	                        <a href="http://#Application.HttpsUrl#/CFTestTrack/project/add/"><i class="fa fa-plus-circle"></i> Add Project</a>
 	                    </li>
 	                    <cfif ArrayLen(arrProjects) gt 0>
 						<cfloop array="#arrProjects#" index="i">
 						<li>							
 							<div style="right:5px;bottom:10px;position:absolute; z-index:2;"><a class="btn btn-xs btn-default" href="/CFTestTrack/project/#i.getId()#&edit=true/" style="padding-left:5px;" ><i class="fa fa-pencil"> </i></a>
 							<button class="btn btn-xs btn-danger lnkDeleteProject" projectid="#i.getId()#"><i class="fa fa-trash"> </i></button></div>
-							<a href="http://#cgi.server_name#/CFTestTrack/project/#i.getId()#/">#i.getProjectTitle()#</a>
+							<a href="http://#Application.HttpsUrl#/CFTestTrack/project/#i.getId()#/">#i.getProjectTitle()#</a>
 							
 						</li>
 						</cfloop>
@@ -199,11 +199,11 @@
 	                <a href="##"><i class="fa fa-wrench fa-fw"></i> Projects<span class="fa arrow"></span></a>
 	                <ul class="nav nav-second-level">
 	                    <li>
-							<a href="http://#cgi.server_name#/CFTestTrack/project/add/"><i class="fa fa-plus-circle"></i> Add Project</a>
+							<a href="http://#Application.HttpsUrl#/CFTestTrack/project/add/"><i class="fa fa-plus-circle"></i> Add Project</a>
 						</li>
 						<cfloop query="qryProjects">
 						<li>
-							<a href="http://#cgi.server_name#/CFTestTrack/project/#AxoSoftPid#/">#Name#</a>
+							<a href="http://#Application.HttpsUrl#/CFTestTrack/project/#AxoSoftPid#/">#Name#</a>
 						
 						<cfquery name="qryChildren" dbtype="query">
 							SELECT AxoSoftPId, Name, ParentId
@@ -214,7 +214,7 @@
 						<ul class="nav nav-third-level">
 						<cfloop query="qryChildren">
 							<li>
-								<a href="http://#cgi.server_name#/CFTestTrack/project/#qryChildren.AxoSoftPId#/">#qryChildren.Name#</a>
+								<a href="http://#Application.HttpsUrl#/CFTestTrack/project/#qryChildren.AxoSoftPId#/">#qryChildren.Name#</a>
 							</li>
 						</cfloop>
 						</ul>
@@ -237,7 +237,7 @@
 						 }							
 					</cfscript>
 					<li>
-						<a href="http://#cgi.server_name#/CFTestTrack/project/#i.id#/">#i.name#</a>
+						<a href="http://#Application.HttpsUrl#/CFTestTrack/project/#i.id#/">#i.name#</a>
 					<cfif StructKeyExists(i,"children")>
 						<ul class="nav nav-third-level">
 					<cfloop array="#i.children#" index="c">
@@ -257,7 +257,7 @@
 						 }
 						</cfscript>
 					<li>
-						<a href="http://#cgi.server_name#/CFTestTrack/project/#c.id#/">#c.name#</a>
+						<a href="http://#Application.HttpsUrl#/CFTestTrack/project/#c.id#/">#c.name#</a>
 					</li>
 					</cfloop>
 					</ul>
@@ -277,7 +277,7 @@
 			WHERE ProjectID = <cfqueryparam value="#arguments.ProjectID#">
 		</cfquery>
 		<div class="panel panel-default">
-				<div class="panel-heading">Test Scenario Status<div class="btn-group" style="float:right;margin-top:-5px;"><a href="##" class="lnkAddScenario btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Scenario</a><a href="http://#cgi.server_name#/CFTestTrack/project/#arguments.projectid#/allscenarios/" class="btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
+				<div class="panel-heading">Test Scenario Status<div class="btn-group" style="float:right;margin-top:-5px;"><a href="##" class="lnkAddScenario btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Scenario</a><a href="http://#Application.HttpsUrl#/CFTestTrack/project/#arguments.projectid#/allscenarios/" class="btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
 				<div class="panel-body">
 					<cfif ArrayLen(qryTestScenarios) gt 0>
 					<table class="table table-striped table-condensed">
@@ -291,7 +291,7 @@
 								<cfset objData = createObject("component","Data")>
 								<cfset qryTestCases = objData.qryTestCaseForScenarios(scenario.getId())>
 								<tr>
-									<td><a href="http://#cgi.server_name#/CFTestTrack/scenario/#scenario.getId()#/" scenarioid="#scenario.getId()#"><cfif Len(scenario.getAxoSoftNumber()) gt 0>#scenario.getAxoSoftNumber()# - </cfif>#scenario.getTestScenario()#</a></td>
+									<td><a href="http://#Application.HttpsUrl#/CFTestTrack/scenario/#scenario.getId()#/" scenarioid="#scenario.getId()#"><cfif Len(scenario.getAxoSoftNumber()) gt 0>#scenario.getAxoSoftNumber()# - </cfif>#scenario.getTestScenario()#</a></td>
 									<td>(#qryTestCases.RecordCount#)</td>
 									<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteScenario btn btn-danger btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-trash"></i> Delete</a></td>
 								</tr>
@@ -483,16 +483,65 @@
 			</div>
 	</cffunction>
 	
+<<<<<<< HEAD
+=======
+	<cffunction name="mileStoneTimeline" access="remote" output="true">
+		<cfargument name="projectid" required="true" />
+		<cfset objMilestones = EntityLoad("TTestMilestones",{ProjectID = arguments.projectid}, false) />
+		<div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-clock-o fa-fw"></i> Milestone Timeline
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <ul class="timeline">
+                            	<cfset i = 1 />
+                            	<cfloop array="#objMilestones#" index="milestone">
+                                <li<cfif i mod 2 eq 0> class="timeline-inverted"</cfif>>
+                                    <div class="timeline-badge<cfif milestone.GetDueOn() LT Now()> danger</cfif>"><i class="fa fa-check"></i>
+                                    </div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title<cfif milestone.GetDueOn() LT Now()> danger</cfif>">#milestone.GetMilestone()#</h4>
+                                            <p><small class="text-muted"><i class="fa fa-clock-o"></i> Due on: #milestone.GetDueOn()#</small>
+                                            </p>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>#milestone.getMilestoneDescription()#</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <cfset i = i + 1 />
+                                </cfloop>
+                                <!---<li class="timeline-inverted">
+                                    <div class="timeline-badge warning"><i class="fa fa-credit-card"></i>
+                                    </div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Lorem ipsum dolor</h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem dolorem quibusdam, tenetur commodi provident cumque magni voluptatem libero, quis rerum. Fugiat esse debitis optio, tempore. Animi officiis alias, officia repellendus.</p>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium maiores odit qui est tempora eos, nostrum provident explicabo dignissimos debitis vel! Adipisci eius voluptates, ad aut recusandae minus eaque facere.</p>
+                                        </div>
+                                    </div>
+                                </li>--->
+                                </ul>
+                        	</div>
+                    	</div>
+	</cffunction>
+	
+>>>>>>> e62cd13af24ed28846ea48c350623191aa10222b
 	<cffunction name="UserDashPart" access="remote" output="true">
 			<div class="row">
 				<div class="col-lg-3 col-md-6">
 				<div class="panel panel-primary">
             		<div class="panel-heading">
             			<div class="row">
-	                		<div class="col-xs-3">
-    	            		<img src="https://www.gravatar.com/avatar/#lcase(Hash(lcase(Session.Email)))#?r=R" alt="#Session.Name#'s Gravatar" class="img-responsive img-circle img-thumbnail center-block" />
+	                		<div class="col-lg-4">
+    	            		<img src="http://www.gravatar.com/avatar/#lcase(Hash(lcase(Session.Email)))#?r=R" alt="#Session.Name#'s Gravatar" class="img-responsive img-circle img-thumbnail center-block" />
         	        		</div>
-        	        		<div class="col-xs-9 text-right">
+        	        		<div class="col-lg-8 text-right">
         	        			<div class="huge">#Session.Name#</div>
         	        		</div>
             			</div>

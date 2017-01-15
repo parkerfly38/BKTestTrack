@@ -21,10 +21,18 @@
 	<cfset this.mappings["/taffy"] = "#this.directory#taffy/">
 	<cfset this.ormSettings.cfclocation = "#this.directory#cfc/db/" />
 	<cfset this.wschannels = [{name="general",cfclistener="cfc.Chat"}] >
+	<cfset this.httpsurl = "#cgi.server_name#" />
 	<!--- production only 
 	<cfsetting showdebugoutput="false" />--->
 	
 	<cffunction name="onRequestStart" returntype="any" output="true">
+		<!---<cfif cgi.server_name does not contain "local">
+			<cfif cgi.https neq "on">
+				<cflocation url="https://#this.httpsurl#/#cgi.script_name#" addtoken="no" />
+			</cfif>
+		<cfelse>
+			<cfset this.httpsurl = "localhost" />
+		</cfif>--->
 		<!--- debug only, remove otherwise --->
 		<cfif StructKeyExists(URL, "reload")> 
         	<cfset ApplicationStop() />
@@ -78,7 +86,7 @@
 			<cfreturn false />
 		</cfif>
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin) && !FindNoCase("logon.cfc",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport.cfm",CGI.SCRIPT_NAME) && !FindNoCase("AxoSoftRedirect.cfm",CGI.SCRIPT_NAME) && !FindNoCase(".cfr",CGI.SCRIPT_NAME) && !FindNoCase("report",CGI.SCRIPT_NAME) && !FindNoCase("skedtasks",CGI.SCRIPT_NAME) && !FindNoCase("chat.cfm", CGI.SCRIPT_NAME)>
-			<cfset Session.OrigURL = CGI.SERVER_NAME & "/" & CGI.SCRIPT_NAME & "?" & CGI.QUERY_STRING>
+			<cfset Session.OrigURL = this.HttpsUrl & "/" & CGI.SCRIPT_NAME & "?" & CGI.QUERY_STRING>
 			<cflocation url="/CFTestTrack/login.cfm" addtoken="false" />
 		</cfif>
 	</cffunction>
@@ -114,6 +122,11 @@
 		<cfset qryAllowCaseDelete = EntityLoad("TTestSettings",{Setting="AllowCaseDelete"},true)>
 		<cfset Application.useLDAP = qryAuthenticationType.getSettingValue() />
 		<cfset Application.DOMAIN = "" />
+		<cfif cgi.server_name does not contain "local">
+			<cfset Application.HttpsUrl = "#cgi.server_name#" />
+		<cfelse>
+			<cfset Application.HttpsUrl = "localhost" />
+		</cfif>
 		<cfset Application.AllowCaseDelete = qryAllowCaseDelete.getSettingValue() />
 		<cfset qryMailerDaemon = EntityLoad("TTestSettings",{Setting="MAILERDAEMONADDRESS"},true)>
 		<cfset Application.MAILERDAEMONADDRESS = qryMailerDaemon.getSettingValue() />

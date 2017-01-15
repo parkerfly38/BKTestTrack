@@ -4,8 +4,8 @@ component extends="taffy.core.resource" taffy_uri="/projects"
 	public function get() hint='Returns all projects.'
 	{
 		objData = createObject("component","/CFTestTrack/cfc/Data");
-		//return representationOf(objData.getAllProjects());
-		return representationOf(application._taffy);
+		return representationOf(objData.getAllProjects());
+		//return representationOf(application._taffy);
 	}
 	
 	public function post() hint='Adds a new project using the following JSON: {
