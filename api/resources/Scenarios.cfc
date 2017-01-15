@@ -1,6 +1,7 @@
 component  extends="taffy.core.resource" taffy_uri="/scenarios"
 {
 	objData = createObject("component","/CFTestTrack/cfc/Data");
+	objHelpers = createObject("component","/CFTestTrack/api/helpers");
 	
 	public function get() hint='Returns all scenarios.'
 	{

@@ -428,6 +428,7 @@
             	<div class="col-lg-12">
             	<cfif isNumeric(url.scenarioid)>
 		  			<cfoutput>#objDashboard.TestScenarioHub(url.scenarioid)#</cfoutput>
+		  			
 		  		</cfif>
 		  		</div>
 		  	</div>
@@ -467,6 +468,7 @@
 			  				<cfelse>
 			  					<cfoutput>#objDashboard.listTestScenarios(url.projectid)#</cfoutput>
 			  				</cfif>
+			  				<cfoutput>#objDashboard.MilestoneTimeline(url.projectid)#</cfoutput>
 			  			</cfif>
 		  			<cfelse>
 					  	<cfif isNumeric(url.projectid)>

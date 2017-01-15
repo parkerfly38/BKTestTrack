@@ -165,6 +165,12 @@ component
 		milestones = entityLoad("TTestMilestones");
 		return milestones;
 	}
+	
+	public array function getMilestonesByProjectId(id)
+	{
+		milestones = entityLoad("TTestMilestones",{projectid = arguments.id},"DueOn Desc");
+		return milestones;
+	}
 	public array function getAllLinks()
 	{
 		links = entityLoad("TTestLinks");

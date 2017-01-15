@@ -5,6 +5,7 @@ component table="TTestMilestones" persistent="true"
 	property name="DueOn" ormtype="timestamp" notnull="false";
 	property name="MilestoneDescription";
 	property name="Closed" getter="false" ormtype="boolean";
+	property name="ClosedDate" ormtype="timestamp";
 	property name="ProjectID" ormtype="integer";
 	
 	public TTestMilestones function init() 
