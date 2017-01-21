@@ -61,7 +61,7 @@ component  extends="taffy.core.resource" taffy_uri="/scenarios"
 		objMetaData = GetMetaData(createObject("component", "/CFTestTrack/cfc/db/TTestScenario")).properties;
 		if (objHelpers.testStruct(dataPayload, objMetaData) eq "true")
 		{
-			testscenario = createObject("component","/CFTestTrack/cfc/db/TTestScenario");
+			testscenario = createObject("component","cfc/db/TTestScenario");
 			testscenario.setId(datapayload.ID);
 			testscenario.setTestScenario(datapayload.TESTSCENARIO);
 			testscenario.setMilestoneID(datapayload.MILESTONEID);
@@ -71,7 +71,7 @@ component  extends="taffy.core.resource" taffy_uri="/scenarios"
 			testscenario.setSectionID(datapayload.SECTIONID);
 			testscenario.setAxoSoftNumber(datapayload.AXOSOFTNUMBER);
 			EntitySave(testscenario);
-			return representationOf(testresult);
+			return representationOf(testscenario);
 		} else {
 			return representationOf(objHelpers.testStruct(dataPayload, objMetaData));
 		}

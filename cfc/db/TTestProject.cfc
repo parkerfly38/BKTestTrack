@@ -6,16 +6,16 @@ component table="TTestProject" persistent="true"
 	property name="ProjectDescription" ormtype="string" length="4000";
 	property name="ProjectStartDate" ortmype="date" notnull="true";
 	property name="ProjectProjectedEndDate" ormtype="date" notnull="true";
-	property name="ProjectActualEndDate" ormtype="date" notnull="false";
+	property name="ProjectActualEndDate" ormtype="date" notnull="false" default="";
 	property name="IncludeAnnouncement" ormtype="boolean";
 	property name="RepositoryType" ormtype="string";
 	property name="Closed" ormtype="boolean" notnull="false";
 	property name="Color" getter="false";
-	property name="AxoSoftProjectID";
-	property name="AxoSoftSystemID";
-	property name="AxoSoftClient";
-	property name="CodePath" ormtype="string" notnull="false";
-	property name="TestProjectPath" ormtype="string" notnull="false";
+	property name="AxoSoftProjectID" ormtype="string" notnull="false" default="";
+	property name="AxoSoftSystemID" ormtype="string" notnull="false";
+	property name="AxoSoftClient" ormtype="string" notnull="false";
+	property name="CodePath" ormtype="string" notnull="false" default="";
+	property name="TestProjectPath" ormtype="string" notnull="false" default="";
 	
 	public TTestProject function init()
 	{
