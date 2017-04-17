@@ -554,7 +554,7 @@
         	</div>
 	</cffunction>
 	
-	<cffunction name="MilestoneTimeline" access="remote" output="true">
+	<!---<cffunction name="MilestoneTimeline" access="remote" output="true">
 		<cfargument name="projectid" required="yes">
 		<cfset arrMilestones = objData.getMilestonesByProjectId(arguments.projectid) />
 		<div class="row">
@@ -670,7 +670,7 @@
                   	</div>
               	</div>
           	</div>
-    </cffunction>
+    </cffunction>--->
 	
 	<cffunction name="AllProjectsChart" access="remote" output="true">
 		<cfdbinfo type="version" name="dbInfo">

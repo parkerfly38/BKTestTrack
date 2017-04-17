@@ -7,5 +7,5 @@ component table="TTestTokens" persistent="true"
 	
 	public function getDateCreated()
 	{
-		
+	}
 }

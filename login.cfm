@@ -112,7 +112,7 @@
 		<div class="row">
         	<div class="col-md-6" style="height:100px"><small style="margin:0;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">104 Baker Road<br />Winterport, ME 04496<br /><a href="mailto:crucible@covebrookcode.com?subject=Crucible%20Support">crucible@covebrookcode.com</a></small></div>
         	<div class="col-md-6">
-        	<img src="http://covebrookcode.com/img/covebrookcoders.png" border="0" style="height:100px; width:100px; display:block; margin:auto;" /></div>
+        	<img src="http://covebrookcode.com/img/covebrookcoders.png" border="0" style="height:auto; width:100px; display:block; margin:auto;" /></div>
     	</div>
                     </div>
                 </div>
