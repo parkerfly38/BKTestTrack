@@ -806,19 +806,15 @@
 	</cffunction>
 		
 	<cffunction name="AllReports" access="remote" output="true">
-		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfreturn>
-		</cfif>
-		<cfif !StructKeyExists(SESSION,"ProjectID")>
-			<cfreturn>
-		</cfif>
+		<cfargument name="projectid" required="true" />
+		<h1>Reporting</h1>
 		<div class="panel panel-default">
-			<div class="panel-heading"><strong><i class="fa fa-bars"></i> Reporting</strong></div>
+			<div class="panel-heading"><strong><i class="fa fa-bars"></i> </strong></div>
 			<div class="panel-body">
 				<Cfif Len(Session.ProjectID) eq 0>
 					<cfset arrReports = EntityLoad("TTestReports")>
 				<cfelse>
-					<cfset arrReports = EntityLoad("TTestReports",{ProjectID = Session.ProjectID},{maxresults=10})>
+					<cfset arrReports = EntityLoad("TTestReports",{ProjectID = arguments.ProjectID},{maxresults=10})>
 				</Cfif>
 				<cfif ArrayLen(arrReports) GT 0>
 					<div class="well well-sm" style="font-weight:bold;">Configured Reports</div>
@@ -848,7 +844,7 @@
 					</table>
 				<cfelse>
 						
-				<div class='alert alert-danger' role='alert'><strong>There are no reports configured.</strong><br />Set up reports by selecting report types from the right.</div>
+				<div class='alert alert-danger' role='alert'><strong>There are no reports configured.</strong><br />Set up reports by selecting report types from the left.</div>
 				</cfif>
 				<cfset objMaintenance = createObject("component","Maintenance")>
 				<cfset qryTasks = objMaintenance.returnTasks()>
@@ -1764,89 +1760,33 @@
 	</cffunction>
 	
 	<cffunction name="getCreateReports" access="remote" output="true">
-		<div id="createreportpanel" class="panel panel-default">
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$('[data-toggle="tooltip"]').tooltip();
 				});
 			</script>
-			<div class="panel-heading"><i class="fa fa-bars"></i> Create Reports</div>
-			<div class="panel-body">
+				<li><a href="##"><i class="fa fa-bars fa-fw"> </i> Create Reports<span class="fa arrow"></span></a>
+				<ul class="nav nav-second-level">
 				<cfif Application.AxoSoftIntegration eq "true">
-				<strong>AxoSoft</strong><br />
-				<table class="table table-condensed table-hover">
-					<tbody>
-						<tr><td><a href="##" class="lnkCreateReport" reporttype="AllOpenItems" data-toggle="tooltip" data-placement="left" title="Shows all open AxoSoft items."><i class="fa fa-plus-circle" style="color: green;"></i> All Open Items</a></td>
-						</tr>
-						<tr><td><a href="##" class="lnkCreateReport" reporttype="ReadyForProduction" data-toggle="tooltip" data-placement="left" title="Shows all AxoSoft items ready for production."><i class="fa fa-plus-circle" style="color: green;"></i> Ready For Production</a></td>
-						</tr>
-						<tr>
-							<td><a href="##" class="lnkCreateReport" reporttype="ClientAcceptance" data-toggle="tooltip" data-placement="left" title="Client acceptance items report."><i class="fa fa-plus-circle" style="color: green;"></i> Client Acceptance</a></td>
-						</tr>
-					</tbody>
-				</table><Br /></cfif>
-				<strong>Projects</strong><br />
-				<table class="table table-condensed table-hover">
-					<tbody>
-						<tr><td><a href="##" class="lnkCreateReport" reporttype="Activity" data-toggle="tooltip" data-placement="left" title="Shows a summary of new and updated test cases."><i class="fa fa-plus-circle" style="color:green;"></i> Activity</a></td>
-						</tr>
-						<!---<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Coverage for References</td>
-						</tr>--->
-						<tr><td><a href="##" class="lnkCreateReport" reporttype="ExecutionList" data-toggle="tooltip" data-placement="left" title="Displays Execution data for test scenarios."><i class="fa fa-plus-circle" style="color:green;"></i> Execution List</a></td>
-						</tr>
-						<tr><td><a href="##" class="lnkCreateReport" reporttype="ProblemTestCases" data-toggle="tooltip" data-placement="left" title="Displays problem test cases for this project."><i class="fa fa-plus-circle" style="color:green;"></i> Problem Test Cases</a></td>
-						</tr>
-					</tbody>
-				</table>
-				<br />
-				<strong>Defects</strong>
-				<br />
-				<table class="table table-condensed table-hover">
-					<tbody>
-						<tr>
-							<td><a href="##" class="lnkCreateReport" reporttype="DefectsSummary" data-toggle="tooltip" data-placement="left" title="Displays defect summary for selected test scenarios."><i class="fa fa-plus-circle" style="color:green;"></i> Defect Summary</a></td>
-						</tr>
-						<tr>
-							<td><a href="##" class="lnkCreateReport" reporttype="TestCaseDefectsSummary" data-toggle="tooltip" data-placement="left" title="Displays test case defect summaries for project."><i class="fa fa-plus-circle" style="color:green;"></i> Summary for Test Cases</a></td>
-						</tr>
-					</tbody>
-				</table>
-				<br />
-				<strong>Test Results</strong>
-				<br />
-				<table class="table table-condensed table-hover">
-					<tbody>
-						<tr>
-							<td><i class="fa fa-plus-circle" style="color:green;"></i> Case Comparison</td>
-						</tr>
-						<tr>
-							<td><i class="fa fa-plus-circle" style="color:green;"></i> Reference Comparison</td>
-						</tr>
-						<tr>
-							<td><i class="fa fa-plus-circle" style="color:green;"></i> Property Distribution</td>
-						</tr>
-					</tbody>
-				</table>
-				<br />
-				<strong>Summary</strong>
-				<br />
-				<table class="table table-condensed table-hover">
-					<tbody>
-						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Milestone Summary</td></tr>
-						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Scenario Summary</td></tr>
-						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Project Summary</td></tr>
-					</tbody>
-				</table>
-				<br />
-				<strong>Users</strong>
-				<br />
-				<table class="table table-condensed table-hover">
-					<tbody>
-						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> User Workload Summary</td></tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
+					<li><a href="##" class="lnkCreateReport" reporttype="AllOpenItems" data-toggle="tooltip" data-placement="right" title="Shows all open AxoSoft items."><i class="fa fa-plus-circle" style="color: green;"></i> All Open Items</a></li>
+					<li><a href="##" class="lnkCreateReport" reporttype="ReadyForProduction" data-toggle="tooltip" data-placement="right" title="Shows all AxoSoft items ready for production."><i class="fa fa-plus-circle" style="color: green;"></i> Ready For Production</a></li>
+					<li><a href="##" class="lnkCreateReport" reporttype="ClientAcceptance" data-toggle="tooltip" data-placement="right" title="Client acceptance items report."><i class="fa fa-plus-circle" style="color: green;"></i> Client Acceptance</a></li>
+					
+				</cfif>
+					<li><a href="##" class="lnkCreateReport" reporttype="Activity" data-toggle="tooltip" data-placement="right" title="Shows a summary of new and updated test cases."><i class="fa fa-plus-circle" style="color:green;"></i> Activity</a></li>
+					<li><a href="##" class="lnkCreateReport" reporttype="ExecutionList" data-toggle="tooltip" data-placement="right" title="Displays Execution data for test scenarios."><i class="fa fa-plus-circle" style="color:green;"></i> Execution List</a></li>
+					<li><a href="##" class="lnkCreateReport" reporttype="ProblemTestCases" data-toggle="tooltip" data-placement="right" title="Displays problem test cases for this project."><i class="fa fa-plus-circle" style="color:green;"></i> Problem Test Cases</a></li>
+					<li><a href="##" class="lnkCreateReport" reporttype="DefectsSummary" data-toggle="tooltip" data-placement="right" title="Displays defect summary for selected test scenarios."><i class="fa fa-plus-circle" style="color:green;"></i> Defect Summary</a></li>
+					<li><a href="##" class="lnkCreateReport" reporttype="TestCaseDefectsSummary" data-toggle="tooltip" data-placement="right" title="Displays test case defect summaries for project."><i class="fa fa-plus-circle" style="color:green;"></i> Summary for Test Cases</a></li>
+					<li><a><i class="fa fa-plus-circle" style="color:green;"></i> Case Comparison</a></li>
+					<li><a><i class="fa fa-plus-circle" style="color:green;"></i> Reference Comparison</a></li>
+					<li><a><i class="fa fa-plus-circle" style="color:green;"></i> Property Distribution</a></li>
+					<li><a><i class="fa fa-plus-circle" style="color:green;"></i> Milestone Summary</a></li>
+					<li><a><i class="fa fa-plus-circle" style="color:green;"></i> Scenario Summary</a></li>
+					<li><a><i class="fa fa-plus-circle" style="color:green;"></i> Project Summary</a></li>
+					<li><a><i class="fa fa-plus-circle" style="color:green;"></i> User Workload Summary</a></li>
+				</ul>
+				<lia>
 	</cffunction>
 	
 	<!--- JSON and single value functions --->

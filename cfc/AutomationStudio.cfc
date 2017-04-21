@@ -333,7 +333,8 @@ component extends="cfselenium.CFSeleniumTestCase"
 	remote string function listScripts() output="true" {
 		arrScripts = EntityLoad("TTestScript");
 		arrTestTypes = EntityLoad("TTestType");
-		writeOutput("<div class='panel panel-default'><div class='panel-heading'>Test Script Library</div><div class='panel-body'>"&chr(13));
+		writeOutput("<h1>Test Script Library</h1>");
+		writeOutput("<div class='panel panel-default'><div class='panel-heading'>Add and Edit Test Scripts</div><div class='panel-body'>"&chr(13));
 		writeOutput('<form method="post" id="fileinfo" name="fileinfo" onsubmit="return submitForm();">');	
 		writeOutput("<table class='table table-striped table-condensed table-hover'><thead><tr><th>Script Name</th><th>Script Description</th><th>Script File</th><th>Script Test Type</th><th></th></tr></thead><tbody>" & chr(13));
 		for ( i = 1; i <= ArrayLen(arrScripts); i++) {

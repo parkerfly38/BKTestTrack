@@ -14,6 +14,7 @@
 	}
 	objData = createObject("component","cfc.Data");
 	objDashboard = createObject("component","cfc.Dashboard");
+	objAutomation = createObject("component","cfc.AutomationStudio");
 	objAxoSoft = createObject("component","cfc.AxoSoft");
 	objForm = createObject("component","cfc.Forms");
 	local.testsAssigned = objDashboard.assignedTestsCount(Session.UserIDInt);
@@ -250,15 +251,17 @@
 		          	<ul class="nav nav-second-level">
 		          		<li><a class="lnkBuildAutomatedTest" href="#">Build Test</a></li>
 		          		<li><a class="lnkScheduleTests" href="#">Schedule Tests</a></li>
-		          		<li><a class="lnkTestScriptLibrary" href="#">Test Script Library</a></li>
+		          		<li><a href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/scriptlibrary/">Test Script Library</a></li>
 		          		<li class="divider"></li>
 		          		<li><a class="lnkViewScheduledTests" href="#">View Scheduled Tests</a></li>
 		          		<li><a class="" href="#">Automated Test Activity</a></li>
 		          	</ul>
 		          </li>
 		          <li>
-		          	<a class="lnkViewReports" href="#"><i class="fa fa-bars fa-fw"> </i> Reporting</a>
-		          </li>
+		          	<a href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/project/<cfoutput>#session.projectid#</cfoutput>/reporting/"><i class="fa fa-bars fa-fw"> </i> Reporting</a></li>
+		          	<cfif StructKeyExists(url,"reporting")>
+		          		<cfoutput>#objDashboard.getCreateReports()#</cfoutput>
+		          	</cfif>
 		          </cfif>
 		        </ul>
 		      </div><!--/.nav-collapse -->
@@ -303,6 +306,10 @@
 		  					<cfoutput>#objDashboard.AllScenarios(session.ProjectID)#</cfoutput>
 		  				<cfelseif StructKeyExists(url, "alltests")>
 		  					<cfoutput>#objDashboard.AllTests(session.ProjectID)#</cfoutput>
+		  				<cfelseif StructKeyExists(url, "scriptlibrary")>
+		  					<cfoutput>#objAutomation.listScripts()#</cfoutput>
+		  				<cfelseif StructKeyExists(url, "reporting")>
+		  					<cfoutput>#objDashboard.AllReports(session.ProjectID)#</cfoutput>
 		  				<cfelse>
 			  				<cfoutput>#objDashboard.HubChart(url.projectid)#</cfoutput>
 			  				<cfoutput>#objDashboard.mileStoneTimeline(url.projectid)#</cfoutput>

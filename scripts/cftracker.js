@@ -321,12 +321,12 @@ $(document).ready(function() {
 		$("#largeModal .modal-body").load("/CFTestTrack/cfc/AutomationStudio.cfc?method=viewAutomatedTasks");
 		$("#largeModal").modal("show");
 	});
-	$(document).on("click","a.lnkTestScriptLibrary",function(event) {
+	/*$(document).on("click","a.lnkTestScriptLibrary",function(event) {
 		event.preventDefault();
 		$("#featurecontent").removeClass("panel").removeClass("panel-default");
 		$("#featurecontent").load("/CFTestTrack/cfc/AutomationStudio.cfc?method=listScripts");
 		$("#createreportpanel").remove();
-	});
+	});*/
 	$(document).on("click","a.lnkViewReports",function(event){
 		event.preventDefault();
 		$("#featurecontent").removeClass("panel").removeClass("panel-default");
