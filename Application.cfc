@@ -1,12 +1,12 @@
 <cfcomponent>
 
-	<cfset this.Name = "TheCrucible" />
+	<cfset this.Name = "CFTestTrack" />
 	<cfset this.sessionManagement = true />
 	<cfset this.applicationTimeout = createTimeSpan(1,0,0,0)>
 	<cfset this.sessionTimeout = createTimeSpan(0,0,30,0)>
 	<cfset this.ormEnabled = true />
-	<cfset this.datasource = "COGData" />
-	<cfset this.ormSettings.datasource = "COGData" />
+	<cfset this.datasource = "voterdb" />
+	<cfset this.ormSettings.datasource = "voterdb" />
 	<cfset this.ormSettings.eventhandling = true />
 	<cfset this.ormSettings.dbCreate = "update" />
 	<cfset this.ormSettings.dialect = "MicrosoftSQLServer" />
@@ -18,12 +18,21 @@
 	<cfset this.mappings["/cfc"] = "#this.directory#cfc/">
 	<cfset this.mappings["/db"] = "#this.directory#cfc/db/">
 	<cfset this.mappings["/style"] = "#this.directory#style/">
-	<cfset this.ormSettings.cflocation = "db" />
+	<cfset this.mappings["/taffy"] = "#this.directory#taffy/">
+	<cfset this.ormSettings.cfclocation = "#this.directory#cfc/db/" />
 	<cfset this.wschannels = [{name="general",cfclistener="cfc.Chat"}] >
+	<cfset this.httpsurl = "#cgi.server_name#" />
 	<!--- production only 
 	<cfsetting showdebugoutput="false" />--->
 	
-	<cffunction name="onRequestStart" returntype="void" output="true">
+	<cffunction name="onRequestStart" returntype="any" output="true">
+		<!---<cfif cgi.server_name does not contain "local">
+			<cfif cgi.https neq "on">
+				<cflocation url="https://#this.httpsurl#/#cgi.script_name#" addtoken="no" />
+			</cfif>
+		<cfelse>
+			<cfset this.httpsurl = "localhost" />
+		</cfif>--->
 		<!--- debug only, remove otherwise --->
 		<cfif StructKeyExists(URL, "reload")> 
         	<cfset ApplicationStop() />
@@ -42,6 +51,12 @@
     				<cfif Application.AxoSoftIntegration and !StructKeyExists(SESSION,"AxoSoftToken")>
     					<cfscript>objAxoSoft.getAxoSoftToken();</cfscript>
     				<cfelse>
+    					<!--- if remember me checked do this first --->
+    					<cfif StructKeyExists(FORM,"remember")>
+    						<cfset strRememberMe = (CreateUUID() & ":" & form.username & ":" & CreateUUID()) />
+    						<cfset strRememberMe = Encrypt(strRememberMe, APPLICATION.EncryptionKey, "CFMX_COMPAT", "hex") />
+    						<cfcookie name="CrucibleRemember" value="#strRememberMe#" expires="never" />
+    					</cfif>
     					<cflocation url="index.cfm" addtoken="false" >
     				</cfif>
     			</cfif>
@@ -55,13 +70,23 @@
     				<cfif Application.AxoSoftIntegration and !StructKeyExists(SESSION,"AxoSoftToken")>
     					<cfscript>objAxoSoft.getAxoSoftToken();</cfscript>
     				<cfelse>
+    					<!--- if remember me checked do this first --->
+    					<cfif StructKeyExists(FORM,"remember")>
+    						<cfset strRememberMe = (CreateUUID() & ":" & form.username & ":" & CreateUUID()) />
+    						<cfset strRememberMe = Encrypt(strRememberMe, APPLICATION.EncryptionKey, "CFMX_COMPAT", "hex") />
+    						<cfcookie name="CrucibleRemember" value="#strRememberMe#" expires="never" />
+    					</cfif>
     					<cflocation url="index.cfm" addtoken="false" >
     				</cfif>
     			</cfif>
     		</cfif>
     	</cfif>
+		<cfif FindNoCase(".cfc", CGI.SCRIPT_NAME) && (!StructKeyExists(SESSION,"LoggedIn") || Session.Loggedin neq "true")>
+			<cfoutput><script>location.href="/CFTestTrack/login.cfm";</script></cfoutput>
+			<cfreturn false />
+		</cfif>
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin) && !FindNoCase("logon.cfc",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport.cfm",CGI.SCRIPT_NAME) && !FindNoCase("AxoSoftRedirect.cfm",CGI.SCRIPT_NAME) && !FindNoCase(".cfr",CGI.SCRIPT_NAME) && !FindNoCase("report",CGI.SCRIPT_NAME) && !FindNoCase("skedtasks",CGI.SCRIPT_NAME) && !FindNoCase("chat.cfm", CGI.SCRIPT_NAME)>
-			<cfset Session.OrigURL = CGI.SERVER_NAME & "/" & CGI.SCRIPT_NAME & "?" & CGI.QUERY_STRING>
+			<cfset Session.OrigURL = this.HttpsUrl & "/" & CGI.SCRIPT_NAME & "?" & CGI.QUERY_STRING>
 			<cflocation url="/CFTestTrack/login.cfm" addtoken="false" />
 		</cfif>
 	</cffunction>
@@ -95,37 +120,36 @@
 		<cfset Application.charttype = "html" /><!--- options being flash, jpg, png, html --->
 		<cfset qryAuthenticationType = EntityLoad("TTestSettings",{Setting="UseLDAP"},true)>
 		<cfset qryAllowCaseDelete = EntityLoad("TTestSettings",{Setting="AllowCaseDelete"},true)>
-		<cfset Application.useLDAP = qryAuthenticationType.getSettingValue() /><!--- set this to true if you want to use LDAP --->
-		<cfset Application.DOMAIN = "CORNEROPS" /><!--- set your domain name here, further adjustments may be necessary in Logon.cfc --->
+		<cfset Application.useLDAP = qryAuthenticationType.getSettingValue() />
+		<cfset Application.DOMAIN = "" />
+		<cfif cgi.server_name does not contain "local">
+			<cfset Application.HttpsUrl = "#cgi.server_name#" />
+		<cfelse>
+			<cfset Application.HttpsUrl = "localhost" />
+		</cfif>
 		<cfset Application.AllowCaseDelete = qryAllowCaseDelete.getSettingValue() />
 		<cfset qryMailerDaemon = EntityLoad("TTestSettings",{Setting="MAILERDAEMONADDRESS"},true)>
 		<cfset Application.MAILERDAEMONADDRESS = qryMailerDaemon.getSettingValue() />
 		<cfset qryChat = EntityLoad("TTestSettings",{Setting="AllowChat"},true)>
 		<cfset Application.EnableChat = qryChat.getSettingValue() />
-		<!--- by user chat count --->
 		<cfset arrUsers = EntityLoad("TTestTester")>
 		<cfloop array="#arrUsers#" index="user">
 			<cfset Application.UserChatCount[user.getId()] = 0 />
 		</cfloop>
-		<!--- AxoSoft Integration --->
-		<!--- if public or private --->
 		<cfset qryAxoSoftIntegration = EntityLoad("TTestSettings",{Setting="AxoSoftIntegration"},true)>
 		<cfset Application.AxoSoftIntegration = qryAxoSoftIntegration.getSettingValue()>
 		<cfset qryAxoSoftAuthentication = EntityLoad("TTestSettings",{Setting="AxoSoftAuthentication"},true)>
-		<cfset Application.AxoSoftAuthentication = qryAxoSoftAuthentication.getSettingValue()> <!--- for public Authorization, for private Username is possible --->
+		<cfset Application.AxoSoftAuthentication = qryAxoSoftAuthentication.getSettingValue()>
 		<cfset qryAxoSoftClient_Id = EntityLoad("TTestSettings",{Setting="AxoSoftClient_Id"},true)>
 		<cfset Application.AxoSoftClient_Id = qryAxoSoftClient_Id.getSettingValue() >
-		<!--- client secret if Username --->
 		<cfset qryAxoSoftClient_Secret = EntityLoad("TTestSettings",{Setting="AxoSoftClient_Secret"},true)>
 		<cfset Application.AxoSoftClient_Secret = qryAxoSoftClient_Secret.getSettingValue()>
 		<cfset qryAxoSoftRedirectURI = EntityLoad("TTestSettings",{Setting="AxoSoftRedirectURI"},true)>
 		<cfset Application.AxoSoftRedirectURI = qryAxoSoftRedirectURI.getSettingValue()>
-		<!---<cfset Application.AxoSoftRedirectURI = "http://localhost/CFTestTrack/AxoSoftRedirect.cfm">--->
 		<cfset qryAxoSoftExpiration = EntityLoad("TTestSettings",{Setting="AxoSoftRedirectURI"},true)>
-		<cfset Application.AxoSoftExpiration = qryAxoSoftExpiration.getSettingValue()>  <!--- default is 30, a value of false will never expire --->
+		<cfset Application.AxoSoftExpiration = qryAxoSoftExpiration.getSettingValue()>
 		<cfset qryAxoSoftURL = EntityLoad("TTestSettings",{Setting="AxoSoftURL"},true)>
 		<cfset Application.AxoSoftURL = qryAxoSoftURL.getSettingValue()>
-		<!---bk if we pull from a nightly/hourly job from axosoft instead of real time API reference --->
 		<cfset qryAxoSoftUseAPI = EntityLoad("TTestSettings",{Setting="AxoSoftUseAPI"},true)>
 		<cfset Application.AxoSoftUseAPI = qryAxoSoftUseAPI.getSettingValue()>
 		<cfset Application.ChatStruct = StructNew()>
@@ -134,6 +158,7 @@
         <cfset Application.SlackAPIToken = EntityLoad("TTestSettings", {Setting="SlackAPIToken"},true).getSettingValue() />
         <cfset Application.SlackBotChannel = EntityLoad("TTestSettings", {Setting="SlackBotChannel"},true).getSettingValue() />
         <cfset Application.SlackBotURL = EntityLoad("TTestSettings", {Setting="SlackBotURL"},true) />
+        <cfset Application.EncryptionKey = "Aw3s0m3S@uc3" />
 	</cffunction>
 	
 	<cffunction name="onMissingTemplate" output="true">

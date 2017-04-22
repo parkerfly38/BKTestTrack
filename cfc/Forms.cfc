@@ -1,17 +1,16 @@
 <cfcomponent>
 
 	<!--- form building --->
+	
 	<cffunction name="getTestEditForm" access="remote" output="true">
 		<cfargument name="testcaseid" type="numeric" required="true">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			login
 			<cfexit>
 		</cfif>
-		<!--- time to get our testcase ---> 
 		<cfquery name="qryTestCase" dbtype="hql">
 			FROM TTestCase where id = <cfqueryparam value="#arguments.testcaseid#">
 		</cfquery>
-		<!--- get list of all scenarios this is assigned to --->
 		<cfquery name="qryScenarios">
 			SELECT b.TestScenario, b.id as ScenarioID
 			FROM TTestScenarioCases a
@@ -174,7 +173,7 @@
 				$(document).on("click","##btnSave",function(event) {
 					event.preventDefault();
 					$.ajax({
-						url: "http://#cgi.server_NAME#/CFTestTrack/CFC/forms.cfc?method=saveTestCase",
+						url: "http://#Application.HttpsUrl#/CFTestTrack/CFC/forms.cfc?method=saveTestCase",
 						type: "POST",
 						data: {
 							id : $("##txtId").val(),
@@ -193,7 +192,7 @@
 						if ( data == "true" )
 						{
 							$("##largeModal").modal('hide');
-							$("##featurecontent").load("http://#cgi.server_NAME#/CFTestTrack/CFC/Dashboard.cfc?method=AllTests");
+							$("##panelalltestcases").parent().load("http://#Application.HttpsUrl#/CFTestTrack/CFC/Dashboard.cfc?method=AllTests&projectid=#arguments.projectid#");
 							restoreSpinner();
 							
 						} else {
@@ -245,7 +244,6 @@
 				<input type="text" class="form-control" name="txtTestDetails" id="txtTestDetails" value="#arrTestCase.getTestDetails()#"  />
 				<p class="help-block">Insert related AxoSoft ids here, ex: <em>COG00050</em>.</p>
 				<cfif arguments.testcaseid gt 0>
-					<!--- get list of all scenarios this is assigned to --->
 					<cfquery name="qryScenarios">
 						SELECT b.TestScenario, b.id as ScenarioID
 						FROM TTestScenarioCases a
@@ -295,7 +293,7 @@
 				$(document).on("click","##btnSave",function(event) {
 					event.preventDefault();
 					$.ajax({
-						url: "http://#cgi.server_NAME#/CFTestTrack/CFC/forms.cfc?method=saveMilestone",
+						url: "http://#Application.HttpsUrl#/CFTestTrack/CFC/forms.cfc?method=saveMilestone",
 						type: "POST",
 						data: {
 							id : $("##txtID").val(),
@@ -311,11 +309,10 @@
 							$("##largeModal").modal('hide');
 							if ( $("##allmilestonespanel").length == 0)
 							{
-								$("##panelmilestones").remove();
+								/*$("##panelmilestones").parent.remove();*/
 								insertMilestones();
 							} else {
-								$("##allmilestonespanel").remove();
-								$("##featurecontent").load("http://#cgi.server_NAME#/CFTestTrack/CFC/Dashboard.cfc?method=AllMilestones");
+								$("##allmilestonespanel").parent().load("http://#Application.HttpsUrl#/CFTestTrack/CFC/Dashboard.cfc?method=AllMilestones&projectid=#arguments.projectid#");
 							}
 							restoreSpinner();
 						} else {
@@ -375,7 +372,7 @@
 				$(document).on("click","##btnSave",function(event) {
 					event.preventDefault();
 					$.ajax({
-						url: "CFC/forms.cfc?method=saveSection",
+						url: "/CFTestTrack/cfc/forms.cfc?method=saveSection",
 						type: "POST",
 						data: {
 							id : $("##txtID").val(),
@@ -540,8 +537,7 @@
 								$("##paneltestscenarios").remove();
 								insertScenarios();
 							} else {
-								$("##scenariospanel").remove();
-								$("##featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios");
+								$("##scenariospanel").parent().load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios&projectid=#arguments.ProjectID#");
 							}
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");
@@ -743,9 +739,6 @@
 				</div>
 			</div>
 			</cfif>
-			<div class="form-group">
-				<button id="btnSave" type="button" class="btn btn-primary">Save changes</button>
-			</div>
 		</div>
 		</div>
 		<div class="panel-footer">
@@ -753,6 +746,7 @@
 		</div>
 		</div>
 	</cffunction>
+	
 	<!--- form processing --->
 	
 	<cffunction name="removeTestCases" access="remote" returntype="void">
@@ -792,6 +786,13 @@
 				newcasehistory.setDateOfAction(Now());
 				newcasehistory.setCaseId(i);
 				EntitySave(newcasehistory);
+				newresult = EntityNew("TTestResult");
+				newresult.setDateTested(Now());
+				newresult.setComment("Added to scenario.");
+				newresult.setTestCaseId(i);
+				newresult.setStatusID(1);
+				newresult.setTesterID(Session.UserIDInt);
+				EntitySave(newresult);
 			</cfscript>
 		</cfloop>
 		<cfreturn>
@@ -840,7 +841,7 @@
 				EntitySave(arrMilestone);
 				if (Application.SlackIntegration eq "true") {
 					objSlack = createObject("component","Slack");
-					objSlack.slackPostMessage(text="#arrMilestone.GetMilestone()# added to http://#cgi.server_name#/CFTestTrack/project/#arrMilestone.getProjectID()#",as_user=false);
+					objSlack.slackPostMessage(text="#arrMilestone.GetMilestone()# added to http://#Application.HttpsUrl#/CFTestTrack/project/#arrMilestone.getProjectID()#",as_user=false);
 				}
 				return true;
 			} catch (any ex) {
@@ -882,7 +883,7 @@
 				if (application.SlackIntegration == "true") 
 				{
 					slackObj = createObject("component","Slack");
-					slackObj.slackPostMessage(text="#arrTestCase.GetTestTitle()# created - http://#cgi.server_name#/CFTestTrack/testcase/#arrTestCase.getId()#/", as_user=false);
+					slackObj.slackPostMessage(text="#arrTestCase.GetTestTitle()# created - http://#Application.HttpsUrl#/CFTestTrack/testcase/#arrTestCase.getId()#/", as_user=false);
 				}
 				return true;
 			} catch (any ex) {
@@ -932,7 +933,6 @@
 		<cfargument name="IncludeAnnouncement" required="true">
 		<cfargument name="RepositoryType" required="true">
 		<cfargument name="Closed" required="false" default="false">
-		<!--- if id > 0, we're going to load an entity to modify, otherwise create new --->
 		<cfscript>
 			if ( arguments.id > 0 ) {
 				arrProject = EntityLoadByPK("TTestProject",arguments.id);
@@ -951,8 +951,13 @@
 				EntitySave(arrProject);
 				if (application.SlackIntegration == "true")
 				{
+					if ( arguments.id > 0 ) {
+						texteditcreate = "edited";
+					} else {
+						texteditcreate = "created";
+					}
 					slackObj = createObject("component","Slack");
-					slackObj.slackPostMessage(text="#arguments.ProjectTitle# created - http://#cgi.server_name#/CFTestTrack/project/#arrProject.getId()#/", as_user=false);
+					slackObj.slackPostMessage(text="#arguments.ProjectTitle# #texteditcreate# - http://#Application.HttpsUrl#/CFTestTrack/project/#arrProject.getId()#/", as_user=false);
 				}
 				return true;
 			} catch (any ex) {
@@ -965,19 +970,28 @@
 		<cfargument name="testcaseid" type="numeric" required="true">
 		<cfargument name="testerid" type="numeric" required="true">
 		<cfset objFunc = createObject("component","Functions")>
-		<cfset newTestResult = new CFTestTrack.cfc.db.TTestResult()>
+		<!---<cfset newTestResult = new CFTestTrack.cfc.db.TTestResult()>--->
 		<cfscript>
-			newTestResult.setTestCaseID(arguments.testcaseid);
-			newTestResult.setDateTested(Now());
-			newTestResult.setComment("Assigned");
-			teststatus = EntityLoadByPK("TTestStatus",5);
+			//newTestResult.setTestCaseID(arguments.testcaseid);
+			//newTestResult.setDateTested(Now());
+			//newTestResult.setComment("Assigned");
+			//teststatus = EntityLoadByPK("TTestStatus",5);
 			tester = EntitYLoadByPK("TTestTester",arguments.testerid);
-			newTestResult.setTTestStatus(teststatus);
-			newTestResult.setVersion(0);
-			newTestResult.setElapsedTime(0);
-			newTestResult.setTTestTester(tester);
-			EntitySave(newTestResult);
-			mailbody = "You have been assigned test case <strong>TC" & arguments.testcaseid & ".</strong>  Click <a href='http://" & CGI.SERVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TC=" & arguments.testcaseid & "'>here</a> to view test case.";
+			//newTestResult.setTTestStatus(teststatus);
+			//newTestResult.setVersion(0);
+			//newTestResult.setElapsedTime(0);
+			//newTestResult.setTTestTester(tester);
+			//EntitySave(newTestResult);
+			currenttestcasehistory = ORMExecuteQuery("FROM TTestCaseHistory where CaseId = :testcaseid AND DateActionClosed = null",{testcaseid = arguments.testcaseid}, true); //EntityLoad("TTestCaseHistory",{CaseID = arguments.testcaseid, DateActionClosed = ""},true);
+			currenttestcasehistory.setDateActionClosed(now());
+			EntitySave(currenttestcasehistory);
+			newtestcasehistory = EntityNew("TTestCaseHistory");
+			newtestcasehistory.setAction(currenttestcasehistory.getAction());
+			newtestcasehistory.setTesterID(arguments.testerid);
+			newtestcasehistory.setDateofAction(Now());
+			newtestcasehistory.setCaseID(currenttestcasehistory.getCaseID());
+			EntitySave(newtestcasehistory);
+			mailbody = "You have been assigned test case <strong>TC" & arguments.testcaseid & ".</strong>  Click <a href='http://" & Application.HttpsUrl & "/" & Application.ApplicationName & "/index.cfm?TC=" & arguments.testcaseid & "'>here</a> to view test case.";
 			objFunc.MailerFunction(tester.getEmail(),Application.MAILERDAEMONADDRESS,"Test Case TC" & arguments.testcaseid & " Assigned" ,mailbody);
 		</cfscript> 	
 	</cffunction>
@@ -996,9 +1010,9 @@
 			<cfscript>
 				var testresult = EntityNew("TTestResult");
 				StatusObj = EntityLoadByPk("TTestStatus",arguments.statusid);
-				testresult.setTTestStatus(StatusObj);
+				testresult.setStatusID(arguments.statusid);
 				TesterObj = EntityLoadByPk("TTestTester",arguments.testerid);
-				testresult.setTTestTester(TesterObj);
+				testresult.setTesterID(arguments.testerid);
 				testresult.setVersion(arguments.version);
 				testresult.setElapsedTime(arguments.elapsedtime);
 				testresult.setComment(arguments.comment);
@@ -1008,7 +1022,7 @@
 				testresult.setTestCaseID(ListElement);
 				EntitySave(testresult);
 				arrTestDetail = EntityLoadByPK("TTestCase",ListElement);
-				/*mailbody = "There is an update on test case <strong>TC" & arrTestDetail.getId() & " - " & arrTestDetail.getTestTitle() & ".</strong>  Click <a href='http://" & CGI.SERVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TC=" & arrTestDetail.getId() & "'>here</a> to view test case.";
+				/*mailbody = "There is an update on test case <strong>TC" & arrTestDetail.getId() & " - " & arrTestDetail.getTestTitle() & ".</strong>  Click <a href='http://" & Application.HttpsUrl & "/" & Application.ApplicationName & "/index.cfm?TC=" & arrTestDetail.getId() & "'>here</a> to view test case.";
 				objFunc.MailerFunction(TesterObj.getEmail(),Application.MAILERDAEMONADDRESS,"Test Case Update - TC" & arrTestDetail.getid(), mailbody);
 				if ( Application.AxoSoftIntegration && StructKeyExists(Session,"AxoSoftToken") ) {
 					objAxoSoft = new CFTestTrack.cfc.AxoSoft();
@@ -1017,7 +1031,7 @@
 					{
 						arrScenario = EntityLoadByPK("TTestScenario",arrScenarioLink[i].getScenarioId());
 						if ( len(arrScenario.getAxoSoftNumber()) > 1) {
-							objAxoSoft.updateIncident(arrScenario.getAxoSoftNumber(),"http://" & cgi.serVER_NAME & "/" & Application.ApplicationName & "/index.cfm?TR="  & arrScenario.getId(),Session.AxoSoftToken);
+							objAxoSoft.updateIncident(arrScenario.getAxoSoftNumber(),"http://" & Application.HttpsUrl & "/" & Application.ApplicationName & "/index.cfm?TR="  & arrScenario.getId(),Session.AxoSoftToken);
 						}
 					}
 				}*/
@@ -1031,7 +1045,6 @@
 		<cfargument name="reportName" required="true">
 		<cfargument name="reportOptions" type="string">
 		<cfargument name="reportAandS" type="string">
-		<!--- convert options and ands to cfml from wddx --->
 		<cfset s1 = deserializeJSON(arguments.reportOptions,false)>
 		<cfset s2 = deserializeJSON(arguments.reportAandS,false)>
 		
@@ -1082,7 +1095,6 @@
 		<cfset testcase = EntityLoadByPK("TTestCase",arguments.tcid)>
 		<cfscript>
 			EntityDelete(testcase);
-			// delete related stuff
 			arrTCScenarios = EntityLoad("TTestScenarioCases",{CaseId = arguments.tcid});
 			for (tcasescenario in arrTCScenarios) {
 				EntityDelete(tcasescenario);

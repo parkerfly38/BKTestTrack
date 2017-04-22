@@ -9,8 +9,10 @@ component table="TTestResult" persistent="true"
 	property name="AttachmentList";
 	property name="TestCaseID" ormtype="integer";
 	property name="Defects";
-	property name="TTestStatus" fieldtype="one-to-one" cfc="TTestStatus" fkcolumn="StatusID";
-	property name="TTestTester" fieldtype="one-to-one" cfc="TTestTester" fkcolumn="TesterID";
+	property name="StatusID" ormtype="integer";
+	property name="TesterID" ormtype="integer";
+	//property name="TTestStatus" fieldtype="one-to-one" cfc="TTestStatus" fkcolumn="StatusID";
+	//property name="TTestTester" fieldtype="one-to-one" cfc="TTestTester" fkcolumn="TesterID";
 	
 	public TTestResult function init() 
 	{
@@ -41,20 +43,23 @@ component table="TTestResult" persistent="true"
 	
 	public void function postInsert() {
 		//update any old case history for caseid
+		if (variables.StatusID != 1) {
 		updatequery = new Query();
 		updatequery.setSql("UPDATE TTestCaseHistory SET DateActionClosed = :dateclosed WHERE caseid = :caseid AND DateActionClosed is NULL");
 		updatequery.addParam(name="dateclosed",value=Now(),cfsqltype="cf_sql_timestamp");
 		updatequery.addParam(name="caseid",value=this.getTestCaseID(),cfsqltype="cf_sql_integer");
 		updatequery.execute().getResult();
 		newcasehistory = EntityNew("TTestCaseHistory");
-		newcasehistory.setAction(this.getTTestStatus().getStatus());
-		newcasehistory.setTesterID(this.getTTestTester().getId());
+		teststatus = EntityLoadByPK("TTestStatus",variables.StatusID);
+		newcasehistory.setAction(teststatus.getStatus());
+		newcasehistory.setTesterID(variables.TesterID);
 		newcasehistory.setDateOfAction(Now());
 		//if ( this.getTTestStatus().getStatus() == "Passed" ) {
 		//	newcasehistory.setDateActionClosed(now());
 		//}
 		newcasehistory.setCaseId(this.getTestCaseID());
 		EntitySave(newcasehistory);
+		}
 		//if axosoft
 	}
 }

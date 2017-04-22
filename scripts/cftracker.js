@@ -81,11 +81,12 @@ $(document).ready(function() {
 	$(document).on("click","a.testcasedeletelink", function(event) {
 		event.preventDefault();
 		var tcid = $(this).attr("editid");
+		var projectid = $(this).attr("projectid");
 		$.ajax({
 			url:"/CFTestTrack/cfc/Forms.cfc?method=deleteTestCase&tcid="+tcid,
 			type: "GET"
 		}).done(function(){
-			$("#featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllTests");
+			$("#panelalltestcases").parent().load("/CFTestTrack/cfc/Dashboard.cfc?method=AllTests&projectid="+projectid);
 		});
 	});
 	
@@ -125,6 +126,15 @@ $(document).ready(function() {
 		$("#largeModal").modal("show");
 		$(document).trigger("eventLoadForm");
 	});
+	
+	$(document).on("click","a#readAllMessages", function(event) {
+		event.preventDefault();
+		$("#largeModal .modal-title").text("Messages");
+		$("#largeModal .modal-body").load("/CFTestTrack/chat.cfm");
+		$("#largeModal").modal("show");
+		$(document).trigger("eventLoadForm");
+	});
+	
 	$(document).on("click","a.lnkEditProject",function(event) {
 		event.preventDefault();
 		var pjid = $(this).attr("projectid");
@@ -198,12 +208,11 @@ $(document).ready(function() {
 	$(document).on("click","a.lnkDeleteMilestone",function(event) {
 		event.preventDefault();
 		var mid = $(this).attr("milestoneid");
+		var projectid = $(this).attr("projectid");
 		$.ajax({ url: "/CFTestTrack/cfc/forms.cfc?method=deleteMilestone",data: {mid : mid},type:"POST"}).done(function() {
-				$("#featurecontent").removeClass("panel").removeClass("panel-default");
-				$("#featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllMilestones");
+				$("#allmilestonespanel").parent().load("/CFTestTrack/cfc/Dashboard.cfc?method=AllMilestones&projectid="+projectid);
 			
-			if ($("#panelmilestones").length > 0) {
-				$("#panelmilestones").remove();
+			if ($("#allmilestonespanel").length > 0) {
 				insertMilestones();
 			}
 		});
@@ -211,14 +220,14 @@ $(document).ready(function() {
 	$(document).on("click","a.lnkDeleteScenario",function(event) {
 		event.preventDefault();
 		var scenarioid = $(this).attr("scenarioid");
+		var projectid = $(this).attr("projectid");
 		$.ajax({ url: "/CFTestTrack/cfc/forms.cfc?method=deleteScenario", data: { scid : scenarioid},type:"POST"}).done(function() {
-				$("#featurecontent").removeClass("panel").removeClass("panel-default");
-				$("#featurecontent").load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios");
+				$("#scenariospanel").parent().load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios&projectid="+projectid);
 			
-			if ($("#paneltestscenarios").length > 0) {
-				$("#paneltestscenarios").remove();
+			/*if ($("#scenariospanel").length > 0) {
+				$("#scenariospanel").remove();
 				insertScenarios();
-			}
+			}*/
 		});
 	});
 	$(document).on("click","a.lnkAddTest",function(event) {
@@ -312,12 +321,12 @@ $(document).ready(function() {
 		$("#largeModal .modal-body").load("/CFTestTrack/cfc/AutomationStudio.cfc?method=viewAutomatedTasks");
 		$("#largeModal").modal("show");
 	});
-	$(document).on("click","a.lnkTestScriptLibrary",function(event) {
+	/*$(document).on("click","a.lnkTestScriptLibrary",function(event) {
 		event.preventDefault();
 		$("#featurecontent").removeClass("panel").removeClass("panel-default");
 		$("#featurecontent").load("/CFTestTrack/cfc/AutomationStudio.cfc?method=listScripts");
 		$("#createreportpanel").remove();
-	});
+	});*/
 	$(document).on("click","a.lnkViewReports",function(event){
 		event.preventDefault();
 		$("#featurecontent").removeClass("panel").removeClass("panel-default");
@@ -579,13 +588,15 @@ function projectLoad() {
 }
 
 function insertMilestones() {
-	$("#panelmilestones").remove();
+	//$("#panelmilestones").remove();
 	$.ajax({
-		url: "/CFTestTrack/cfc/dashboard.cfc?method=getMilestones",
+		url: "/CFTestTrack/cfc/dashboard.cfc?method=allMilestones",
 		type: "post",
 		data: { projectid : projectid }
 	}).done(function(data){
-		$("#midrow").prepend(data);
+		//var blarg = $("#allmilestonespanel").parent();
+		$("#allmilestonespanel").parent().html(data);
+		//blarg.append(data);
 	});
 }
 

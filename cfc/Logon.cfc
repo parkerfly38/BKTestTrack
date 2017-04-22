@@ -31,6 +31,7 @@
     		<cfset Session.Email = results.mail[1] />
     		<cfset Session.Name = results.cn[1] />
     		<cfset Session.UserId = results.samaccountname[1] />
+    		<cfset Session.IsAdmin = false />
     		<cfif arrUser.getIsAdmin() gt 0>
     			<cfset Session.IsAdmin = true />
     		<cfelse>
@@ -45,8 +46,46 @@
 				<cfset Session.LoggedIn = false />
 			</cfcatch>
 		</cftry>
-		<cfset wsPublish("general",Session.Name + "has logged in.") />
+		<!---<cfset wsPublish("general",Session.Name + "has logged in.") /> don't know that we need system messages --->
 		<cfreturn isAuthenticated />
+	</cffunction>
+	
+	<cffunction access="public" name="tokenAuthenticate" returntype="struct" >
+		<cfargument name="username" required="true">
+		<cfargument name="password" required="true">
+		<cfargument name="deviceuuid" default="" />
+		<cfargument name="deviceos" default="" />
+				
+		<cfset qryLogin = EntityLoad("TTestTester",{ADID=arguments.username},true) >
+		
+		<cfif isnull(qryLogin)>
+			<cfreturn structnew() />
+		</cfif>
+		
+			
+		<!--- testing code only --->
+		<cfif Len(qryLogin.getSalt()) gt 0>
+	 	<cfset hashedFormPassword = computeHash(arguments.password, qryLogin.getSalt()) ><!--- this is the only part that stays in production --->
+		<cfelse>
+		<cfset hashedFormPassword = "">
+		</cfif> 
+		
+	  	<cfif qryLogin.getPassword() eq hashedFormPassword>
+	  		<cfif len(arguments.deviceuuid) gt 0 AND len(arguments.deviceos) gt 0>
+	  			<cfset qryDevices = EntityLoad("TTestDevices",{TesterID = qryLogin.getId(), DeviceUUID = arguments.deviceuuid, DeviceOS = arguments.Deviceos}, true) />
+	  			<cfif isnull(qryDevices)>
+	  				<cfset objDevice = EntityNew("TTestDevices",{DeviceUUID = arguments.deviceuuid, DeviceOS = arguments.deviceos, TesterID = qryLogin.getId()}) />
+	  				<cfset EntitySave(objDevice) />
+	  				<cfset ormflush() />
+	  			</cfif>
+	  		</cfif>
+	  		<cfset returnstruct = structnew() />
+	  		<cfset returnstruct.access_token = CSRFGenerateToken() />
+	  		<cfset returnstruct.testerid = qryLogin.getId() />
+	  		<cfreturn returnstruct />
+		<cfelse>
+			<cfreturn structnew() />
+		</cfif> 
 	</cffunction>
 	
 	<cffunction access="public" name="formAuthenticate" returntype="boolean" >
@@ -71,6 +110,12 @@
 	  		<cfset Session.Email = qryLogin.getEmail()>
 	  		<cfset Session.Name = qryLogin.getUserName()>
 	  		<cfset Session.UserID = qryLogin.getADID()>
+	  		<cfset Session.IsAdmin = false />
+    		<cfif qryLogin.getIsAdmin() gt 0>
+    			<cfset Session.IsAdmin = true />
+    		<cfelse>
+    			<cfset Session.IsAdmin = false />
+    		</cfif>
 	  		<!--- adding new token routine, get one per session instead of reusing one --->
 	  		<cfif Application.AxoSoftIntegration>
 	  			<!--- todo:  please change to variables for axosoft --->
@@ -128,7 +173,7 @@
 		<cfset wsPublish("general","<strong>" & Session.Name &  "</strong> has logged out.") />
 		<cfset StructDelete(Application.SessionTracker,Session.UserIDInt,false) />
 		<cfset StructClear(SESSION) />
-		<cflocation url="/#application.applicationname#/" addtoken="false">
+		<cflocation url="/CFTestTrack/" addtoken="false">
 	</cffunction>
 	
 	<cffunction name="genSalt" access="public" returnType="string">

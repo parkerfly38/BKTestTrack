@@ -47,7 +47,7 @@
 								</cfif>
 								<cfloop query="qryIncidents" startrow="#((ppage-1)*20)+1#" endrow="#((ppage)*20)#">
 									<tr>
-										<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#id#/">#AxoSoftID#</a></td>
+										<td colspan="2"><a href="http://#Application.HttpsUrl#/CFTestTrack/item/#id#/">#AxoSoftID#</a></td>
 										<td>#ProjectTitle#</td>
 									</tr>
 								</cfloop>
@@ -87,7 +87,7 @@
 								</cfif>
 								<cfloop query="qryBugs" startrow="#((bpage-1)*20)+1#" endrow="#((bpage)*20)#">
 									<tr>
-										<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#id#/">#AxoSoftID#</a></td>
+										<td colspan="2"><a href="http://#Application.HttpsUrl#/CFTestTrack/item/#id#/">#AxoSoftID#</a></td>
 										<td>#ProjectTitle#</td>
 									</tr>
 								</cfloop>
@@ -123,7 +123,7 @@
 								 }							
 							</cfscript>
 							<tr>
-								<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#i.id#/">#i.number#</a></td>
+								<td colspan="2"><a href="http://#Application.HttpsUrl#/CFTestTrack/item/#i.id#/">#i.number#</a></td>
 								<td>#i.name#</td>
 							</tr>
 							</cfif>
@@ -151,7 +151,7 @@
 								 }							
 							</cfscript>
 							<tr>
-								<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/item/#i.id#/">#i.number#</a></td>
+								<td colspan="2"><a href="http://#Application.HttpsUrl#/CFTestTrack/item/#i.id#/">#i.number#</a></td>
 								<td>#i.name#</td>
 							</tr>
 							</cfif>
@@ -164,68 +164,69 @@
 	</cffunction>
 	
 	<cffunction name="listProjects" access="public" output="true">
-		<div id="panelaxosoftprojects" class="panel panel-default">
-			<div class="panel-heading"><i class="fa fa-wrench"></i> Projects</div>
-			<div class="panel-body">
 				<cfset objData = new CFTestTrack.cfc.Data()>
 				<cfset arrProjects = objData.getAllProjects()>
-				<table class="table table-condensed table-striped">
-					<tr>
-						<td colspan="2">
-							<a href="http://#cgi.server_name#/CFTestTrack/project/add/"><i class="fa fa-plus-circle"></i> Add Project</a>
-						</td>
-					</tr>
-					<cfif ArrayLen(arrProjects) gt 0>
-					<cfloop array="#arrProjects#" index="i">
-					<tr>
-						<td><a href="http://#cgi.server_name#/CFTestTrack/project/#i.getId()#/">#i.getProjectTitle()#</a></td>
-						<td>
-							<a class="btn btn-xs btn-default" href="/CFTestTrack/project/#i.getId()#&edit=true/" ><i class="fa fa-pencil"> </i></a>
-							<button class="btn btn-xs btn-danger lnkDeleteProject" projectid="#i.getId()#"><i class="fa fa-trash"> </i></button>
-					</tr>
-					</cfloop>
-					</cfif>
-				</table>
-			</div>
-		</div>
+				<li>
+	                <a href="##"><i class="fa fa-wrench fa-fw"></i> Projects<span class="fa arrow"></span></a>
+	                <ul class="nav nav-second-level">
+	                    <li>
+	                        <a href="http://#Application.HttpsUrl#/CFTestTrack/project/add/"><i class="fa fa-plus-circle"></i> Add Project</a>
+	                    </li>
+	                    <cfif ArrayLen(arrProjects) gt 0>
+						<cfloop array="#arrProjects#" index="i">
+						<li>							
+							<div style="right:5px;bottom:10px;position:absolute; z-index:2;"><a class="btn btn-xs btn-default" href="/CFTestTrack/project/#i.getId()#&edit=true/" style="padding-left:5px;" ><i class="fa fa-pencil"> </i></a>
+							<button class="btn btn-xs btn-danger lnkDeleteProject" projectid="#i.getId()#"><i class="fa fa-trash"> </i></button></div>
+							<a href="http://#Application.HttpsUrl#/CFTestTrack/project/#i.getId()#/">#i.getProjectTitle()#</a>
+							
+						</li>
+						</cfloop>
+						</cfif>
+	                </ul>
+                            <!-- /.nav-second-level -->
+                </li>
 	</cffunction>					
 	
 	<cffunction name="listAxoSoftProjects" access="public" output="true">
 		<cfargument name="axosoftprojects" type="struct">
-		<div id="panelaxosoftprojects" class="panel panel-default">
-			<div class="panel-heading"><i class="fa fa-wrench"></i> Projects</div>
-			<div class="panel-body">
 				<cfif StructKeyExists(arguments.axosoftprojects,"error") or !Application.AxoSoftUseAPI>
 					<!--- pull from database record instead --->
 					<cfquery name="qryProjects">
 						SELECT AxoSoftPId, Name, ParentId
 						FROM TTestAxoSoftProject
 					</cfquery>
-					<table class="table table-condensed table-striped">
-						<tr><td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/project/add/"><i class="fa fa-plus-circle"></i> Add Project</a></td>
-						</tr>
+					<li>
+	                <a href="##"><i class="fa fa-wrench fa-fw"></i> Projects<span class="fa arrow"></span></a>
+	                <ul class="nav nav-second-level">
+	                    <li>
+							<a href="http://#Application.HttpsUrl#/CFTestTrack/project/add/"><i class="fa fa-plus-circle"></i> Add Project</a>
+						</li>
 						<cfloop query="qryProjects">
-						<tr>
-							<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/project/#AxoSoftPid#/">#Name#</a></td>
-						</tr>
+						<li>
+							<a href="http://#Application.HttpsUrl#/CFTestTrack/project/#AxoSoftPid#/">#Name#</a>
+						
 						<cfquery name="qryChildren" dbtype="query">
 							SELECT AxoSoftPId, Name, ParentId
 							FROM qryProjects
 							WHERE ParentId = #AxoSoftPId#
 						</cfquery>
 						<cfif qryChildren.RecordCount gt 0>
+						<ul class="nav nav-third-level">
 						<cfloop query="qryChildren">
-							<tr>
-								<td>&nbsp;</td>
-								<td><a href="http://#cgi.server_name#/CFTestTrack/project/#qryChildren.AxoSoftPId#/">#qryChildren.Name#</a></td>
-							</tr>
+							<li>
+								<a href="http://#Application.HttpsUrl#/CFTestTrack/project/#qryChildren.AxoSoftPId#/">#qryChildren.Name#</a>
+							</li>
 						</cfloop>
+						</ul>
 						</cfif>
 						</cfloop>
-					</table>					
+						</li>
+					</li>					
 				<cfelse>
-				<table class="table table-condensed table-striped">
-				<cfloop array="#arguments.axosoftprojects["data"]#" index="i">
+				<li>
+					<a href="##"><i class="fa fa-wrench fa-fw"></i> Projects<span class="fa arrow"></span></a>
+	                <ul class="nav nav-second-level">					
+					<cfloop array="#arguments.axosoftprojects["data"]#" index="i">
 					<!--- check and see if it's not new and in the table --->
 					<cfscript>
 						if ( ArrayLen(EntityLoad("TTestAxoSoftProject",{AxoSoftPId = i.id})) lte 0 ) {
@@ -235,10 +236,10 @@
 						 	EntitySave(newAxoSoftProject);
 						 }							
 					</cfscript>
-					<tr>
-						<td colspan="2"><a href="http://#cgi.server_name#/CFTestTrack/project/#i.id#/">#i.name#</a></td>
-					</tr>
+					<li>
+						<a href="http://#Application.HttpsUrl#/CFTestTrack/project/#i.id#/">#i.name#</a>
 					<cfif StructKeyExists(i,"children")>
+						<ul class="nav nav-third-level">
 					<cfloop array="#i.children#" index="c">
 						<cfscript>
 						if ( ArrayLen(EntityLoad("TTestAxoSoftProject",{AxoSoftPId = c.id})) lte 0) {
@@ -255,17 +256,18 @@
 						 	}
 						 }
 						</cfscript>
-					<tr>
-						<td>&nbsp;</td>
-						<td><a href="http://#cgi.server_name#/CFTestTrack/project/#c.id#/">#c.name#</td>
-					</tr>
+					<li>
+						<a href="http://#Application.HttpsUrl#/CFTestTrack/project/#c.id#/">#c.name#</a>
+					</li>
 					</cfloop>
+					</ul>
 					</cfif>
+					</li>
+					
 				</cfloop>
-				</table>
+				</ul>
+				</li>
 				</cfif>
-			</div>
-		</div>
 	</cffunction>
 	
 	<cffunction name="listTestScenarios" access="remote" output="true">
@@ -275,7 +277,7 @@
 			WHERE ProjectID = <cfqueryparam value="#arguments.ProjectID#">
 		</cfquery>
 		<div class="panel panel-default">
-				<div class="panel-heading">Test Scenario Status<div class="btn-group" style="float:right;margin-top:-5px;"><a href="##" class="lnkAddScenario btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Scenario</a><a href="##" class="lnkViewScenarios btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
+				<div class="panel-heading">Test Scenario Status<div class="btn-group" style="float:right;margin-top:-5px;"><a href="##" class="lnkAddScenario btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Scenario</a><a href="http://#Application.HttpsUrl#/CFTestTrack/project/#arguments.projectid#/allscenarios/" class="btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
 				<div class="panel-body">
 					<cfif ArrayLen(qryTestScenarios) gt 0>
 					<table class="table table-striped table-condensed">
@@ -289,7 +291,7 @@
 								<cfset objData = createObject("component","Data")>
 								<cfset qryTestCases = objData.qryTestCaseForScenarios(scenario.getId())>
 								<tr>
-									<td><a href="http://#cgi.server_name#/CFTestTrack/scenario/#scenario.getId()#/" scenarioid="#scenario.getId()#"><cfif Len(scenario.getAxoSoftNumber()) gt 0>#scenario.getAxoSoftNumber()# - </cfif>#scenario.getTestScenario()#</a></td>
+									<td><a href="http://#Application.HttpsUrl#/CFTestTrack/scenario/#scenario.getId()#/" scenarioid="#scenario.getId()#"><cfif Len(scenario.getAxoSoftNumber()) gt 0>#scenario.getAxoSoftNumber()# - </cfif>#scenario.getTestScenario()#</a></td>
 									<td>(#qryTestCases.RecordCount#)</td>
 									<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteScenario btn btn-danger btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-trash"></i> Delete</a></td>
 								</tr>
@@ -297,7 +299,7 @@
 						</tbody>
 					</table>
 					<cfelse>
-					<div class="alert alert-warning"><h4>This project doesn't contain any test scenarios.</h4>Please add one from the actions link to the right.</div>
+					<div class="alert alert-warning"><h4>This project doesn't contain any test scenarios.</h4>Please add one from the Test Scenarios above.  You can also add Test Sections to better organize your testing.</div>
 					</cfif>
 				</div>
 			</div>
@@ -322,6 +324,7 @@
 			FROM TTestProject
 			WHERE id = <cfqueryparam value="#arguments.projectid#">
 		</cfquery>
+		<h1 class="page-header">#qryName[1].getProjectTitle()#</h1>
 		<div id="topcontent" class="panel panel-default">
 		<div class="panel-heading" id="activitytitle"><span class="label label-info">P#qryName[1].getId()#</span> #qryName[1].getProjectTitle()#</div>
 		<div class="panel-body">
@@ -480,6 +483,195 @@
 			</div>
 	</cffunction>
 	
+	<cffunction name="mileStoneTimeline" access="remote" output="true">
+		<cfargument name="projectid" required="true" />
+		<cfset objMilestones = EntityLoad("TTestMilestones",{ProjectID = arguments.projectid}, false) />
+		<div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-clock-o fa-fw"></i> Milestone Timeline
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <ul class="timeline">
+                            	<cfset i = 1 />
+                            	<cfloop array="#objMilestones#" index="milestone">
+                                <li<cfif i mod 2 eq 0> class="timeline-inverted"</cfif>>
+                                    <div class="timeline-badge<cfif milestone.GetDueOn() LT Now()> danger</cfif>"><i class="fa fa-check"></i>
+                                    </div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title<cfif milestone.GetDueOn() LT Now()> danger</cfif>">#milestone.GetMilestone()#</h4>
+                                            <p><small class="text-muted"><i class="fa fa-clock-o"></i> Due on: #milestone.GetDueOn()#</small>
+                                            </p>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>#milestone.getMilestoneDescription()#</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <cfset i = i + 1 />
+                                </cfloop>
+                                <!---<li class="timeline-inverted">
+                                    <div class="timeline-badge warning"><i class="fa fa-credit-card"></i>
+                                    </div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Lorem ipsum dolor</h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem dolorem quibusdam, tenetur commodi provident cumque magni voluptatem libero, quis rerum. Fugiat esse debitis optio, tempore. Animi officiis alias, officia repellendus.</p>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium maiores odit qui est tempora eos, nostrum provident explicabo dignissimos debitis vel! Adipisci eius voluptates, ad aut recusandae minus eaque facere.</p>
+                                        </div>
+                                    </div>
+                                </li>--->
+                                </ul>
+                        	</div>
+                    	</div>
+	</cffunction>
+	
+	<cffunction name="UserDashPart" access="remote" output="true">
+			<div class="row">
+				<div class="col-lg-3 col-md-6">
+				<div class="panel panel-primary">
+            		<div class="panel-heading">
+            			<div class="row">
+	                		<div class="col-lg-4">
+    	            		<img src="http://www.gravatar.com/avatar/#lcase(Hash(lcase(Session.Email)))#?r=R" alt="#Session.Name#'s Gravatar" class="img-responsive img-circle img-thumbnail center-block" />
+        	        		</div>
+        	        		<div class="col-lg-8 text-right">
+        	        			<div class="huge">#Session.Name#</div>
+        	        		</div>
+            			</div>
+            		</div>
+            		<a href="##">
+	            	<div class="panel-footer">
+                        <span class="pull-left">View Profile</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+        		</div>
+        		</div>
+        	</div>
+	</cffunction>
+	
+	<!---<cffunction name="MilestoneTimeline" access="remote" output="true">
+		<cfargument name="projectid" required="yes">
+		<cfset arrMilestones = objData.getMilestonesByProjectId(arguments.projectid) />
+		<div class="row">
+			<div class="col-lg-12 col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Milestone Timeline
+					</div>
+					<div class="panel-body">
+						<ul class="timeline">
+							<cfset x = 1 />
+							<cfloop array="#arrMilestones#" index="item">
+                                <li<cfif x mod 2 eq 0> class="timeline-inverted"</cfif>>
+                                    <div class="timeline-badge <cfif item.getClosed()>success</cfif>"><i class="fa <cfif item.getClosed()>fa-check<cfelse>fa-map-marker</cfif>"></i>
+                                    </div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">#item.getMilestone()#</h4>
+                                            <p><small class="text-muted"><i class="fa fa-clock-o"></i> <cfif item.getClosed()>Finished: #item.getClosedDate()#<cfelse>Due On: #item.getDueOn()#</cfif></small>
+                                            </p>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>#item.getMilestoneDescription()#</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <cfset x = x + 1 />
+                            </cfloop>
+                                <!---<li class="timeline-inverted">
+                                    <div class="timeline-badge warning"><i class="fa fa-credit-card"></i>
+                                    </div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Lorem ipsum dolor</h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem dolorem quibusdam, tenetur commodi provident cumque magni voluptatem libero, quis rerum. Fugiat esse debitis optio, tempore. Animi officiis alias, officia repellendus.</p>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium maiores odit qui est tempora eos, nostrum provident explicabo dignissimos debitis vel! Adipisci eius voluptates, ad aut recusandae minus eaque facere.</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="timeline-badge danger"><i class="fa fa-bomb"></i>
+                                    </div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Lorem ipsum dolor</h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus numquam facilis enim eaque, tenetur nam id qui vel velit similique nihil iure molestias aliquam, voluptatem totam quaerat, magni commodi quisquam.</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="timeline-inverted">
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Lorem ipsum dolor</h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates est quaerat asperiores sapiente, eligendi, nihil. Itaque quos, alias sapiente rerum quas odit! Aperiam officiis quidem delectus libero, omnis ut debitis!</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="timeline-badge info"><i class="fa fa-save"></i>
+                                    </div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Lorem ipsum dolor</h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis minus modi quam ipsum alias at est molestiae excepturi delectus nesciunt, quibusdam debitis amet, beatae consequuntur impedit nulla qui! Laborum, atque.</p>
+                                            <hr>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="fa fa-gear"></i> <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="##">Action</a></li>
+                                                    <li><a href="##">Another action</a></li>
+                                                    <li><a href="##">Something else here</a></li>
+                                                    <li class="divider"></li>
+                                                    <li><a href="##">Separated link</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Lorem ipsum dolor</h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sequi fuga odio quibusdam. Iure expedita, incidunt unde quis nam! Quod, quisquam. Officia quam qui adipisci quas consequuntur nostrum sequi. Consequuntur, commodi.</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="timeline-inverted">
+                                    <div class="timeline-badge success"><i class="fa fa-graduation-cap"></i>
+                                    </div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Lorem ipsum dolor</h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt obcaecati, quaerat tempore officia voluptas debitis consectetur culpa amet, accusamus dolorum fugiat, animi dicta aperiam, enim incidunt quisquam maxime neque eaque.</p>
+                                        </div>
+                                    </div>
+                                </li>--->
+                            </ul>
+                      	</div>
+                  	</div>
+              	</div>
+          	</div>
+    </cffunction>--->
+	
 	<cffunction name="AllProjectsChart" access="remote" output="true">
 		<cfdbinfo type="version" name="dbInfo">
 		<cfset qryGeneralActivity = objData.qryGeneralActivity()>
@@ -614,16 +806,16 @@
 	</cffunction>
 		
 	<cffunction name="AllReports" access="remote" output="true">
-		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfreturn>
-		</cfif>
-		<cfif !StructKeyExists(SESSION,"ProjectID")>
-			<cfreturn>
-		</cfif>
+		<cfargument name="projectid" required="true" />
+		<h1>Reporting</h1>
 		<div class="panel panel-default">
-			<div class="panel-heading"><strong><i class="fa fa-bars"></i> Reporting</strong></div>
+			<div class="panel-heading"><strong><i class="fa fa-bars"></i> </strong></div>
 			<div class="panel-body">
-				<cfset arrReports = EntityLoad("TTestReports",{ProjectID = Session.ProjectID},{maxresults=10})>
+				<Cfif Len(Session.ProjectID) eq 0>
+					<cfset arrReports = EntityLoad("TTestReports")>
+				<cfelse>
+					<cfset arrReports = EntityLoad("TTestReports",{ProjectID = arguments.ProjectID},{maxresults=10})>
+				</Cfif>
 				<cfif ArrayLen(arrReports) GT 0>
 					<div class="well well-sm" style="font-weight:bold;">Configured Reports</div>
 					<table class="table table-striped table-condensed table-hover">
@@ -652,7 +844,7 @@
 					</table>
 				<cfelse>
 						
-				<div class='alert alert-danger' role='alert'><strong>There are no reports configured.</strong><br />Set up reports by selecting report types from the right.</div>
+				<div class='alert alert-danger' role='alert'><strong>There are no reports configured.</strong><br />Set up reports by selecting report types from the left.</div>
 				</cfif>
 				<cfset objMaintenance = createObject("component","Maintenance")>
 				<cfset qryTasks = objMaintenance.returnTasks()>
@@ -684,13 +876,12 @@
 	</cffunction>
 	
 	<cffunction name="AllMilestones" access="remote" output="true">
+		<cfargument name="projectid">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfreturn>
-		</cfif>
-		<cfif !StructKeyExists(SESSION,"ProjectID")>
-			<cfreturn>
-		</cfif>
-		<cfset arrMilestones = EntityLoad("TTestMilestones",{ProjectID = SESSION.ProjectID},"DueOn ASC")>
+		</cfif>		
+		<cfset arrMilestones = EntityLoad("TTestMilestones",{ProjectID = arguments.ProjectID},"DueOn ASC")>
+		<h1 class="page-header">Project Milestones</h1>
 		<div id="allmilestonespanel" class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-map-marker"></i> <strong>Milestones</strong></div>
 			<div class="panel-body">
@@ -706,7 +897,7 @@
 						<td>
 							<h5>#milestone.getMilestone()#</h5>Due on #DateFormat(milestone.getDueon(),"m/d/yyyy")#
 						</td>
-						<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteMilestone btn btn-danger btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-trash"></i> Delete</a>
+						<td><a href="##" class="lnkEditMilestone btn btn-default btn-xs" milestoneid="#milestone.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteMilestone btn btn-danger btn-xs" projectid="#arguments.projectid#"  milestoneid="#milestone.getId()#"><i class="fa fa-trash"></i> Delete</a>
 							<cfif overdueCount eq 1>
 								<script type="text/javascript">
 									$(document).ready(function() {
@@ -781,15 +972,14 @@
 	</cffunction>						
 	
 	<cffunction name="AllScenarios" access="remote" output="true">
+		<cfargument name="projectid">
 		<cfargument name="start" default="1">
 		<cfargument name="searchstring" default="">
 		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
 			<cfreturn>
 		</cfif>
-		<cfif !StructKeyExists(SESSION,"ProjectID")>
-			<cfreturn>
-		</cfif>
-		<cfset qryCount = "SELECT count(*) FROM TTestScenario WHERE ProjectID = #Session.ProjectID#">
+		
+		<cfset qryCount = "SELECT count(*) FROM TTestScenario WHERE ProjectID = #arguments.ProjectID#">
 		<cfset countresults = ORMExecuteQuery(qryCount)[1]>
 		<script type="text/javascript">
 			$(document).ready(function() {
@@ -797,16 +987,16 @@
 				$(document).on("click",".pagination li a",function() {
 					var pagenum = $(this).text();
 					<cfif Len(arguments.searchstring) gt 0>
-						$.ajax({url:"/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios",type:"POST",data : { start: pagenum, searchstring : "#arguments.searchstring#"  } }).done(function(data) { $("##topcontent").html(data); });
+						$.ajax({url:"/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios",type:"POST",data : { projectid: #arguments.projectid#, start: pagenum, searchstring : "#arguments.searchstring#"  } }).done(function(data) { $("##topcontent").html(data); });
 					<cfelse>
-					$("##topcontent").load("/CFTestTrack/ccfc/Dashboard.cfc?method=AllScenarios&start="+pagenum);
+					$("##scenariospanel").parent().load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios&projectid=#arguments.projectid#&start="+pagenum);
 					</cfif>
 				});
 				$(document).off("click","##btnsearch");
 				$(document).on("click","##btnsearch", function() {
-					$.ajax({url:"/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios", type: "POST", data: {searchstring : $("##searchstring").val() 
+					$.ajax({url:"/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios", type: "POST", data: { projectid: #arguments.projectid#, searchstring : $("##searchstring").val() 
 					}}).done(function(data) {
-						$("##topcontent").html(data);
+						$("##scenariospanel").parent().html(data);
 					});
 				});
 			});
@@ -820,10 +1010,11 @@
 			<cfset arrTestScenarios = EntityLoad("TTestScenario",{ProjectID = Session.ProjectID},"AxoSoftNumber Desc, ProjectID Desc",{maxresults=20,offset=(arguments.start-1)*20})>
 		</cfif>
 		<cfset objData = createObject("component","Data")>
+		<h1 class="page-header">All Test Scenarios</h1>
 		<div id="scenariospanel" class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-tachometer"></i> <strong>Test Scenarios</strong></div>
 			<div class="panel-body">
-				<div class="well well-sm" style="font-weight:bold;">Active<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 input-group" style="float:right;margin-top:-7px;"><input type='text' class='form-control' id='searchstring' name='searchstring' placeholder="Search for..." /><span class="input-group-btn"><button id='btnsearch' class='btn btn-primary'><i class='fa fa-search'></i></button></span></div></div>
+				<div class="well well-sm" style="font-weight:bold;">Active<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 input-group" style="float:right;margin-top:-7px;"><input type='text' class='form-control' id='searchstring' name='searchstring' placeholder="Search for..." <cfif len(arguments.searchstring) gt 0>value="#arguments.searchstring#"</cfif> /><span class="input-group-btn"><button id='btnsearch' class='btn btn-primary'><i class='fa fa-search'></i></button></span></div></div>
 				<cfset numPages = ceiling(countresults / 20)>
 				<cfif ArrayLen(arrTestScenarios) gt 0>
 				<cfif numPages gt 1>
@@ -866,8 +1057,8 @@
 									<strong>#StatusCount#</strong> #Status#<cfif currentRow lt qryTestCounts.RecordCount>,</cfif>
 								</cfloop>
 							</td>
-							<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteScenario btn btn-danger btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-trash"></i> Delete</a></td>
-							<td style="width:33%"><div class="progress">
+							<td><a href="##" class="lnkEditScenario btn btn-default btn-xs" scenarioid="#scenario.getId()#"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="##" class="lnkDeleteScenario btn btn-danger btn-xs" scenarioid="#scenario.getId()#" projectid="#arguments.projectid#"><i class="fa fa-trash"></i> Delete</a></td>
+							<td style="width:33%"><div class="progress active">
 									<cfif passedPercent gt 0>
 									<div class="progress-bar progress-bar-success progress-bar-striped" style="width:#passedPercent#%;">
 										<span class="sr-only">#passedPercent#% Passed</span>
@@ -908,17 +1099,20 @@
 				</ul>
 				</cfif>
 				<cfelse>
-				<div class="alert alert-warning"><h4>This project doesn't contain any test scenarios.</h4>Please add one from the actions link to the right.</div>
+				<cfif len(arguments.searchstring) lte 0>
+				<div class="alert alert-warning"><h4>This project doesn't contain any test scenarios.</h4>Please add one from the Test Scenarios menu above.</div>
+				<cfelse>
+				<div class="alert alert-warning"><h4>No results found.</h4>Refine your search and try again.</div>
+				</cfif>
 				</cfif>				
 			</div>
 	</cffunction>
 	
 	<cffunction name="AllTests" access="remote" output="true">
-		<cfif (!StructKeyExists(SESSION,"Loggedin") || !Session.Loggedin)>
-			<cfreturn>
-		</cfif>
+		<cfargument name="projectid">
 		<cfset objData = createObject("component","Data")>
-		<cfset arrTestCases = objData.getTestCasesByProject(Session.ProjectID)>
+		<cfset arrTestCases = objData.getTestCasesByProject(arguments.ProjectID)>
+		<h1 class="page-header">All Test Cases</h1>
 		<div id="panelalltestcases" class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-tachometer"></i> <strong>Test Cases</strong></div>
 			<div class="panel-body">
@@ -951,13 +1145,13 @@
 							<td><span class="label label-info">TC#case.getId()#</label></td>
 							<td>#case.getTestTitle()#</td>
 							<td><a href="##" class="testcaseeditlink btn btn-default btn-xs" editid="#case.getId()#"><i class="fa fa-pencil"></i> Edit</a></td>
-							<td><cfif Application.AllowCaseDelete eq "true"><a href="##" class="testcasedeletelink btn btn-danger btn-xs" editid="#case.getId()#"><i class="fa fa-trash"></i> Delete</a></cfif></td>
+							<td><cfif Application.AllowCaseDelete eq "true"><a href="##" class="testcasedeletelink btn btn-danger btn-xs" editid="#case.getId()#" projectid="#arguments.projectid#"><i class="fa fa-trash"></i> Delete</a></cfif></td>
 						</tr>
 						</cfloop>
 					</tbody>
 				</table>
 				<cfelse>
-				<div class="alert alert-warning"><h4>This project doesn't contain any test cases.</h4>Please add one from the actions link to the right.</div>
+				<div class="alert alert-warning"><h4>This project doesn't contain any test cases.</h4>Please add one from the Test Cases menu above.</div>
 				</cfif>	
 			</div>
 		</div>				
@@ -978,7 +1172,7 @@
 						<cfset totaltests = totaltests + StatusCount >
 					</cfloop>
 					<cfloop query="qryTestCounts">
-					<p><span class="label #returnBSLabelStyle(Status)#">#StatusCount# #Status#</span><br />#NumberFormat((StatusCount gt 0 AND totaltests gt 0) ? (StatusCount / totaltests) * 100 : 0,"0.0")#% set to #Status#</p>
+					<p><span class="label #returnBSLabelStyle(Status)#">#StatusCount#&nbsp;#Status#</span><br />#NumberFormat((StatusCount gt 0 AND totaltests gt 0) ? (StatusCount / totaltests) * 100 : 0,"0.0")#% set to #Status#</p>
 					</cfloop>
 				</div>
 				<script type="text/javascript">
@@ -1066,11 +1260,11 @@
 		<div id="scenarioreport">
 		<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
 		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-			<p><span class="label label-success">#local.TotalPassedCount# Passed</span><br />#NumberFormat(local.PassedPercent,"0.00")#% set to Passed</p>
-			<p><span class="label label-default">#local.TotalBlockedCount# Blocked</span><br />#NumberFormat(local.BlockedPercent,"0.00")#% set to Blocked</p>
-			<p><span class="label label-warning">#local.TotalRetestCount# Retest</span><br />#NumberFormat(local.RetestPercent,"0.00")#% set to Retest</p>
-			<p><span class="label label-danger">#local.TotalFailedCount# Failed</span><br />#NumberFormat(local.FailedPercent,"0.00")#% set to Failed</p>
-			<p><span class="label label-info">#local.TotalUntestedCount# Untested</span><br />#NumberFormat(local.UntestedPercent,"0.00")#% set to Untested</p>
+			<p><span class="label label-success">#local.TotalPassedCount#&nbsp;Passed</span><br />#NumberFormat(local.PassedPercent,"0.00")#% set to Passed</p>
+			<p><span class="label label-default">#local.TotalBlockedCount#&nbsp;Blocked</span><br />#NumberFormat(local.BlockedPercent,"0.00")#% set to Blocked</p>
+			<p><span class="label label-warning">#local.TotalRetestCount#&nbsp;Retest</span><br />#NumberFormat(local.RetestPercent,"0.00")#% set to Retest</p>
+			<p><span class="label label-danger">#local.TotalFailedCount#&nbsp;Failed</span><br />#NumberFormat(local.FailedPercent,"0.00")#% set to Failed</p>
+			<p><span class="label label-info">#local.TotalUntestedCount#&nbsp;Untested</span><br />#NumberFormat(local.UntestedPercent,"0.00")#% set to Untested</p>
 		</div>
 		<script type="text/javascript">
 			var barData = {
@@ -1288,6 +1482,7 @@
 				}
 			}
 		</script>
+		<h1 class="page-header">#arrScenarioData.getTestScenario()#</h1>
 		<div class="panel panel-default">
 			<div class="panel-heading"><span class="label label-info">S#arrScenarioData.getId()#</span> #arrScenarioData.getTestScenario()#
 			<div class="btn-group" style="float:right;margin-top:-5px;">
@@ -1517,7 +1712,7 @@
 						</tbody>
 					</table>
 					<cfelse>
-						<div class="alert alert-warning"><h4>This project doesn't contain any milestones.</h4>Please add one from the actions link to the right.</div>
+						<div class="alert alert-warning"><h4>This project doesn't contain any milestones.</h4>Please add one from the Milestones menu above.</div>
 					</cfif>
 				</div>
 				<div class="panel-footer"><div class="btn-group"><a href="##" class="lnkAddMilestone btn btn-info btn-sm"><i class="fa fa-plus-square"></i> Add Milestone</a><a href="##" class="lnkViewMilestones btn btn-info btn-sm"><i class="fa fa-list"></i> View All</a></div></div>
@@ -1565,89 +1760,33 @@
 	</cffunction>
 	
 	<cffunction name="getCreateReports" access="remote" output="true">
-		<div id="createreportpanel" class="panel panel-default">
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$('[data-toggle="tooltip"]').tooltip();
 				});
 			</script>
-			<div class="panel-heading"><i class="fa fa-bars"></i> Create Reports</div>
-			<div class="panel-body">
+				<li><a href="##"><i class="fa fa-bars fa-fw"> </i> Create Reports<span class="fa arrow"></span></a>
+				<ul class="nav nav-second-level">
 				<cfif Application.AxoSoftIntegration eq "true">
-				<strong>AxoSoft</strong><br />
-				<table class="table table-condensed table-hover">
-					<tbody>
-						<tr><td><a href="##" class="lnkCreateReport" reporttype="AllOpenItems" data-toggle="tooltip" data-placement="left" title="Shows all open AxoSoft items."><i class="fa fa-plus-circle" style="color: green;"></i> All Open Items</a></td>
-						</tr>
-						<tr><td><a href="##" class="lnkCreateReport" reporttype="ReadyForProduction" data-toggle="tooltip" data-placement="left" title="Shows all AxoSoft items ready for production."><i class="fa fa-plus-circle" style="color: green;"></i> Ready For Production</a></td>
-						</tr>
-						<tr>
-							<td><a href="##" class="lnkCreateReport" reporttype="ClientAcceptance" data-toggle="tooltip" data-placement="left" title="Client acceptance items report."><i class="fa fa-plus-circle" style="color: green;"></i> Client Acceptance</a></td>
-						</tr>
-					</tbody>
-				</table><Br /></cfif>
-				<strong>Projects</strong><br />
-				<table class="table table-condensed table-hover">
-					<tbody>
-						<tr><td><a href="##" class="lnkCreateReport" reporttype="Activity" data-toggle="tooltip" data-placement="left" title="Shows a summary of new and updated test cases."><i class="fa fa-plus-circle" style="color:green;"></i> Activity</a></td>
-						</tr>
-						<!---<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Coverage for References</td>
-						</tr>--->
-						<tr><td><a href="##" class="lnkCreateReport" reporttype="ExecutionList" data-toggle="tooltip" data-placement="left" title="Displays Execution data for test scenarios."><i class="fa fa-plus-circle" style="color:green;"></i> Execution List</a></td>
-						</tr>
-						<tr><td><a href="##" class="lnkCreateReport" reporttype="ProblemTestCases" data-toggle="tooltip" data-placement="left" title="Displays problem test cases for this project."><i class="fa fa-plus-circle" style="color:green;"></i> Problem Test Cases</a></td>
-						</tr>
-					</tbody>
-				</table>
-				<br />
-				<strong>Defects</strong>
-				<br />
-				<table class="table table-condensed table-hover">
-					<tbody>
-						<tr>
-							<td><i class="fa fa-plus-circle" style="color:green;"></i> Defect Summary</td>
-						</tr>
-						<tr>
-							<td><i class="fa fa-plus-circle" style="color:green;"></i> Summary for Test Cases</td>
-						</tr>
-					</tbody>
-				</table>
-				<br />
-				<strong>Test Results</strong>
-				<br />
-				<table class="table table-condensed table-hover">
-					<tbody>
-						<tr>
-							<td><i class="fa fa-plus-circle" style="color:green;"></i> Case Comparison</td>
-						</tr>
-						<tr>
-							<td><i class="fa fa-plus-circle" style="color:green;"></i> Reference Comparison</td>
-						</tr>
-						<tr>
-							<td><i class="fa fa-plus-circle" style="color:green;"></i> Property Distribution</td>
-						</tr>
-					</tbody>
-				</table>
-				<br />
-				<strong>Summary</strong>
-				<br />
-				<table class="table table-condensed table-hover">
-					<tbody>
-						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Milestone Summary</td></tr>
-						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Scenario Summary</td></tr>
-						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> Project Summary</td></tr>
-					</tbody>
-				</table>
-				<br />
-				<strong>Users</strong>
-				<br />
-				<table class="table table-condensed table-hover">
-					<tbody>
-						<tr><td><i class="fa fa-plus-circle" style="color:green;"></i> User Workload Summary</td></tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
+					<li><a href="##" class="lnkCreateReport" reporttype="AllOpenItems" data-toggle="tooltip" data-placement="right" title="Shows all open AxoSoft items."><i class="fa fa-plus-circle" style="color: green;"></i> All Open Items</a></li>
+					<li><a href="##" class="lnkCreateReport" reporttype="ReadyForProduction" data-toggle="tooltip" data-placement="right" title="Shows all AxoSoft items ready for production."><i class="fa fa-plus-circle" style="color: green;"></i> Ready For Production</a></li>
+					<li><a href="##" class="lnkCreateReport" reporttype="ClientAcceptance" data-toggle="tooltip" data-placement="right" title="Client acceptance items report."><i class="fa fa-plus-circle" style="color: green;"></i> Client Acceptance</a></li>
+					
+				</cfif>
+					<li><a href="##" class="lnkCreateReport" reporttype="Activity" data-toggle="tooltip" data-placement="right" title="Shows a summary of new and updated test cases."><i class="fa fa-plus-circle" style="color:green;"></i> Activity</a></li>
+					<li><a href="##" class="lnkCreateReport" reporttype="ExecutionList" data-toggle="tooltip" data-placement="right" title="Displays Execution data for test scenarios."><i class="fa fa-plus-circle" style="color:green;"></i> Execution List</a></li>
+					<li><a href="##" class="lnkCreateReport" reporttype="ProblemTestCases" data-toggle="tooltip" data-placement="right" title="Displays problem test cases for this project."><i class="fa fa-plus-circle" style="color:green;"></i> Problem Test Cases</a></li>
+					<li><a href="##" class="lnkCreateReport" reporttype="DefectsSummary" data-toggle="tooltip" data-placement="right" title="Displays defect summary for selected test scenarios."><i class="fa fa-plus-circle" style="color:green;"></i> Defect Summary</a></li>
+					<li><a href="##" class="lnkCreateReport" reporttype="TestCaseDefectsSummary" data-toggle="tooltip" data-placement="right" title="Displays test case defect summaries for project."><i class="fa fa-plus-circle" style="color:green;"></i> Summary for Test Cases</a></li>
+					<li><a><i class="fa fa-plus-circle" style="color:green;"></i> Case Comparison</a></li>
+					<li><a><i class="fa fa-plus-circle" style="color:green;"></i> Reference Comparison</a></li>
+					<li><a><i class="fa fa-plus-circle" style="color:green;"></i> Property Distribution</a></li>
+					<li><a><i class="fa fa-plus-circle" style="color:green;"></i> Milestone Summary</a></li>
+					<li><a><i class="fa fa-plus-circle" style="color:green;"></i> Scenario Summary</a></li>
+					<li><a><i class="fa fa-plus-circle" style="color:green;"></i> Project Summary</a></li>
+					<li><a><i class="fa fa-plus-circle" style="color:green;"></i> User Workload Summary</a></li>
+				</ul>
+				<lia>
 	</cffunction>
 	
 	<!--- JSON and single value functions --->

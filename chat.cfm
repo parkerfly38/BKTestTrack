@@ -6,26 +6,8 @@
 	<cfset querySetCell(qryLog,"longDate",DateFormat(qryLog.messagedate[i],"long"),i)>
 </cfloop>
 <script>
-var msgHandler = function(message)
-   {
-         // Get data from the recieved message token
-         var data = message.data;
 
-         if(data)
-         {
-            // If data is present write it to the div
-            var txt=document.getElementById("myDiv");
-            txt.innerHTML+= data + "<br>";
-            $('#myDiv').scrollTop($('#myDiv')[0].scrollHeight);
-         }
-}
 
-var sayHello = function()
-{
-         generalChat.authenticate("<cfoutput>#Session.Name#</cfoutput>","password");
-         generalChat.publish("general",document.getElementById("messagetext").value);
-         document.getElementById("messagetext").value = null;
-}
 
 var openHandler = function()
 {

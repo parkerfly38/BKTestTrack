@@ -1,5 +1,28 @@
 component
 {
+	public boolean function isAPIKeyActivated(string publicKey)
+	{
+		return EntityLoad("TTestAPIUserKeys", {clientid=publicKey},true).getActivated();
+	}
+	
+	public string function getPrivateKeyByPublicKey(string publicKey)
+	{
+		privateKey = EntityLoad("TTestAPIUserKeys",{clientid=publicKey},true).getPrivatekey();
+		return privateKey;
+	}
+	
+	public any function generatePublicPrivateKeys(integer testerid)
+	{
+		newkeys = {publickey = CreateUUID(), privatekey = CreateUUID() };
+		newAPIKey = EntityNew("TTestAPIUserKeys");
+		newAPIKey.setClientid(newkeys.publickey);
+		newAPIKey.setPrivatekey(newkeys.privatekey);
+		newAPIKey.setTesterid(arguments.testerid);
+		newAPIKey.setActivated("false");
+		EntitySave(newAPIKey);
+		return newAPIKey;
+	}
+	
 	public array function getAllProjects()
 	{
 		arrProjects = EntityLoad("TTestProject");
@@ -25,6 +48,12 @@ component
 		scenario = EntityLoad("TTestScenario",id, true);
 		return scenario;
 	}
+
+	public array function getScenarioByProjectID(numeric projectid) {
+		scenarios = EntityLoad("TTestScenario",{projectid = arguments.projectid}, false);
+		return scenarios;
+	}
+
 	public void function deleteScenario(id) {
 		scenario = getScenario(id);
 		EntityDelete(scenario);
@@ -46,10 +75,34 @@ component
 		return arrTestCases;
 	}
 	
+	public array function getTestResults(id)
+	{
+		arrTestResults = EntityLoad("TTestResult",{TestCaseId = arguments.id});
+		return arrTestResults;
+	}
+	
+	public array function getAllTestResults()
+	{
+		arrTestResults = EntityLoad("TTestResult");
+		return arrTestResults;
+	}
+	
 	public array function getTestCasesByProject(projectid)
 	{
 		arrTestCases = EntityLoad("TTestCase",{ProjectID=arguments.projectid});
 		return arrTestCases;
+	}
+	
+	public array function getAllScenarios()
+	{
+		arrScenarios = EntityLoad("TTestScenario");
+		return arrScenarios;
+	}
+	
+	public array function getTestTypes()
+	{
+		arrTestTypes = EntityLoad("TTestType");
+		return arrTestTypes;
 	}
 	
 	public void function deleteTestCase(id) {
@@ -67,9 +120,10 @@ component
 		return arrTestCases;
 	}
 	
-	public void function saveTestCase(db.TTestCase tc)
+	public db.TTestCase function saveTestCase(db.TTestCase tc)
 	{
 		entitySave(arguments.tc);
+		return arguments.tc;
 	}
 	
 	public array function getAllStatuses()
@@ -95,6 +149,12 @@ component
 		return history;
 	}
 	
+	public void function deleteTestCaseHistory(id)
+	{
+		testcasehistory = EntityLoadByPk("TTestCaseHistory", id);
+		EntityDelete(testcasehistory);
+	}
+	
 	public query function qryTestCaseHistoryByTestCase(id) {
 		arrHistory = getTestCaseHistoryByTestCase(arguments.id);
 		return EntityToQuery(arrHistory);
@@ -105,17 +165,30 @@ component
 		milestones = entityLoad("TTestMilestones");
 		return milestones;
 	}
+	
+	public array function getMilestonesByProjectId(id)
+	{
+		milestones = entityLoad("TTestMilestones",{projectid = arguments.id},"DueOn Desc");
+		return milestones;
+	}
 	public array function getAllLinks()
 	{
 		links = entityLoad("TTestLinks");
 		return links;
 	}
+	
+	public array function getAllPriorityTypes()
+	{
+		prioritytypes = entityLoad("TTestPriorityType");
+		return prioritytypes;
+	}
+	
 	public query function qryTestCaseForScenarios(numeric scenarioid)
 	{
 		qryResult = queryExecute(
 			"SELECT a.id as TestCaseId, a.TestTitle, b.DateOfAction, c.UserName, b.DateActionClosed" &
 			" FROM TTestCaseHistory b INNER JOIN TTestCase a ON a.id = b.CaseId INNER JOIN TTestTester c on b.TesterID = c.id INNER JOIN TTestScenarioCases d ON a.id = d.CaseId" &
-			" WHERE d.ScenarioId = " & arguments.scenarioid & " and b.DateActionClosed IS NULL");
+			" WHERE d.ScenarioId = " & arguments.scenarioid & " and b.DateActionClosed IS NULL ORDER BY a.id ASC");
 		return qryResult;	
 	}
 	public query function qryTestCasesForProject(projectid)
@@ -149,6 +222,68 @@ component
 		return qryResult.getResult();
 	}
 	
+	public query function qryTestDefects(string scenarioVariables)
+	{
+		qryNew = new query();
+		qryNew.SetName("getTestDefects");
+		sqlString = "SELECT TTestCase.TestTitle, " &
+					"TTestCaseHistory.Action, " &
+					"TTestResult.DateTested, " &
+					"TTestResult.Comment, " &
+					"TTestResult.Defects, " &
+					"TTestResult.ElapsedTime, " &
+					"TTestResult.Version, " &
+					"TTestTester.UserName, " &
+					"TTestScenario.TestScenario " &
+					"FROM " &
+					"	TTestCaseHistory " &
+					"INNER JOIN " &
+					"	TTestCase on TTestCase.id = TTestCaseHistory.CaseId " &
+					"INNER JOIN " &
+					"	TTestScenarioCases on TTestScenarioCases.CaseId = TTestCaseHistory.CaseId " &
+					"INNER JOIN " &
+					"	TTestScenario on TTestScenario.id = TTestScenarioCases.ScenarioId " &
+					"INNER JOIN " &
+					"	TTestResult on TTestResult.TestCaseID = TTestCaseHistory.CaseId " & 
+					"	AND  " &
+					"		DATEADD(ms, -DATEPART(ms, TTestResult.DateTested), TTestResult.DateTested) = DATEADD(ms, -DATEPART(ms, TTestCaseHistory.DateOfAction), TTestCaseHistory.DateOfAction) " &
+					"INNER JOIN " &
+					"	TTestTester on TTestTester.id = TTestResult.TesterID " &
+					"WHERE  " &
+					"	TTestCaseHistory.DateActionClosed is null " &
+					"	AND TTestResult.StatusID IN (3,4,5) " &
+					"	AND TTestScenarioCases.ScenarioId IN (" & arguments.scenarioVariables & ")";
+		qryResult = qryNew.execute(sql = sqlString);
+		return qryResult.getResult();
+	}
+
+	public query function qryTestCaseDefectsSummary(string projectid)
+	{
+		qryNew = new query();
+		qryNew.SetName("getTestCaseDefectSummary");
+		sqlString =	"SELECT TTestCase.TestTitle, " &
+					"TTestCaseHistory.ACtion, " &
+					"TTestResult.DateTested, " &
+					"TTestResult.Defects," &
+					"TTestResult.ElapsedTime, " &
+					"TTestResult.Version, " &
+					"TTestTester.UserName " &
+					"FROM " &
+					"	TTestCaseHistory " &
+					"INNER JOIN " &
+					"	TTestCase on TTestCase.id = TTestCaseHistory.CaseId " &
+					"INNER JOIN " &
+					"	TTestResult on TTestResult.TestCaseID = TTestCaseHistory.CaseId " & 
+					"	AND  " &
+					"		DATEADD(ms, -DATEPART(ms, TTestResult.DateTested), TTestResult.DateTested) = DATEADD(ms, -DATEPART(ms, TTestCaseHistory.DateOfAction), TTestCaseHistory.DateOfAction) " &
+					"INNER JOIN " &
+					"	TTestTester on TTestTester.id = TTestResult.TesterID " &
+					"WHERE " &
+					"	TTestCase.ProjectID = " & arguments.projectid;
+		qryResult = qryNew.execute(sql = sqlString);
+		return qryResult.getResult();
+	}
+
 	public query function qryTestCaseHistoryDataForScenario(numeric scenarioid) {
 		qryResult = queryExecute("SELECT DISTINCT d.TestTitle, a.TestCaseId, a.DateTested, e.Status, c.UserName FROM TTestResult a " &
 										"INNER JOIN TTestScenarioCases b on a.TestCaseId = b.CaseId " &
@@ -181,8 +316,9 @@ component
 										"WHERE a.ScenarioId = " & arguments.scenarioid & " AND c.Action = 'Assigned'");
 		return qryResult;
 	}
+
 	public query function qryGetCurrentTestStatus(numeric caseid) {
-		cfdbinfo(name="dbInfo",type="version",datasource="COGData");
+		cfdbinfo(name="dbInfo",type="version");
 		
 		if (dbinfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
 		{
@@ -204,7 +340,7 @@ component
 	
 	public query function qryGetChatLog()
 	{
-		cfdbinfo(name="dbInfo",type="version",datasource="COGData");
+		cfdbinfo(name="dbInfo",type="version");
 		
 		if (dbinfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
 		{
@@ -213,7 +349,24 @@ component
 			);
 		} else {
 			qryChatLog = queryExecute(
-				"SELECT a.* FROM (SELECT TOP 100 username, messageDate, messageBody FROM TTestMessageLog ORDER BY messageDate DESC) a order by a.MessageDate"
+				"SELECT a.* FROM (SELECT TOP 100 username, messageDate, messageBody FROM TTestMessageLog ORDER BY messageDate desc) a order by a.MessageDate"
+			);
+		}
+		return qryChatLog;
+	}
+	
+	public query function qryGetChatLogMini()
+	{
+		cfdbinfo(name="dbInfo",type="version");
+		
+		if (dbinfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
+		{
+			qryChatLog = queryExecute(
+				"SELECT a.* FROM (SELECT username, messageDate, messageBody FROM TTestMessageLog ORDER BY messageDate DESC LIMIT 100) a order by a.MessageDate"
+			);
+		} else {
+			qryChatLog = queryExecute(
+				"SELECT a.* FROM (SELECT TOP 100 username, messageDate, messageBody FROM TTestMessageLog WHERE username <> 'System' ORDER BY messageDate desc) a order by a.MessageDate desc"
 			);
 		}
 		return qryChatLog;
@@ -232,7 +385,7 @@ component
 	
 	public query function qryGeneralActivity()
 	{
-		cfdbinfo(name="dbInfo", type="version", datasource="COGData");
+		cfdbinfo(name="dbInfo", type="version");
 		if (dbinfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
 		{
 			qryGeneralActivity = queryExecute(
@@ -253,9 +406,10 @@ component
 		}
 		return qryGeneralActivity;
 	}
+	
 	public query function qryCounts(numeric projectid)
 	{
-		cfdbinfo(name="dbInfo", type="version", datasource="COGData");
+		cfdbinfo(name="dbInfo", type="version");
 		if (dbInfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
 		{
 			qryCounts = queryExecute(
@@ -301,6 +455,36 @@ component
 				qfprocresult(name="qryCounts");
 			}
 		}
+	}
+	
+	public query function getLastTestResultStatus(numeric testcaseid)
+	{
+		cfdbinfo(name="dbInfo", type="version");
+		if (dbInfo.DATABASE_PRODUCTNAME[1] eq "PostgreSQL")
+		{
+			qryResult = queryExecute(
+				"SELECT COALESCE(StatusID,5) as StatusID FROM TTestResult
+				WHERE TestCaseID = " & arguments.testcaseid & "
+				ORDER BY id DESC
+				LIMIT 1"
+			);
+		} else {
+			qryResult = queryExecute(
+				"SELECT ISNULL(StatusID,5) as StatusID FROM TTestResult WHERE
+				id in (SELECT MAX(id) FROM TTestResult WHERE TestCaseID = " & arguments.testcaseid & ")");
+		}
+		return qryResult;
+	}
+	
+	public query function getTestCasesByScenarioId(numeric projectid, numeric scenarioid)
+	{
+		qryResult = queryExecute(
+			"	SELECT id, TestTitle
+			FROM TTestCase
+			WHERE ProjectID = " & arguments.projectid & "
+			AND id not in (SELECT CaseID from TTestScenarioCases where ScenarioId = " & arguments.scenarioid & ") "
+		);
+		return qryResult;
 	}
 		
 	public query function qryGetProblemTestCases(numeric projectid, date datestart, date dateend)
