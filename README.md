@@ -10,11 +10,12 @@ environments, but can be used to run Selenium tests on most other web applicatio
 
 ### Requirements ###
 
-1.  ~~CF9 or above~~ Developed and tested on CF11 with CF11 specific markup
+1.  CF10, CF11, CF2016 supported
 2.  [CFSelenium] (https://github.com/teamcfadvance/CFSelenium) - FireFox plugins
 3.  Selenium IDE with above mentioned FireFox plugin
 4.  MXUnit
 5.  MS SQL Server/PostgreSQL (though PostgreSQL may be buggy)
+6.  Taffy for REST service API
 
 ### Credits and Thanks ###
 
