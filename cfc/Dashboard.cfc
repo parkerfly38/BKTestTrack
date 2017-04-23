@@ -1,6 +1,7 @@
 <cfcomponent>
 	
 	<cfset objFunctions = createObject("component","Functions")>
+	<cfset objData = createObject("component","Data")>
 	
 	<cffunction name="listAxoSoftItems" access="public" output="true">
 		<cfargument name="axosoftItems" type="struct">
@@ -531,27 +532,74 @@
 	
 	<cffunction name="UserDashPart" access="remote" output="true">
 			<div class="row">
-				<div class="col-lg-3 col-md-6">
+				<div class="col-lg-4 col-md-6">
 				<div class="panel panel-primary">
             		<div class="panel-heading">
             			<div class="row">
-	                		<div class="col-lg-4">
-    	            		<img src="http://www.gravatar.com/avatar/#lcase(Hash(lcase(Session.Email)))#?r=R" alt="#Session.Name#'s Gravatar" class="img-responsive img-circle img-thumbnail center-block" />
-        	        		</div>
-        	        		<div class="col-lg-8 text-right">
-        	        			<div class="huge">#Session.Name#</div>
+	                		<div class="col-xs-3">
+    	            			<i class="fa fa-users fa-5x"></i>
+    	            		</div>
+        	        		<div class="col-xs-9 text-right">
+        	        			<div class="huge">#arrayLen(objData.getAllTesters())#</div>
+        	        			<div>Users</div>
         	        		</div>
             			</div>
             		</div>
             		<a href="##">
 	            	<div class="panel-footer">
-                        <span class="pull-left">View Profile</span>
+                        <span class="pull-left">View Details</span>
                         <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                         <div class="clearfix"></div>
                     </div>
+                    </a>
         		</div>
         		</div>
-        	</div>
+        		<div class="col-lg-4 col-md-6">
+        			<div class="panel panel-green">
+        				<div class="panel-heading">
+        					<div class="row">
+        						<div class="col-xs-3">
+        							<i class="fa fa-wrench fa-5x"></i>
+        						</div>
+        						<div class="col-xs-9 text-right">
+        							<div class="huge"><cfoutput>#ArrayLen(objData.getAllProjects())#</cfoutput></div>
+        							<div>Total Projects</div>
+        						</div>
+        					</div>
+        				</div>
+        				<a href="##">
+        					<div class="panel-footer">
+        						<span class="pull-left">View Details</span>
+        						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+        						<div class="clearfix"></div>
+        					</div>
+        				</a>
+        			</div>
+        		</div>
+        		<div class="col-lg-4 col-md-6">
+        			<div class="panel panel-yellow">
+        				<div class="panel-heading">
+        					<div class="row">
+        						<div class="col-xs-3">
+        							<i class="fa fa-tachometer fa-5x"></i>
+        						</div>
+        						<div class="col-xs-9 text-right">
+        							<div class="huge">#objData.getAllOpenCases().RecordCount#</div>
+        							<div>Total Open Tests</div>
+        						</div>
+        					</div>
+        				</div>
+        				<a href="##">
+        					<div class="panel-footer">
+        						<span class="pull-left">View Details</span>
+        						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+        						<div class="clearfix"></div>
+        					</div>
+        				</a>
+        			</div>
+        		</div>
+        		
+        	</div>  	
 	</cffunction>
 	
 	<!---<cffunction name="MilestoneTimeline" access="remote" output="true">
@@ -681,7 +729,7 @@
 		<div class="panel-body">
 			<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"><canvas id="chartcanvas" name="chartcanvas" width="100%" height="300" /></div>
 			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-				<h5>Most Activity (Last 14 Days)</h5>
+				<h5>Most Activity</h5>
 				<cfif qryGeneralActivity.RecordCount eq 0>
 					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-right" >
 						<div style='width:32px;height:32px;background-color:##777;border: 1px solid ##666;float:right;'>&nbsp;</div>

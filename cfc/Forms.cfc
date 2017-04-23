@@ -192,9 +192,9 @@
 						if ( data == "true" )
 						{
 							$("##largeModal").modal('hide');
-							$("##panelalltestcases").parent().load("http://#Application.HttpsUrl#/CFTestTrack/CFC/Dashboard.cfc?method=AllTests&projectid=#arguments.projectid#");
-							restoreSpinner();
-							
+							//$("##panelalltestcases").parent().load("http://#Application.HttpsUrl#/CFTestTrack/CFC/Dashboard.cfc?method=AllTests&projectid=#arguments.projectid#");
+							//restoreSpinner();
+							location.href = "http://#Application.HttpsUrl#/CFTestTrack/project/#arguments.projectid#/alltests/"
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");
 						}
@@ -307,14 +307,15 @@
 						if ( data == "true" )
 						{
 							$("##largeModal").modal('hide');
-							if ( $("##allmilestonespanel").length == 0)
-							{
+							//if ( $("##allmilestonespanel").length == 0)
+							//{
 								/*$("##panelmilestones").parent.remove();*/
-								insertMilestones();
-							} else {
-								$("##allmilestonespanel").parent().load("http://#Application.HttpsUrl#/CFTestTrack/CFC/Dashboard.cfc?method=AllMilestones&projectid=#arguments.projectid#");
-							}
-							restoreSpinner();
+							//	insertMilestones();
+							//} else {
+							//	$("##allmilestonespanel").parent().load("http://#Application.HttpsUrl#/CFTestTrack/CFC/Dashboard.cfc?method=AllMilestones&projectid=#arguments.projectid#");
+							//}
+							location.href = "http://#Application.HttpsUrl#/CFTestTrack/project/#arguments.projectid#/allmilestones/";
+							//restoreSpinner();
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");
 						}
@@ -531,14 +532,15 @@
 					}).done(function(data) {
 						if ( data == "true" )
 						{
-							$("##largeModal").modal('hide');
+							/*$("##largeModal").modal('hide');
 							if ( $("##scenariospanel").length == 0 )
 							{
 								$("##paneltestscenarios").remove();
 								insertScenarios();
 							} else {
 								$("##scenariospanel").parent().load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios&projectid=#arguments.ProjectID#");
-							}
+							}*/
+							location.href = "http://#Application.HttpsUrl#/CFTestTrack/project/#arguments.ProjectID#/allscenarios/";
 						} else {
 							alert("There was an error with your save.  Please contact system administrator.");
 						}

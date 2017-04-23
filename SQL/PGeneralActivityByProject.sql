@@ -1,17 +1,11 @@
 
-/****** Object:  StoredProcedure [dbo].[PGeneralActivityByProject]    Script Date: 1/3/2015 10:35:42 AM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		Brian Kresge, MBA
 -- Create date: 01/02/15
 -- Description:	Returns active project data
 -- =============================================
-CREATE PROCEDURE [dbo].[PGeneralActivityByProject]
+ALTER PROCEDURE [dbo].[PGeneralActivityByProject]
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -22,9 +16,12 @@ BEGIN
 --	datelist date
 --)
 
+declare @maximumDate datetime;
+select @maximumDate = MAX(DateTested) FROM TTestResult
+
 ;with cte (datelist, maxdate) as
 (
-	SELECT DateAdd(day, -14, GETDATE()) as datelist, getdate() as  maxdate
+	SELECT DateAdd(day, -30, @maximumDate) as datelist, @maximumDate as maxdate
 	UNION ALL
 	select dateadd(dd,1,datelist), maxdate
 	FROM cte
@@ -43,20 +40,24 @@ select @cols = STUFF((SELECT distinct ',' + QUOTENAME(convert(CHAR(10), datelist
             ).value('.', 'NVARCHAR(MAX)') 
         ,1,1,'')
 
-		set @query = 'SELECT ProjectTitle, ' + @cols + ' from 
+		set @query = '
+		     DECLARE @maximumDate datetime;
+		     SELECT @maximumDate = MAX(DateTested) FROM TTestResult;
+			 SELECT ProjectTitle, Color, ' + @cols + ' from 
              (
                 select b.ProjectTitle, 
                     d.datelist,
+                    b.Color,
                     convert(CHAR(10), datelist, 120) PivotDate
                 from #tempDates d
                 inner join
 					(
-						SELECT ProjectTitle, DateTested
+						SELECT ProjectTitle, DateTested, Color
 						FROM TTestProject
 						INNER JOIN TTestCase ON TTestCase.ProjectID = TTestProject.id
 						INNER JOIN TTestResult ON TTestResult.TestCaseID = TTestCase.id
-						WHERE DateTested <= GETDATE() and DateTested >= DATEADD(DAY,-14,GETDATE())
-						AND Closed = 0
+						--WHERE DateTested <= @maximumDate  and DateTested >= DATEADD(DAY,-30,@maximumDate)
+						WHERE Closed = 0
 						
 					)  b
 					on cast(d.datelist as date) = cast(b.datetested as date)
@@ -73,6 +74,4 @@ select @cols = STUFF((SELECT distinct ',' + QUOTENAME(convert(CHAR(10), datelist
 			execute(@query)
 
 END
-
-GO
 
