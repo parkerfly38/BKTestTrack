@@ -75,6 +75,15 @@ component
 		return arrTestCases;
 	}
 	
+	public query function getAllOpenCases()
+	{
+		qryNew = new query();
+		qryNew.setName("getOPENTestCases");
+		qryResult = qryNew.execute(sql="SELECT id, TestTitle, TestDetails, PriorityId, TypeId, Preconditions, Steps, ExpectedResult, MilestoneId, Estimate, ProjectID FROM TTestCase WHERE id not in (SELECT TestCaseID FROM TTestResult WHERE StatusID = 2)
+");
+		return qryResult.getResult();
+	}
+	
 	public array function getTestResults(id)
 	{
 		arrTestResults = EntityLoad("TTestResult",{TestCaseId = arguments.id});

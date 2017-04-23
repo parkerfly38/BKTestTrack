@@ -171,14 +171,15 @@
 		            <span class="icon-bar"></span>
 	            	<span class="icon-bar"></span>
 	          	</button>
-	          	<cfif (StructKeyExists(url,"projectid") && isNumeric(url.projectid)) || isNumeric(Session.projectID)>
+	          	<!---<cfif (StructKeyExists(url,"projectid") && isNumeric(url.projectid)) || isNumeric(Session.projectID)>
 	          		<!--- get at our project title --->
 	          		<cfset projectid = (StructKeyExists(url,"projectid") ? url.projectid : Session.projectid) >
 	          		<a class="navbar-brand" href="http://<cfoutput>#Application.HttpsUrl#</cfoutput>/CFTestTrack/<cfoutput>project/#session.projectID#/</cfoutput>" id="lnkHome">
 	          		&nbsp;<cfoutput>#EntityLoadByPk("TTestProject",projectid).getProjectTitle()#</cfoutput>
 	          		</a>
-	          		<cfelse><a class="navbar-brand">The Crucible</a>
-	          		</cfif>
+	          		<cfelse>--->
+	          		<a class="navbar-brand">The Crucible</a>
+	          		<!---</cfif>--->
 	          </div>
 		      <ul class="nav navbar-top-links navbar-right">
                 <cfif Application.EnableChat>
@@ -215,6 +216,7 @@
                     <ul class="nav" id="side-menu">
                     	<cfif StructKeyExists(url,"projectid") || isNumeric(Session.projectID)>
   		<li><a href="/CFTestTrack/" <!---class="btn btn-default" style="position: fixed; top: -3px; left: -3px;z-index:9999;"--->><i class="fa fa-arrow-left"></i>&nbsp;Main Dashboard</a></li>
+      	<li><a href="/CFTestTrack/project/<cfoutput>#url.projectid#</cfoutput>/"><i class="fa fa-home"></i> Project Home</a></li>
       	</cfif>
                     	<cfif Application.AxoSoftIntegration>
 		  				<cfoutput>#objDashboard.listAxoSoftProjects(objAxoSoft.getProjects(Session.AxoSoftToken))#</cfoutput>
