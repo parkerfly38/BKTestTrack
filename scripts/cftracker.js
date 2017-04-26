@@ -222,8 +222,8 @@ $(document).ready(function() {
 		var scenarioid = $(this).attr("scenarioid");
 		var projectid = $(this).attr("projectid");
 		$.ajax({ url: "/CFTestTrack/cfc/forms.cfc?method=deleteScenario", data: { scid : scenarioid},type:"POST"}).done(function() {
-				$("#scenariospanel").parent().load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios&projectid="+projectid);
-			
+				//$("#scenariospanel").parent().load("/CFTestTrack/cfc/Dashboard.cfc?method=AllScenarios&projectid="+projectid);
+			location.href = "/CFTestTrack/projects/" + projectid + "/allscenarios/";
 			/*if ($("#scenariospanel").length > 0) {
 				$("#scenariospanel").remove();
 				insertScenarios();
