@@ -21,6 +21,7 @@
 	<cfset this.mappings["/taffy"] = "#this.directory#taffy/">
 	<cfset this.ormSettings.cfclocation = "#this.directory#cfc/db/" />
 	<cfset this.wschannels = [{name="general",cfclistener="cfc.Chat"}] >
+	<cfset this.javaSettings = {LoadPaths = ["/java"],reloadOnChange=true,watchInterval=30} />
 	<cfset this.httpsurl = "#cgi.server_name#" />
 	<!--- production only 
 	<cfsetting showdebugoutput="false" />--->
