@@ -411,7 +411,12 @@ component
 			cfstoredproc(procedure="PGeneralActivityByProject")
 			{
 				cfprocresult(name="qryGeneralActivity");
+				
 			}
+		}
+		if (!isQuery(qryGeneralActivity))
+		{
+			qryGeneralActivity = QueryNew("ProjectTitle, Colors","VarChar, VarChar");
 		}
 		return qryGeneralActivity;
 	}

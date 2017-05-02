@@ -203,7 +203,7 @@
                     <ul class="nav" id="side-menu">
                     	<cfif StructKeyExists(url,"projectid") || isNumeric(Session.projectID)>
   		<li><a href="/CFTestTrack/" <!---class="btn btn-default" style="position: fixed; top: -3px; left: -3px;z-index:9999;"--->><i class="fa fa-arrow-left"></i>&nbsp;Main Dashboard</a></li>
-      	<li><a href="/CFTestTrack/project/<cfoutput>#url.projectid#</cfoutput>/"><i class="fa fa-home"></i> Project Home</a></li>
+      	<li><a href="/CFTestTrack/project/<cfoutput>#(StructKeyExists(url,"projectid") ? url.projectid : session.projectid)#</cfoutput>/"><i class="fa fa-home"></i> Project Home</a></li>
       	</cfif>
                     	<cfif Application.AxoSoftIntegration>
 		  				<cfoutput>#objDashboard.listAxoSoftProjects(objAxoSoft.getProjects(Session.AxoSoftToken))#</cfoutput>

@@ -1669,7 +1669,7 @@
 	
 	<cffunction name="getTodos" access="remote" output="true">
 		<cfstoredproc procedure="PTodos">
-			<cfprocparam cfsqltype="CF_SQL_INTEGER" value="#Session.UserIDInt#">
+			<!---<cfprocparam cfsqltype="CF_SQL_INTEGER" value="#Session.UserIDInt#">--->
 			<cfprocresult name="qryTodos" />
 		</cfstoredproc>
 		<div id='todopanel' class="panel panel-default"><div class="panel-heading"><i class="fa fa-check-square-o"></i> Todos</div>
@@ -1723,7 +1723,7 @@
 		
 	<cffunction name="TodosBySection" access="remote" returnformat="JSON" returntype="string">
 		<cfstoredproc procedure="PTodos">
-			<cfprocparam cfsqltype="CF_SQL_INTEGER" value="#Session.UserIDInt#">
+			<!--cfprocparam cfsqltype="CF_SQL_INTEGER" value="#Session.UserIDInt#">-->
 			<cfprocresult name="qryTodos" />
 		</cfstoredproc>
 		<cfreturn serializeJSON(qryTodos) />
