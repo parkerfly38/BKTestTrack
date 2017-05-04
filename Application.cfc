@@ -21,7 +21,7 @@
 	<cfset this.mappings["/taffy"] = "#this.directory#taffy/">
 	<cfset this.ormSettings.cfclocation = "#this.directory#cfc/db/" />
 	<cfset this.wschannels = [{name="general",cfclistener="cfc.Chat"}] >
-	<cfset this.javaSettings = {LoadPaths = ["/java"],reloadOnChange=true,watchInterval=30} />
+	<cfset this.javaSettings = {LoadPaths = [ExpandPath('java')],reloadOnChange=true,watchInterval=30} />
 	<cfset this.httpsurl = "#cgi.server_name#" />
 	<!--- production only 
 	<cfsetting showdebugoutput="false" />--->
@@ -82,7 +82,7 @@
     			</cfif>
     		</cfif>
     	</cfif>
-		<cfif FindNoCase(".cfc", CGI.SCRIPT_NAME) && !FindNoCase("logon.cfc", CGI.SCRIPT_NAME) && (!StructKeyExists(SESSION,"LoggedIn") || Session.Loggedin neq "true")>
+		<cfif FindNoCase(".cfc", CGI.SCRIPT_NAME) && !FindNoCase("PushNotifications.cfc", CGI.SCRIPT_NAME) && !FindNoCase("logon.cfc", CGI.SCRIPT_NAME) && (!StructKeyExists(SESSION,"LoggedIn") || Session.Loggedin neq "true")>
 			<cfoutput><script>location.href="/CFTestTrack/login.cfm";</script></cfoutput>
 			<cfreturn false />
 		</cfif>
@@ -102,7 +102,7 @@
 		
 		writeOutput( pageContent );
 		getPageContext().getOut().flush();
-		if (!FindNoCase("Logon.cfc", CGI.SCRIPT_NAME) && !FindNoCase("skedtasks",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport",CGI.Script_NAME) && !FindNoCase("report",CGI.SCRIPT_NAME) && !FindNoCase("axosoftgrab",CGI.ScRIPT_NAME)) {
+		if (!FindNoCase("PushNotifications.cfc",CGI.SCRIPT_NAME) && !FindNoCase("Logon.cfc", CGI.SCRIPT_NAME) && !FindNoCase("skedtasks",CGI.SCRIPT_NAME) && !FindNoCase("login",CGI.SCRIPT_NAME) && !FindNoCase("testreport",CGI.Script_NAME) && !FindNoCase("report",CGI.SCRIPT_NAME) && !FindNoCase("axosoftgrab",CGI.ScRIPT_NAME)) {
 			StructUpdate(application.SessionTracker,Session.UserIDInt,Now());
 		}
 		</cfscript>

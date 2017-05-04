@@ -147,6 +147,12 @@ component
 		return testers;
 	}
 	
+	public db.TTestTester function getTester(string id)
+	{
+		tester = entityLoad("TTestTester", {id = arguments.id}, true);
+		return tester;
+	}
+	
 	public array function getAllTestCaseHistory()
 	{
 		history = entityLoad("TTestCaseHistory");
