@@ -147,10 +147,29 @@ component
 		return testers;
 	}
 	
-	public db.TTestTester function getTester(string id)
+	public any function getTester(string id)
 	{
 		tester = entityLoad("TTestTester", {id = arguments.id}, true);
 		return tester;
+	}
+	
+	public any function getTesterByUsername(string name)
+	{
+		tester = entityLoad("TTestTester", {ADID = arguments.name}, true);
+		return tester;
+	}
+	
+	public array function getDevices(testerid, deviceuuid, deviceois)
+	{
+		devices = EntityLoad("TTestDevices",{TesterID = arguments.testerid, DeviceUUID = arguments.deviceuuid, DeviceOIS = arguments.deviceos}, true);
+		return devices;
+	}
+	
+	public void function saveDevice(deviceuuid, deviceos, testerid)
+	{
+		objDevice = EntityNew("TTestDevices",{DeviceUUID = arguments.deviceuuid, DeviceOS = arguments.deviceos, TesterID = arguments.testerid});
+		EntitySave(objDevice);
+		ormFlush();
 	}
 	
 	public array function getAllTestCaseHistory()

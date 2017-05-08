@@ -15,7 +15,7 @@
 	<cfset this.ormSettings.dialect = "MicrosoftSQLServer" />
 	<cfset this.ormSettings.useDBForMapping = "false" />
 	<!---<cfset this.mappings["/db"] = "#ExpandPath('../cfc/db/')#" />--->
-	<cfset this.ormSettings.cfclocation = "#ExpandPath('../cfc/db')#" />
+	<cfset this.ormSettings.cfclocation = "#ExpandPath('db')#" />
 	<cfscript>
 		variables.framework = {};
 		variables.framework.debugKey = "debug";
