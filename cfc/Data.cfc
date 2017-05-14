@@ -518,10 +518,13 @@ component
 	public query function getTestCasesByScenarioId(numeric projectid, numeric scenarioid)
 	{
 		qryResult = queryExecute(
-			"	SELECT id, TestTitle
-			FROM TTestCase
-			WHERE ProjectID = " & arguments.projectid & "
-			AND id not in (SELECT CaseID from TTestScenarioCases where ScenarioId = " & arguments.scenarioid & ") "
+			"SELECT a.id, a.TestTitle, a.TestDetails, b.PriorityName, c.Type, a.Preconditions, a.Steps, a.ExpectedResult
+			, a.MilestoneId, a.Estimate, a.ProjectID, a.SectionID
+			FROM TTestCase a
+			INNER JOIN TTestPriorityType b ON a.PriorityId = b.id
+			INNER JOIN TTestType c ON a.TypeId = c.id
+			WHERE a.ProjectID = " & arguments.projectid & "
+			AND a.id not in (SELECT CaseID from TTestScenarioCases where ScenarioId = " & arguments.scenarioid & ") "
 		);
 		return qryResult;
 	}

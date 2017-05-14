@@ -399,10 +399,10 @@
 						yAxisLabel : "Count",
 						savePng : true,
 						savePngOutput : "Save",
-						savePngName: "Last 14 Days",
+						savePngName: "Activity",
 						savePngBackgroundColor : "white",
 						annotateDisplay : true,
-						graphTitle: "Testing Activity - 14 Days",
+						graphTitle: "Testing Activity",
 						responsive: true,
 						responsiveMaxHeight: 300,
 						maintainAspectRatio: false
@@ -666,7 +666,7 @@
 						//yAxisLabel : "Count",
 						savePng : true,
 						savePngOutput : "Save",
-						savePngName: "Last 14 Days",
+						savePngName: "Test Activity",
 						savePngBackgroundColor : "white",
 						responsive: true,
 						responsiveMaxHeight: 300,
@@ -685,7 +685,7 @@
 		<cfscript>
 			hubChart = StructNew();
 			hubchart["opticon"] = "fa-line-chart";
-			hubChart["optlabel"] = "Activity (14 days)";
+			hubChart["optlabel"] = "Activity";
 			hubChart["optvalue"] = "HubChart";
 			ArrayAppend(result,hubChart);
 			hubPieChart = StructNew();
@@ -1241,7 +1241,7 @@
 						yAxisLabel : "Count",
 						savePng : true,
 						savePngOutput : "Save",
-						savePngName: "Last 14 Days",
+						savePngName: "Activity",
 						savePngBackgroundColor : "white",
 						annotateDisplay : true,
 						graphTitle: "Activity",
