@@ -399,10 +399,10 @@
 						yAxisLabel : "Count",
 						savePng : true,
 						savePngOutput : "Save",
-						savePngName: "Last 14 Days",
+						savePngName: "Activity",
 						savePngBackgroundColor : "white",
 						annotateDisplay : true,
-						graphTitle: "Testing Activity - 14 Days",
+						graphTitle: "Testing Activity",
 						responsive: true,
 						responsiveMaxHeight: 300,
 						maintainAspectRatio: false
@@ -602,124 +602,6 @@
         	</div>  	
 	</cffunction>
 	
-	<!---<cffunction name="MilestoneTimeline" access="remote" output="true">
-		<cfargument name="projectid" required="yes">
-		<cfset arrMilestones = objData.getMilestonesByProjectId(arguments.projectid) />
-		<div class="row">
-			<div class="col-lg-12 col-md-12">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						Milestone Timeline
-					</div>
-					<div class="panel-body">
-						<ul class="timeline">
-							<cfset x = 1 />
-							<cfloop array="#arrMilestones#" index="item">
-                                <li<cfif x mod 2 eq 0> class="timeline-inverted"</cfif>>
-                                    <div class="timeline-badge <cfif item.getClosed()>success</cfif>"><i class="fa <cfif item.getClosed()>fa-check<cfelse>fa-map-marker</cfif>"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">#item.getMilestone()#</h4>
-                                            <p><small class="text-muted"><i class="fa fa-clock-o"></i> <cfif item.getClosed()>Finished: #item.getClosedDate()#<cfelse>Due On: #item.getDueOn()#</cfif></small>
-                                            </p>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p>#item.getMilestoneDescription()#</p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <cfset x = x + 1 />
-                            </cfloop>
-                                <!---<li class="timeline-inverted">
-                                    <div class="timeline-badge warning"><i class="fa fa-credit-card"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">Lorem ipsum dolor</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem dolorem quibusdam, tenetur commodi provident cumque magni voluptatem libero, quis rerum. Fugiat esse debitis optio, tempore. Animi officiis alias, officia repellendus.</p>
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium maiores odit qui est tempora eos, nostrum provident explicabo dignissimos debitis vel! Adipisci eius voluptates, ad aut recusandae minus eaque facere.</p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="timeline-badge danger"><i class="fa fa-bomb"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">Lorem ipsum dolor</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus numquam facilis enim eaque, tenetur nam id qui vel velit similique nihil iure molestias aliquam, voluptatem totam quaerat, magni commodi quisquam.</p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="timeline-inverted">
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">Lorem ipsum dolor</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates est quaerat asperiores sapiente, eligendi, nihil. Itaque quos, alias sapiente rerum quas odit! Aperiam officiis quidem delectus libero, omnis ut debitis!</p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="timeline-badge info"><i class="fa fa-save"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">Lorem ipsum dolor</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis minus modi quam ipsum alias at est molestiae excepturi delectus nesciunt, quibusdam debitis amet, beatae consequuntur impedit nulla qui! Laborum, atque.</p>
-                                            <hr>
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                                                    <i class="fa fa-gear"></i> <span class="caret"></span>
-                                                </button>
-                                                <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="##">Action</a></li>
-                                                    <li><a href="##">Another action</a></li>
-                                                    <li><a href="##">Something else here</a></li>
-                                                    <li class="divider"></li>
-                                                    <li><a href="##">Separated link</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">Lorem ipsum dolor</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sequi fuga odio quibusdam. Iure expedita, incidunt unde quis nam! Quod, quisquam. Officia quam qui adipisci quas consequuntur nostrum sequi. Consequuntur, commodi.</p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="timeline-inverted">
-                                    <div class="timeline-badge success"><i class="fa fa-graduation-cap"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">Lorem ipsum dolor</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt obcaecati, quaerat tempore officia voluptas debitis consectetur culpa amet, accusamus dolorum fugiat, animi dicta aperiam, enim incidunt quisquam maxime neque eaque.</p>
-                                        </div>
-                                    </div>
-                                </li>--->
-                            </ul>
-                      	</div>
-                  	</div>
-              	</div>
-          	</div>
-    </cffunction>--->
-	
 	<cffunction name="AllProjectsChart" access="remote" output="true">
 		<cfdbinfo type="version" name="dbInfo">
 		<cfset qryGeneralActivity = objData.qryGeneralActivity()>
@@ -784,7 +666,7 @@
 						//yAxisLabel : "Count",
 						savePng : true,
 						savePngOutput : "Save",
-						savePngName: "Last 14 Days",
+						savePngName: "Test Activity",
 						savePngBackgroundColor : "white",
 						responsive: true,
 						responsiveMaxHeight: 300,
@@ -803,7 +685,7 @@
 		<cfscript>
 			hubChart = StructNew();
 			hubchart["opticon"] = "fa-line-chart";
-			hubChart["optlabel"] = "Activity (14 days)";
+			hubChart["optlabel"] = "Activity";
 			hubChart["optvalue"] = "HubChart";
 			ArrayAppend(result,hubChart);
 			hubPieChart = StructNew();
@@ -1359,7 +1241,7 @@
 						yAxisLabel : "Count",
 						savePng : true,
 						savePngOutput : "Save",
-						savePngName: "Last 14 Days",
+						savePngName: "Activity",
 						savePngBackgroundColor : "white",
 						annotateDisplay : true,
 						graphTitle: "Activity",
@@ -1787,7 +1669,7 @@
 	
 	<cffunction name="getTodos" access="remote" output="true">
 		<cfstoredproc procedure="PTodos">
-			<cfprocparam cfsqltype="CF_SQL_INTEGER" value="#Session.UserIDInt#">
+			<!---<cfprocparam cfsqltype="CF_SQL_INTEGER" value="#Session.UserIDInt#">--->
 			<cfprocresult name="qryTodos" />
 		</cfstoredproc>
 		<div id='todopanel' class="panel panel-default"><div class="panel-heading"><i class="fa fa-check-square-o"></i> Todos</div>
@@ -1841,7 +1723,7 @@
 		
 	<cffunction name="TodosBySection" access="remote" returnformat="JSON" returntype="string">
 		<cfstoredproc procedure="PTodos">
-			<cfprocparam cfsqltype="CF_SQL_INTEGER" value="#Session.UserIDInt#">
+			<!--cfprocparam cfsqltype="CF_SQL_INTEGER" value="#Session.UserIDInt#">-->
 			<cfprocresult name="qryTodos" />
 		</cfstoredproc>
 		<cfreturn serializeJSON(qryTodos) />

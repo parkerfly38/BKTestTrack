@@ -19,7 +19,7 @@ BEGIN
 SELECT		c.Section, count(a.id) as ItemCount
 FROM		TTestResult a
 INNER JOIN	TTestCase b ON a.TestCaseID = b.id
-INNER JOIN	TTestProjectTestSection c on c.id = b.SectionId
+INNER JOIN	TTestProjectTestSection c on c.id = b.id
 WHERE		a.StatusID != 2
 GROUP BY	c.Section
 

@@ -147,6 +147,31 @@ component
 		return testers;
 	}
 	
+	public any function getTester(string id)
+	{
+		tester = entityLoad("TTestTester", {id = arguments.id}, true);
+		return tester;
+	}
+	
+	public any function getTesterByUsername(string name)
+	{
+		tester = entityLoad("TTestTester", {ADID = arguments.name}, true);
+		return tester;
+	}
+	
+	public array function getDevices(testerid, deviceuuid, deviceois)
+	{
+		devices = EntityLoad("TTestDevices",{TesterID = arguments.testerid, DeviceUUID = arguments.deviceuuid, DeviceOIS = arguments.deviceos}, true);
+		return devices;
+	}
+	
+	public void function saveDevice(deviceuuid, deviceos, testerid)
+	{
+		objDevice = EntityNew("TTestDevices",{DeviceUUID = arguments.deviceuuid, DeviceOS = arguments.deviceos, TesterID = arguments.testerid});
+		EntitySave(objDevice);
+		ormFlush();
+	}
+	
 	public array function getAllTestCaseHistory()
 	{
 		history = entityLoad("TTestCaseHistory");
@@ -411,7 +436,12 @@ component
 			cfstoredproc(procedure="PGeneralActivityByProject")
 			{
 				cfprocresult(name="qryGeneralActivity");
+				
 			}
+		}
+		if (!isQuery(qryGeneralActivity))
+		{
+			qryGeneralActivity = QueryNew("ProjectTitle, Colors","VarChar, VarChar");
 		}
 		return qryGeneralActivity;
 	}
@@ -488,10 +518,13 @@ component
 	public query function getTestCasesByScenarioId(numeric projectid, numeric scenarioid)
 	{
 		qryResult = queryExecute(
-			"	SELECT id, TestTitle
-			FROM TTestCase
-			WHERE ProjectID = " & arguments.projectid & "
-			AND id not in (SELECT CaseID from TTestScenarioCases where ScenarioId = " & arguments.scenarioid & ") "
+			"SELECT a.id, a.TestTitle, a.TestDetails, b.PriorityName, c.Type, a.Preconditions, a.Steps, a.ExpectedResult
+			, a.MilestoneId, a.Estimate, a.ProjectID, a.SectionID
+			FROM TTestCase a
+			INNER JOIN TTestPriorityType b ON a.PriorityId = b.id
+			INNER JOIN TTestType c ON a.TypeId = c.id
+			WHERE a.ProjectID = " & arguments.projectid & "
+			AND a.id not in (SELECT CaseID from TTestScenarioCases where ScenarioId = " & arguments.scenarioid & ") "
 		);
 		return qryResult;
 	}
