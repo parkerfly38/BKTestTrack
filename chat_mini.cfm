@@ -14,11 +14,28 @@ var msgHandler = function(message)
 	 if(data)
 	 {
 	    // If data is present write it to the div
-	    var txt=document.getElementById("myDiv");
-	    //txt.innerHTML+= data + "<br>";
-	    txt.innerHTML += '<h6 class="text-center"><small>' + data.TIME + '</small></h6><span class="label label-primary">' + data.USERNAME + '</span> : <em>' + data.MESSAGE + '</em><br />';
-	    $('#myDiv').scrollTop($('#myDiv')[0].scrollHeight);
-	    $('<span class="badge progress-bar-danger">!</span>').insertAfter('#ddmess i.fa-envelope');
+	    var txt=document.getElementById("chatUl");
+	    var liclass;
+	    var spanclass;
+	    var smallclass;
+	    var strongclass;
+	    if ($('#chatUl').children().last().hasClass("right"))
+	    {
+	    	liclass = "left";
+	    	spanclass = "pull-left";
+	    	smallclass = "pull-right";
+	    	strongclass = "";	
+	    } else {
+	    	liclass = "right";
+	    	spanclass = "pull-right";
+	    	smallclass = "";
+	    	strongclass = "pull-right";
+	    }
+	    txt.innerHTML += '<li class="' + liclass +' clearfix"><span class="chat-img ' + spanclass + '"><img src="http://placehold.it/50/FA6F57/fff" alt="User Avatar" class="img-circle" /></span><div class="chat-body clearfix"><div class="header"><small class="text-muted '+smallclass+'"><i class="fa fa-clock-o fa-fw"></i> Now</small><strong class="' + strongclass + '">' + data.USERNAME + '</strong></div><p>' + data.MESSAGE + '</p></div></li>';
+	    $('#chatDiv').scrollTop($('#chatDiv')[0].scrollHeight);
+	    //$('<span class="badge progress-bar-danger">!</span>').insertAfter('#ddmess i.fa-envelope');
+	    $('#messagebadge').text("!");
+	    $('#messagebadge').show();
 	 }
 }
 var msgHandlerMini = function(message)

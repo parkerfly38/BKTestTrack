@@ -54,6 +54,7 @@
 							email : $("#txtEmail").val()
 						}
 					}).done(function(data) {
+						console.log(data);
 						if ( data != "success") { 
 							$("#errMessage").html(data);
 							$("#creationError").fadeIn("fast");
@@ -62,6 +63,8 @@
 							$('#creationSuccess').fadeIn("fast");
 						}
 					});
+					
+					return false;
 				});
 			});
 		</script>

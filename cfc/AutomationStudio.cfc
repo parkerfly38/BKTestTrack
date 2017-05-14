@@ -85,51 +85,132 @@ component extends="cfselenium.CFSeleniumTestCase"
 	remote any function getSpecificMeta(required string funcName) returnformat="JSON" output="false" {
 		structMetaData = StructNew();
 		switch (arguments.funcname) {
+			case "assert":
+				structMetaData.HINT = "Assert is semantically equivalent to assertTrue, providing a shorter form.";
+				structMetaData.PARAMS = [];
+				structMetaData.PARAMS[1] = StructNew();
+				structMetaData.PARAMS[1].NAME = "boolean condition";
+				structMetaData.PARAMS[1].REQUIRED = "true";
+				structMetaData.PARAMS[1].TYPE = "expression/boolean function";
+				structMetaData.PARAMS[2] = StructNew();
+				structMetaData.PARAMS[2].NAME = 'message string';
+				structMetaData.PARAMS[2].REQUIRED = 'true';
+				structMetaData.PARAMS[2].TYPE = 'string';
+				return serializeJSON(structMetaData);
 			case "assertTrue":case "assertFalse":
-				structMetaData.Hint = "If this assertion fails, it will throw an exception and fail your test.  The first parameter will be the condition that will pass/fail if it is true/false, the second is the message you want recorded about this failure.";
-				structMetaData.params = [];
-				structMetaData.params[1] = StructNew();
-				structMetaData.params[1].NAME = 'boolean condition';
-				structMetaData.params[1].REQUIRED = 'true';
-				structMetaData.params[1].TYPE = 'expression/boolean function';
-				structMetaData.params[2] = StructNew();
-				structMetaData.params[2].NAME = 'message string';
-				structMetaData.params[2].REQUIRED = 'true';
-				structMetaData.params[2].TYPE = 'string';
+				structMetaData.HINT = "If this assertion fails, it will throw an exception and fail your test.  The first parameter will be the condition that will pass/fail if it is true/false, the second is the message you want recorded about this failure.";
+				structMetaData.PARAMS = [];
+				structMetaData.PARAMS[1] = StructNew();
+				structMetaData.PARAMS[1].NAME = 'boolean condition';
+				structMetaData.PARAMS[1].REQUIRED = 'true';
+				structMetaData.PARAMS[1].TYPE = 'expression/boolean function';
+				structMetaData.PARAMS[2] = StructNew();
+				structMetaData.PARAMS[2].NAME = 'message string';
+				structMetaData.PARAMS[2].REQUIRED = 'true';
+				structMetaData.PARAMS[2].TYPE = 'string';
 				return serializeJSON(structMetaData);
 				break;
 			case "assertEquals":
-				structMetaData.Hint = "Compare the expected value with the actual value to determine if the test passes or fails.  The message will be what is recorded as a failure.";
-				structMetaData.params = [];
-				structMetaData.params[1] = StructNew();
-				structMetaData.params[1].NAME = 'expected value';
-				structMetaData.params[1].REQUIRED = 'true';
-				structMetaData.params[1].TYPE = 'string/number';
-				structMetaData.params[2] = StructNew();
-				structMetaData.params[2].NAME = 'actual value';
-				structMetaData.params[2].REQUIRED = 'true';
-				structMetaData.params[2].TYPE = 'Expression';
-				structMetaData.params[3] = StructNew();
-				structMetaData.params[3].NAME = 'message string';
-				structMetaData.params[3].REQUIRED = 'true';
-				structMetaData.params[3].TYPE = 'string';
+				structMetaData.HINT = "Compare the expected value with the actual value to determine if the test passes or fails.  The message will be what is recorded as a failure.";
+				structMetaData.PARAMS = [];
+				structMetaData.PARAMS[1] = StructNew();
+				structMetaData.PARAMS[1].NAME = 'expected value';
+				structMetaData.PARAMS[1].REQUIRED = 'true';
+				structMetaData.PARAMS[1].TYPE = 'string/number';
+				structMetaData.PARAMS[2] = StructNew();
+				structMetaData.PARAMS[2].NAME = 'actual value';
+				structMetaData.PARAMS[2].REQUIRED = 'true';
+				structMetaData.PARAMS[2].TYPE = 'Expression';
+				structMetaData.PARAMS[3] = StructNew();
+				structMetaData.PARAMS[3].NAME = 'message string';
+				structMetaData.PARAMS[3].REQUIRED = 'true';
+				structMetaData.PARAMS[3].TYPE = 'string';
+				return serializeJSON(structMetaData);
+				break;
+			case "fail":
+				structMetaData.HINT = "Actively fails a test.  Useful when you stub a test and want to ensure it fails.";
+				structMetaData.PARAMS = [];
+				structMetaData.PARAMS[1] = StructNew();
+				structMetaData.PARAMS[1].NAME = "message string";
+				structMetaData.PARAMS[1].REQUIRED = "true";
+				structMetaData.PARAMS[1].TYPE = "string";
 				return serializeJSON(structMetaData);
 				break;
 			case "failNotEquals":
-				structMetaData.Hint = "Used to fail when two values do not equal. This doesn't perform any assertion... it's simply a convenience method for providing a specific type of failure message.";
-				structMetaData.params = [];
-				structMetaData.params[1] = StructNew();
-				structMetaData.params[1].NAME = 'expected value';
-				structMetaData.params[1].REQUIRED = 'true';
-				structMetaData.params[1].TYPE = 'string/number';
-				structMetaData.params[2] = StructNew();
-				structMetaData.params[2].NAME = 'actual value';
-				structMetaData.params[2].REQUIRED = 'true';
-				structMetaData.params[2].TYPE = 'Expression';
-				structMetaData.params[3] = StructNew();
-				structMetaData.params[3].NAME = 'message string';
-				structMetaData.params[3].REQUIRED = 'true';
-				structMetaData.params[3].TYPE = 'string';
+				structMetaData.HINT = "Used to fail when two values do not equal. This doesn't perform any assertion... it's simply a convenience method for providing a specific type of failure message.";
+				structMetaData.PARAMS = [];
+				structMetaData.PARAMS[1] = StructNew();
+				structMetaData.PARAMS[1].NAME = 'expected value';
+				structMetaData.PARAMS[1].REQUIRED = 'true';
+				structMetaData.PARAMS[1].TYPE = 'string/number';
+				structMetaData.PARAMS[2] = StructNew();
+				structMetaData.PARAMS[2].NAME = 'actual value';
+				structMetaData.PARAMS[2].REQUIRED = 'true';
+				structMetaData.PARAMS[2].TYPE = 'Expression';
+				structMetaData.PARAMS[3] = StructNew();
+				structMetaData.PARAMS[3].NAME = 'message string';
+				structMetaData.PARAMS[3].REQUIRED = 'true';
+				structMetaData.PARAMS[3].TYPE = 'string';
+				return serializeJSON(structMetaData);
+				break;
+			case "assertSame":
+				structMetaData.HINT = "Used to determine if obj1 and obj2 refer to the same instance.  Arrays are passed by value, so this will always fail for arrays.";
+				structMetaData.PARAMS = [];
+				structMetaData.PARAMS[1] = structNew();
+				structMetaData.PARAMS[1].NAME = 'obj1';
+				structMetaData.PARAMS[1].REQUIRED = 'true';
+				structMetaData.PARAMS[1].TYPE = 'any';
+				structMetaData.PARAMS[2] = structNew();
+				structMetaData.PARAMS[2].NAME = 'obj2';
+				structMetaData.PARAMS[2].REQUIRED = 'true';
+				structMetaData.PARAMS[2].TYPE = 'any';
+				structMetaData.PARAMS[3] = structNEw();
+				structMetaData.PARAMS[3].NAME = 'message string';
+				structMetaData.PARAMS[3].REQUIRED = 'true';
+				structMetaData.PARAMS[3].TYPE = 'string';
+				return serializeJSON(structMetaData);
+				break;
+			case "assertNotSame":
+				structMetaData.HINT = "Used to determine if obj1 and obj2 do not refer to the same instance.  Arrays are passed by value, so this will always fail for arrays.";
+				structMetaData.PARAMS = [];
+				structMetaData.PARAMS[1] = structNew();
+				structMetaData.PARAMS[1].NAME = 'obj1';
+				structMetaData.PARAMS[1].REQUIRED = 'true';
+				structMetaData.PARAMS[1].TYPE = 'any';
+				structMetaData.PARAMS[2] = structNew();
+				structMetaData.PARAMS[2].NAME = 'obj2';
+				structMetaData.PARAMS[2].REQUIRED = 'true';
+				structMetaData.PARAMS[2].TYPE = 'any';
+				structMetaData.PARAMS[3] = structNEw();
+				structMetaData.PARAMS[3].NAME = 'message string';
+				structMetaData.PARAMS[3].REQUIRED = 'true';
+				structMetaData.PARAMS[3].TYPE = 'string';
+				return serializeJSON(structMetaData);
+				break;
+			case "assertIsXMLDoc":
+				structMetaData.HINT = "Determines if XML is valid XML DOM object.";
+				structMetaData.PARAMS = [];
+				structMetaData.PARAMS[1] = structNew();
+				structMetaData.PARAMS[1].NAME = 'xml';
+				structMetaData.PARAMS[1].REQUIRED = 'true';
+				structMetaData.PARAMS[1].TYPE = 'any';
+				structMetaData.PARAMS[2] = structNEw();
+				structMetaData.PARAMS[2].NAME = 'message string';
+				structMetaData.PARAMS[2].REQUIRED = 'true';
+				structMetaData.PARAMS[2].TYPE = 'string';
+				return serializeJSON(structMetaData);
+				break;
+			case "assertIsArray":case "assertIsDefined":case "assertIsEmpty":case "assertIsEmptyArray":case "assertIsEmptyQuery":case "assertIsEmptyStruct":case "assertIsQuery":case "assertIsStruct":
+				structMetaData.HINT = "ColdFusion specific function to check validity, definition, or if they are empty/null";
+				structMetaData.PARAMS = [];
+				structMetaData.PARAMS[1] = structNew();
+				structMetaData.PARAMS[1].NAME = 'obj';
+				structMetaData.PARAMS[1].REQUIRED = 'true';
+				structMetaData.PARAMS[1].TYPE = 'any';
+				structMetaData.PARAMS[2] = structNEw();
+				structMetaData.PARAMS[2].NAME = 'message string';
+				structMetaData.PARAMS[2].REQUIRED = 'true';
+				structMetaData.PARAMS[2].TYPE = 'string';
 				return serializeJSON(structMetaData);
 				break;
 		}
@@ -138,11 +219,11 @@ component extends="cfselenium.CFSeleniumTestCase"
 			for ( i = 1; i <= ArrayLen(SESSION.MDS.FUNCTIONS); i++ ) {
 				if ( SESSION.MDS.FUNCTIONS[i].NAME == arguments.funcName ) {
 					if ( len(SESSION.MDS.FUNCTIONS[i].HINT) > 0 ) { 
-						structMetaData.Hint = SESSION.MDS.FUNCTIONS[i].HINT;
+						structMetaData.HINT = SESSION.MDS.FUNCTIONS[i].HINT;
 					} else {
-						structMetaData.Hint = "";
+						structMetaData.HINT = "";
 					}
-					structMetaData.params = SESSION.MDS.FUNCTIONS[i].PARAMETERS;
+					structMetaData.PARAMS = SESSION.MDS.FUNCTIONS[i].PARAMETERS;
 				}
 			}
 			return serializeJSON(structMetaData);
@@ -404,8 +485,19 @@ component extends="cfselenium.CFSeleniumTestCase"
 	
 	remote string function GetListObj() output="true" {
 		StructDelete(SESSION,"AutomationArray");
-		selenium = new cfselenium.SeleniumRC();
-		mds = GetMetaData(selenium);
+		try {
+			selenium = new cfselenium.SeleniumRC();
+			mds = GetMetaData(selenium);
+		}
+		catch (any Exception)
+		{
+			mds = structNew();
+			mds.functions = [StructNew()];
+			mds.functions[1].access = "public";
+			mds.functions[1].name = "Selenium not loaded.";
+			mds.functions[1].hint = "Selenium failed to load.  Check again, or use JUnit/MXUnit for testing. " & Exception;
+			mds.functions[1].parameters = [];
+		}
 		SESSION.MDS = mds;
 		listOfNames = "";
 		writeOutput("<script type='text/javascript'>" & chr(13));
@@ -521,16 +613,21 @@ component extends="cfselenium.CFSeleniumTestCase"
 			writeOutput("</select></div>");
 		}
 		
-		writeOutput("<p>Build an automated test case by selecting actions and setting their parameters below.  For <em>locator</em> parameters, remember you can use css classes (css=reference), ids (id=reference), names (name=), and complex XPath logic to get at the web piece you want.  See the wiki for more thorough documentation.</p>");
+		writeOutput("<p>Build an automated test case by selecting actions and setting their parameters below.  For Selenium <em>locator</em> parameters, remember you can use css classes (css=reference), ids (id=reference), names (name=), and complex XPath logic to get at the web piece you want.  See the wiki for more thorough documentation.</p>");
 		writeOutput("<div class='col-xs-4 col-sm-4 col-md-4 col-lg-4'>");
 		writeOutput("<select id='ddlTAction' class='form-control' size='8' style='height:150px;'>");
-		writeOutput("<optgroup label='MXUnit Assertions'><option value='assertTrue'>assertTrue</option><option value='assertFalse'>assertFalse</option><option value='assertEquals'>assertEquals</option><option value='failNotEquals'>failNotEquals</option><optgroup>");
+		writeOutput("<optgroup label='JUnit/MXUnit Assertions'><option value='assert'>assert</option><option value='assertTrue'>assertTrue</option><option value='assertFalse'>assertFalse</option><option value='assertEquals'>assertEquals</option><option value='fail'>fail</option><option value='failNotEquals'>failNotEquals</option>
+			<option value='assertSame'>assertSame</option><option value='assertNotSame'>assertNotSame</option><option value='assertIsTypeOf'>assertIsTypeOf</option>
+			<option value='assertIsXMLDoc'>assertIsXMLDoc</option><option value='assertIsArray'>assertIsArray</option><option value='assertIsDefined'>assertIsDefined</option>
+			<option value='assertIsEmpty'>assertIsEmpty</option><option value='assertIsEmptyArray'>assertIsEmptyArray</option><option value='assertIsEmptyQuery'>assertIsEmptyQuery</option>
+			<option value='assertIsEmptyStruct'>assertIsEmptyStruct</option><option value='assertIsQuery'>assertIsQuery</option><option value='assertIsStruct'>assertIsStruct</option><optgroup>");
 		//for (func in mds.FUNCTIONS) {
 		for (i = 1; i <= ArrayLen(mds.Functions); i++) {
 			if (mds.FUNCTIONS[i].ACCESS == "public" && StructKeyExists(mds.FUNCTIONS[i],"HINT") && Len(mds.FUNCTIONS[i].HINT) > 0) {
 				listOfNames = listAppend(listofNames,mds.FUNCTIONS[i].NAME);
 			}
 		}
+		//writeDump(Session.MDS);
 		writeOutput("<optgroup label='Selenium Options'>");
 		AlphaListOfNames = ListSort(listofNames,"text","asc");
 		for ( i=1; i <= ListLen(AlphaListOfNames); i++) {
