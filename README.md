@@ -33,3 +33,6 @@ you don't have execution permissions, you will be limited to using the MXUnit te
 
 This application has not been tested against Lucee.  I welcome any attempt to get it working, please feel free to fork this repo into
 a Lucee version.
+
+Depending on whether you host in Windows or Linux/OS X, you will need to adjust .htaccess or web.config appropriately to configure URL
+rewriting or routing.  Example files are included in this repo.
